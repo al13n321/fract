@@ -1,0 +1,15 @@
+- Finish RaytracingEngine interface
+	+ packing raw tracing result in texture(s)
+		* float texture: iterations and scaled distance
+		* owning the texture(s)
+	+ drawing to it synchronously on demand. 
+	+ owning a camera? probably no, only have a setter for VP matrix
+- Add SceneShader class
+	+ owns color texture
+	+ takes raw tracing result and renders the image
+- Add class for the glut-based interactive flying, directly using RaytracingEngine
+- Get stuff to work! Raytrace a cube; then a procedurally textured cube (will need it for debugging)
+- Add a real DE tracer of some simple fractal (sierpinski?)
+- Add scale to the camera
+	+ figure out scaling details; need to avoid double precision as much as possible; at the very least for tracing results
+- Improve stuff on all fronts
