@@ -1,9 +1,12 @@
-#include "common.h"
+#include "gl-common.h"
 
 namespace fract {
 
     class Texture2D{
     public:
+        Texture2D(const Texture2D &rhs) = delete;
+        Texture2D& operator=(const Texture2D &rhs) = delete;
+
         Texture2D(int width, int height, GLint internalFormat, GLint filter = GL_NEAREST);
         Texture2D(int width, int height, GLint internalFormat, GLenum format, GLenum type, const GLvoid *data, GLint filter = GL_NEAREST);
         ~Texture2D();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "i-cpu-raytracer.h"
-#include "utul/camera.h"
+#include "util/camera.h"
 #include "raytraced-view.h"
 
 namespace fract {

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "raytracer/raytracing-engine.h"
 #include "raytracer/renderer.h"
 #include "cpu-raytracers/cube-cpu-raytracer.h"

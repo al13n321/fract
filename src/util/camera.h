@@ -35,7 +35,7 @@ namespace fract {
     inline void set_position(dvec3 a) { position_ = a; }
     inline void set_field_of_view(float a) { fov_ = a; }
     inline void set_aspect_ratio(float a) { aspect_ratio_ = a; }
-    inline void set_near_clip_plane(float a) const { near_clip_plane_ = a; }
+    inline void set_near_clip_plane(float a) { near_clip_plane_ = a; }
     inline void set_scale(double a) { scale_ = a; }
 
     // delta is the camera shift relative to camera rotation

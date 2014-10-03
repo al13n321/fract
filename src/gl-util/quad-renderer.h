@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "gl-common.h"
 
 namespace fract {
 

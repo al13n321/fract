@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "util/vec.h"
 
 namespace fract {
@@ -10,8 +11,8 @@ namespace fract {
 //       output buffers of corresponding type.
 class ICpuRaytracer {
   struct Ray {
-    vec3 start;
-    vec3 direction; // unit length
+    dvec3 start;
+    fvec3 direction; // unit length
   };
 
   struct TraceResult {
