@@ -9,7 +9,7 @@ class Renderer {
  public:
   Renderer(int width, int height);
 
-  void Renderer(const RaytracedView &raytraced);
+  void Render(const RaytracedView &raytraced);
  private:
   
 };

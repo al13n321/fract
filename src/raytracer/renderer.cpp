@@ -6,7 +6,7 @@ Renderer::Renderer(int width, int height) {
   throw NotImplementedException();
 }
 
-void Renderer::Renderer(const RaytracedView &raytraced) {
+void Renderer::Render(const RaytracedView &raytraced) {
   throw NotImplementedException();
 }
 

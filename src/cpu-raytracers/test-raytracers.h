@@ -4,13 +4,13 @@
 
 namespace fract { namespace cpu_raytracers {
 
-  class Gradient: public ICPURaytracer {
+  class Gradient: public ICpuRaytracer {
    public:
     Gradient() {}
     void traceGrid(const Rays &rays, TraceResults &out_results) override;
   };
 
-  class Cube: public ICPURaytracer {
+  class Cube: public ICpuRaytracer {
    public:
     Cube() {}
     void traceGrid(const Rays &rays, TraceResults &out_results) override;

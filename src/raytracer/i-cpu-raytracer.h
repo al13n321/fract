@@ -10,6 +10,7 @@ namespace fract {
 // NOTE: I can further add IOpenClRaytracer or ICudaRaytracer that accept
 //       output buffers of corresponding type.
 class ICpuRaytracer {
+ public:
   struct Ray {
     dvec3 start;
     fvec3 direction; // unit length

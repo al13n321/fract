@@ -1,7 +1,8 @@
 #include "raytracer/raytracing-engine.h"
 #include "raytracer/renderer.h"
-#include "cpu-raytracers/cube-cpu-raytracer.h"
+#include "cpu-raytracers/test-raytracers.h"
 #include "util/camera.h"
+#include "util/stopwatch.h"
 
 using namespace fract;
 
