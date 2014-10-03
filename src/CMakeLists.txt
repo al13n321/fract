@@ -4,5 +4,14 @@ project (fract)
 include_directories(.)
 
 add_executable(fract
-	application/main.cpp
+	application/experimentation-application.cpp
+	cpu-raytracers/test-raytracers.cpp
+	gl-util/quad-renderer.cpp
+	gl-util/shader.cpp
+	gl-util/texture2d.cpp
+	raytracer/raytracing-engine.cpp
+	raytracer/renderer.cpp
+	util/camera.cpp
+	util/mat.cpp
+	util/stopwatch.cpp
 )

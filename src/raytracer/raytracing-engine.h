@@ -2,6 +2,7 @@
 
 #include "i-cpu-raytracer.h"
 #include "utul/camera.h"
+#include "raytraced-view.h"
 
 namespace fract {
 
@@ -24,14 +25,23 @@ namespace fract {
 //  - saving checkpoints to allow rewinding trajectory without re-rendering?
 //  - multi-GPU tracing?
 class RaytracingEngine {
-public:
-	// *tracer should live longer than this RaytracingEngine.
-	RaytracingCamera(ICpuRaytracer *tracer);
+ public:
+  RaytracingEngine(
+    std::shared_ptr<ICpuRaytracer> tracer,
+    int width, int height);
 
-	
-private:
-	ICpuRaytracer *tracer_ = nullptr;
+  void UpdatePositionAndScale(dvec3 position, double scale);
+  void UpdateRotationProjectionMatrix(fmat4 mat);
+
+  const RaytracedView& Raytrace();
+  // rift will need warped render here
+ private:
+  std::shared_ptr<ICpuRaytracer> cpu_tracer_;
+  RaytracedView view_;
+
+  double camera_scale_;
+  dvec3 camera_position_;
+  fmat4 camera_rotation_projection_;
 };
 
 }
-

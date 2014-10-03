@@ -4,7 +4,7 @@
 namespace fract {
 
 QuadRenderer* QuadRenderer::defaultInstance(){
-    static QuadRenderer* shared_quad_ = new QuadRenderer();
+    static unique_ptr<QuadRenderer> shared_quad_(new QuadRenderer());
 	return shared_quad_;
 }
 
