@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <string>
 
 namespace fract {
 
@@ -8,13 +9,13 @@ namespace fract {
 class ExceptionBase {};
 
 #define EXCEPTION_TYPE(name, base) \
-  class name: base, ExceptionBase { \
+  class name: public base, public ExceptionBase { \
    public: \
     name(const std::string &msg = #name): base(msg) {} \
   };
 
 EXCEPTION_TYPE(NotImplementedException, std::logic_error);
-EXCEPTION_TYPE(VideocardAPICapabilityException, std::logic_error);
+EXCEPTION_TYPE(GraphicsAPIException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 

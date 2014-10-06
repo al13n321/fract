@@ -30,7 +30,11 @@ class RaytracingEngine {
     std::shared_ptr<ICpuRaytracer> tracer,
     int width, int height);
 
-  void UpdatePositionAndScale(dvec3 position, double scale);
+  // can invalidate cache
+  void UpdatePosition(dvec3 position);
+  // can invalidate cache (because of normals mostly) or can do something smart
+  void UpdateScale(double scale);
+  // can keep cache
   void UpdateRotationProjectionMatrix(fmat4 mat);
 
   const RaytracedView& Raytrace();

@@ -6,10 +6,13 @@ namespace fract {
 RaytracingEngine::RaytracingEngine(
   std::shared_ptr<ICpuRaytracer> tracer,
   int width, int height)
-: tracer_(tracer), view_(width, height) {}
+: cpu_tracer_(tracer), view_(width, height) {}
 
-void RaytracingEngine::UpdatePositionAndScale(dvec3 position, double scale) {
+void RaytracingEngine::UpdatePosition(dvec3 position) {
   camera_position_ = position;
+}
+
+void RaytracingEngine::UpdateScale(double scale) {
   camera_scale_ = scale;
 }
 

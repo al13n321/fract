@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "string-util.h"
+#include "util/string-util.h"
 using namespace std;
 
 namespace fract {

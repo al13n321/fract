@@ -1,12 +1,13 @@
 #include "renderer.h"
+#include "util/exceptions.h"
 
 namespace fract {
 
-Renderer::Renderer(int width, int height) {
-  throw NotImplementedException();
-}
+Renderer::Renderer() {}
 
-void Renderer::Render(const RaytracedView &raytraced) {
+void Renderer::Render(
+  const RaytracedView &raytraced, int frame_width, int frame_height
+) {
   throw NotImplementedException();
 }
 

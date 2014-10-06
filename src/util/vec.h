@@ -29,6 +29,9 @@ struct tvec3 {
 	inline tvec3<ftype>& operator *= (const tvec3<ftype> &v) { x *= v.x; y *= v.y; z *= v.z; return *this; }
 	inline tvec3<ftype>& operator /= (ftype d) { d = 1.0f / d; x *= d; y *= d; z *= d; return *this; }
 
+	// be careful with precision; obviously
+	inline bool IsZero() const { return x == 0 && y == 0 && z == 0; }
+
 	inline ftype Dot(const tvec3<ftype> &v) const { return x*v.x + y*v.y + z*v.z; }
 	inline tvec3<ftype> Cross(const tvec3<ftype> &v) const { return tvec3<ftype>(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x); }
 

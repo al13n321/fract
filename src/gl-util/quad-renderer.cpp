@@ -1,11 +1,12 @@
 #include "quad-renderer.h"
 #include <cstdlib>
+#include <memory>
 
 namespace fract {
 
 QuadRenderer* QuadRenderer::defaultInstance(){
-    static unique_ptr<QuadRenderer> shared_quad_(new QuadRenderer());
-	return shared_quad_;
+    static std::unique_ptr<QuadRenderer> shared_quad_(new QuadRenderer());
+	return shared_quad_.get();
 }
 
 void QuadRenderer::init(float x, float y, float wid, float hei, float cx1, float cy1, float cx2, float cy2) {

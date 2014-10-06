@@ -1,5 +1,7 @@
 #include "mat.h"
-#include "math-util.h"
+
+const static float kPI = 3.1415926535897932384626433832795f;
+const static float kDegToRad = kPI / 180.0f;
 
 namespace fract {
 
@@ -141,8 +143,8 @@ fmat4 fmat4::TranslationMatrix(fvec3 delta) {
 }
 
 fmat4 fmat4::RotationMatrixX(float a) {
-	float c = cos(a * kfDegToRad);
-	float s = sin(a * kfDegToRad);
+	float c = cos(a * kDegToRad);
+	float s = sin(a * kDegToRad);
 	fmat4 r = IdentityMatrix();
 	r.m[5]  =  c;
 	r.m[6]  = -s;
@@ -152,8 +154,8 @@ fmat4 fmat4::RotationMatrixX(float a) {
 }
 
 fmat4 fmat4::RotationMatrixY(float a) {
-	float c = cos(a * kfDegToRad);
-	float s = sin(a * kfDegToRad);
+	float c = cos(a * kDegToRad);
+	float s = sin(a * kDegToRad);
 	fmat4 r = IdentityMatrix();
 	r.m[0]  =  c;
 	r.m[2]  =  s;
@@ -163,8 +165,8 @@ fmat4 fmat4::RotationMatrixY(float a) {
 }
 
 fmat4 fmat4::RotationMatrixZ(float a) {
-	float c = cos(a * kfDegToRad);
-	float s = sin(a * kfDegToRad);
+	float c = cos(a * kDegToRad);
+	float s = sin(a * kDegToRad);
 	fmat4 r = IdentityMatrix();
 	r.m[0] =  c;
 	r.m[1] = -s;
@@ -179,7 +181,7 @@ fmat4 fmat4::RotationMatrix(float yaw, float pitch, float roll) {
 
 fmat4 fmat4::PerspectiveProjectionMatrix(float fov, float aspect_ratio, float near_dist, float far_dist) {
 	fmat4 r = ZeroMatrix();
-	float f = 1.0f / tan(fov * (kfDegToRad / 2));
+	float f = 1.0f / tan(fov * (kDegToRad / 2));
 	r.m[0] = f;
 	r.m[5] = f * aspect_ratio;
 	r.m[14] = -1;

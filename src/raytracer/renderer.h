@@ -7,9 +7,10 @@ namespace fract {
 // Renders raw raytracing result into a pretty image on screen.
 class Renderer {
  public:
-  Renderer(int width, int height);
+  Renderer();
 
-  void Render(const RaytracedView &raytraced);
+  void Render(
+    const RaytracedView &raytraced, int frame_width, int frame_height);
  private:
   
 };
