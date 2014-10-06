@@ -30,6 +30,8 @@ Camera camera;
 std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
 
+// declaration order matters
+std::unique_ptr<glfw::Initializer> glfw_init;
 std::unique_ptr<glfw::Window> window;
 
 static void LogGLFWError(int code, const char *message) {
@@ -114,7 +116,7 @@ int main(int argc, char **argv) {
   try {
     freopen("log.txt", "w", stderr);
     glfwSetErrorCallback(&LogGLFWError);
-    glfw::Initializer glfw;
+    glfw_init.reset(new glfw::Initializer());
     window.reset(new glfw::Window(winwid, winhei, "upchk"));
     window->MakeCurrent();
     window->GetFramebufferSize(&winwid, &winhei);
