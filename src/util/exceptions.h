@@ -16,6 +16,8 @@ class ExceptionBase {};
 
 EXCEPTION_TYPE(NotImplementedException, std::logic_error);
 EXCEPTION_TYPE(GraphicsAPIException, std::runtime_error);
+EXCEPTION_TYPE(IOException, std::runtime_error);
+EXCEPTION_TYPE(ShaderCompilationException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 

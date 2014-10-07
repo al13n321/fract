@@ -1,7 +1,7 @@
-- Stub RaytracingEngine and Renderer implementation, get it to compile
 - Implement it almost for real
 - Get stuff to work! Raytrace a cube; then a procedurally textured cube (will need it for debugging)
-- Add a real DE tracer of some simple fractal (sierpinski?)
-- Add scale to the camera
-	+ figure out scaling details; need to avoid double precision as much as possible; at the very least for tracing results
+- Implement runtime compilation of DE/raymarching code
+- Mandelbulb
+- Caching: chunks on cube, tracing rays through them
+- Runtime shader compilation
 - Improve stuff on all fronts

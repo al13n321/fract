@@ -19,7 +19,11 @@ class Initializer {
 
 class Window {
  public:
-  Window(int width, int height, const std::string &title) {
+  Window(int width, int height, const std::string &title,
+    bool resizable = false
+  ) {
+    glfwWindowHint(
+      GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if (!window)
       throw GraphicsAPIException("couldn't create window");

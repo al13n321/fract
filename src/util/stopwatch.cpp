@@ -75,7 +75,7 @@ void Stopwatch::ReportIfGreaterAndRestart(const char *task_name, double min_time
 	long long t = GetCurrentTime();
 	double r = (t - start_time) / GetClocksPerSecond();
 	if (r > min_time)
-		cout << task_name << " took " << r << " seconds" << endl;
+		cerr << task_name << " took " << r << " seconds" << endl;
 	start_time = t;
 }
 

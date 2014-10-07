@@ -98,9 +98,10 @@ static void ProcessKeyboardInput(double frame_time) {
 }
 
 static void Render() {
+  glViewport(0, 0, winwid, winhei);
   glClearColor(0,0,0,1);
   glClear(GL_COLOR_BUFFER_BIT);
-  //renderer->Render(raytracer->Raytrace(), winwid, winhei);
+  renderer->Render(raytracer->Raytrace(), winwid, winhei);
 }
 
 static void UpdateFPS() {
@@ -146,25 +147,8 @@ int main(int argc, char **argv) {
 
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
+      
       Render();
-
-      float ratio = winwid / (float) winhei;
-      glViewport(0, 0, winwid, winhei);
-      glClear(GL_COLOR_BUFFER_BIT);
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
-      glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-      glBegin(GL_TRIANGLES);
-      glColor3f(1.f, 0.f, 0.f);
-      glVertex3f(-0.6f, -0.4f, 0.f);
-      glColor3f(0.f, 1.f, 0.f);
-      glVertex3f(0.6f, -0.4f, 0.f);
-      glColor3f(0.f, 0.f, 1.f);
-      glVertex3f(0.f, 0.6f, 0.f);
-      glEnd();
 
       window->SwapBuffers();
       glfwPollEvents();

@@ -17,6 +17,7 @@ public:
 	Shader(std::string vert, std::string frag, int attribcnt = 2, const char * const *attribnames = kDefaultShaderAttribnames);
 	~Shader();
 
+  GLint GetUniformLocation(const std::string &name);
 	void Use();
 	GLuint program_id();
 	void LogUniforms(); // writes information about all active uniforms to stdout

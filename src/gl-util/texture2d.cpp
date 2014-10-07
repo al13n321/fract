@@ -30,7 +30,7 @@ Texture2D::Texture2D(int width, int height, GLint internalFormat, GLenum format,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }
-void Texture2D::AssignToUniform(int uniform, int unit) {
+void Texture2D::AssignToUniform(int uniform, int unit) const {
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, name_);
 	glUniform1iARB(uniform, unit);

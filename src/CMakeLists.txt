@@ -46,6 +46,10 @@ add_executable(fract
 	util/string-util.cpp
 )
 
+# this only copies the directory when `cmake` command is run;
+# it would be better to treat it as a target and re-copy when it changes
+file(COPY shaders DESTINATION .)
+
 target_link_libraries(fract
 	glfw
 	glew

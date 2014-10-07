@@ -21,7 +21,7 @@ void RaytracingEngine::UpdateRotationProjectionMatrix(fmat4 mat) {
 }
 
 const RaytracedView& RaytracingEngine::Raytrace() {
-  throw NotImplementedException();
+  // TODO: implementation
   return view_;
 }
 
