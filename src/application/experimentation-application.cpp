@@ -10,10 +10,12 @@ using namespace fract;
 
 int winhei = 512;
 int winwid = 512;
-const int imgwid = 128;
-const int imghei = 128;
+const int imgwid = 256;
+const int imghei = 256;
 
 bool mouse_pressed;
+double initial_mousex;
+double initial_mousey;
 double prev_mousex;
 double prev_mousey;
 
@@ -58,11 +60,13 @@ static void MouseButtonCallback(
   if (button == GLFW_MOUSE_BUTTON_1) {
     if (action == GLFW_PRESS) {
       mouse_pressed = true;
-      window->GetCursorPos(&prev_mousex, &prev_mousey);
-      window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+      window->GetCursorPos(&initial_mousex, &initial_mousey);
+      window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+      prev_mousex = -1;
     } else {
       mouse_pressed = false;
-      window->SetCursorPos(prev_mousex, prev_mousey);
+      window->SetCursorPos(initial_mousex, initial_mousey);
+      window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
   }
 }
@@ -71,12 +75,14 @@ static void CursorPosCallback(GLFWwindow *w, double x, double y) {
   if (mouse_pressed) {
     double dx = x - prev_mousex;
     double dy = y - prev_mousey;
-    if (dx != 0 || dy != 0) {
-      window->SetCursorPos(prev_mousex, prev_mousey);
-      window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    if (prev_mousex != -1 && (dx != 0 || dy != 0)) {
       camera.set_yaw(camera.yaw() + dx * looking_speed);
       camera.set_pitch(camera.pitch() - dy * looking_speed);
+      raytracer->UpdateRotationProjectionMatrix(
+        camera.RotationProjectionMatrix());
     }
+    prev_mousex = x;
+    prev_mousey = y;
   }
 }
 
@@ -129,10 +135,15 @@ int main(int argc, char **argv) {
     camera.set_position(fvec3(0, 0, 10));
 
     raytracer.reset(new RaytracingEngine(
-      std::make_shared<cpu_raytracers::Gradient>(),
+      std::make_shared<cpu_raytracers::Cube>(),
       imgwid,
       imghei));
     renderer.reset(new Renderer());
+
+    raytracer->UpdatePosition(camera.position());
+    raytracer->UpdateScale(camera.scale());
+    raytracer->UpdateRotationProjectionMatrix(
+      camera.RotationProjectionMatrix());
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);

@@ -1,7 +1,9 @@
-- Implement it almost for real
 - Get stuff to work! Raytrace a cube; then a procedurally textured cube (will need it for debugging)
-- Implement runtime compilation of DE/raymarching code
-- Mandelbulb
-- Caching: chunks on cube, tracing rays through them
-- Runtime shader compilation
-- Improve stuff on all fronts
+- Mandelbulb/mandelbox
+- OpenCL (keep CPU support for debugging)
+- Runtime compilation of kernel
+- Runtime compilation of shader
+- Saving everything to file (kernel, shader, camera)
+- Lookup cube
+- Windows?
+- Riiiiift!

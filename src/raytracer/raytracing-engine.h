@@ -38,6 +38,9 @@ class RaytracingEngine {
   // head movement without invalidating lookup cube.
   const RaytracedView& Raytrace(fvec3 position_delta = fvec3(0, 0, 0));
  private:
+  int width_;
+  int height_;
+
   std::shared_ptr<IRaytracer> tracer_;
   RaytracedView view_;
 

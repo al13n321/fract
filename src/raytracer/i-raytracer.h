@@ -30,9 +30,28 @@ struct RayGrid {
 
   inline fvec3 GetRayDirection(int x, int y) const {
     return rotation_projection_inv.Transform(fvec3(
-      static_cast<float>(x) + .5f,
-      static_cast<float>(y) + .5f,
+      (static_cast<float>(x) + .5f)
+        / static_cast<float>(resolution_width) * 2 - 1,
+      (static_cast<float>(y) + .5f)
+        / static_cast<float>(resolution_height) * 2 - 1,
       .0f)).Normalized();
+  }
+
+  // Approximate world-space diameter of screen-space pixel at distance 1.
+  inline float GetPixelSizeCoefficient(int x,int y) const {
+    fvec3 a = rotation_projection_inv.Transform(fvec3(
+      static_cast<float>(x)
+        / static_cast<float>(resolution_width) * 2 - 1,
+      static_cast<float>(y)
+        / static_cast<float>(resolution_height) * 2 - 1,
+      .0f));
+    fvec3 b = rotation_projection_inv.Transform(fvec3(
+      (static_cast<float>(x) + .1f)
+        / static_cast<float>(resolution_width) * 2 - 1,
+      (static_cast<float>(y) + .1f)
+        / static_cast<float>(resolution_height) * 2 - 1,
+      .0f));
+    return sqrtf(a.DistanceSquare(b) / a.LengthSquare());
   }
 };
 
@@ -41,7 +60,8 @@ struct RayGrid {
 class IRaytracer {
  public:
   // TODO: Separate methods for lookup cube and final view tracing.
-  virtual void traceGrid(const RayGrid &grid, std::vector<float> &out_results) = 0;
+  virtual void TraceGrid(const RayGrid &grid, std::vector<float> &out_results)
+    = 0;
   virtual ~IRaytracer() {};
 };
 
