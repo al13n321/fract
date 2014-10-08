@@ -1,4 +1,3 @@
-- Get stuff to work! Raytrace a cube; then a procedurally textured cube (will need it for debugging)
 - Mandelbulb/mandelbox
 - OpenCL (keep CPU support for debugging)
 - Runtime compilation of kernel
