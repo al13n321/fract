@@ -3,14 +3,19 @@
 
 namespace fract { namespace cpu_raytracers {
 
-void Gradient::traceGrid(const Rays &rays, TraceResults &out_results) {
-  for (size_t i = 0; i < rays.size(); ++i) {
-    out_results[i] =
-      (TraceResult) { 10, fabsf(rays[i].direction.Dot(fvec3(1,1,1))) };
+void Gradient::traceGrid(const RayGrid &grid, std::vector<float> &out_results) {
+  for (int y = grid.min_y; y < grid.min_y + grid.size_y; ++y) {
+    for (int x = grid.min_x; x < grid.min_x + grid.size_x; ++x) {
+      fvec3 dir = grid.GetRayDirection(x, y);
+      out_results[(y*grid.size_x + x)*4 + 0] = 1;
+      out_results[(y*grid.size_x + x)*4 + 1] = 100;
+      out_results[(y*grid.size_x + x)*4 + 2] = fabsf(dir.Dot(fvec3(1, 1, 1)));
+      out_results[(y*grid.size_x + x)*4 + 3] = 0;
+    }
   }
 }
 
-void Cube::traceGrid(const Rays &rays, TraceResults &out_results) {
+void Cube::traceGrid(const RayGrid &grid, std::vector<float> &out_results) {
   throw NotImplementedException();
 }
 

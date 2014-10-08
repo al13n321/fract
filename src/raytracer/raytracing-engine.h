@@ -1,6 +1,6 @@
 #pragma once
 
-#include "i-cpu-raytracer.h"
+#include "i-raytracer.h"
 #include "util/camera.h"
 #include "raytraced-view.h"
 
@@ -8,8 +8,9 @@ namespace fract {
 
 // Draws the image, using the provided callback to trace the rays.
 // NOTE: Wishlist:
-//  - tracing asynchronously in background thread
-//    + only start tracing when viewport changes
+//  - multithreaded tracing (CPU)
+//  - lookup cube
+//    + tracing asynchronously in background thread
 //    + interrupt any previous tracing if viewport changes
 //    + indicate progress
 //    + don't start tracing when moving?
@@ -17,30 +18,27 @@ namespace fract {
 //    	* or, have interface to start and stop background tracing?
 //  - progressive enhancement
 //    + render some minimal resolution synchronously?
-//  - multithreaded tracing (CPU)
-//  - reuse traced rays if viewport rotates
-//    + put them on a box
-//    + still throw all away when viewport moves
-//    + trace invisible sides when idle?
 //  - saving checkpoints to allow rewinding trajectory without re-rendering?
 //  - multi-GPU tracing?
 class RaytracingEngine {
  public:
   RaytracingEngine(
-    std::shared_ptr<ICpuRaytracer> tracer,
+    std::shared_ptr<IRaytracer> tracer,
     int width, int height);
 
-  // can invalidate cache
+  // Invalidates lookup cube.
   void UpdatePosition(dvec3 position);
-  // can invalidate cache (because of normals mostly) or can do something smart
+  // Can invalidate lookup cube (because of normals mostly)
+  // or can do something smart.
   void UpdateScale(double scale);
-  // can keep cache
+  // Can keep lookup cube.
   void UpdateRotationProjectionMatrix(fmat4 mat);
 
-  const RaytracedView& Raytrace();
-  // rift will need warped render here
+  // position_delta allows rendering stereo image and reacting to oculus rift
+  // head movement without invalidating lookup cube.
+  const RaytracedView& Raytrace(fvec3 position_delta = fvec3(0, 0, 0));
  private:
-  std::shared_ptr<ICpuRaytracer> cpu_tracer_;
+  std::shared_ptr<IRaytracer> tracer_;
   RaytracedView view_;
 
   double camera_scale_;

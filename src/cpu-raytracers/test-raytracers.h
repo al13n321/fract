@@ -1,19 +1,21 @@
 #pragma once
 
-#include "raytracer/i-cpu-raytracer.h"
+#include "raytracer/i-raytracer.h"
 
 namespace fract { namespace cpu_raytracers {
 
-  class Gradient: public ICpuRaytracer {
+  class Gradient: public IRaytracer {
    public:
     Gradient() {}
-    void traceGrid(const Rays &rays, TraceResults &out_results) override;
+    void traceGrid(const RayGrid &grid, std::vector<float> &out_results)
+      override;
   };
 
-  class Cube: public ICpuRaytracer {
+  class Cube: public IRaytracer {
    public:
     Cube() {}
-    void traceGrid(const Rays &rays, TraceResults &out_results) override;
+    void traceGrid(const RayGrid &grid, std::vector<float> &out_results)
+      override;
   };
 
 }}

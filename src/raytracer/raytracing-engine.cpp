@@ -4,9 +4,9 @@
 namespace fract {
 
 RaytracingEngine::RaytracingEngine(
-  std::shared_ptr<ICpuRaytracer> tracer,
+  std::shared_ptr<IRaytracer> tracer,
   int width, int height)
-: cpu_tracer_(tracer), view_(width, height) {}
+: tracer_(tracer), view_(width, height) {}
 
 void RaytracingEngine::UpdatePosition(dvec3 position) {
   camera_position_ = position;
@@ -20,7 +20,7 @@ void RaytracingEngine::UpdateRotationProjectionMatrix(fmat4 mat) {
   camera_rotation_projection_ = mat;
 }
 
-const RaytracedView& RaytracingEngine::Raytrace() {
+const RaytracedView& RaytracingEngine::Raytrace(fvec3 position_delta) {
   // TODO: implementation
   return view_;
 }
