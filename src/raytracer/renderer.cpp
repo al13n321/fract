@@ -13,7 +13,7 @@ void Renderer::Render(
 ) {
   shader_.Use();
   raytraced.main_texture.AssignToUniform(uniform_main_texture_, 0);
-  QuadRenderer::defaultInstance()->Render();
+  GL::QuadRenderer::defaultInstance()->Render();
 }
 
 }

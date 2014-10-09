@@ -3,7 +3,7 @@
 #include "gl-common.h"
 #include <string>
 
-namespace fract {
+namespace fract { namespace GL {
 
 const char * const kDefaultShaderAttribnames[]={"inScreenPos","inCanvasPos"};
 
@@ -25,4 +25,4 @@ private:
 	GLuint vs_, ps_, program_;
 };
 
-}
+}}

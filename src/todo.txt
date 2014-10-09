@@ -1,8 +1,11 @@
-- Mandelbulb/mandelbox
 - OpenCL (keep CPU support for debugging)
 - Runtime compilation of kernel
+- Mandelbulb/mandelbox
 - Runtime compilation of shader
+- Normals, lighting, AO
 - Saving everything to file (kernel, shader, camera)
 - Lookup cube
+- Resizable window
+- Loading uniforms from file at runtime
 - Windows?
 - Riiiiift!

@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <memory>
 
-namespace fract {
+namespace fract { namespace GL {
 
 QuadRenderer* QuadRenderer::defaultInstance(){
     static std::unique_ptr<QuadRenderer> shared_quad_(new QuadRenderer());
@@ -71,4 +71,4 @@ QuadRenderer::~QuadRenderer() {
 	glDeleteVertexArrays(1, &vao_);
 }
 
-}
+}}

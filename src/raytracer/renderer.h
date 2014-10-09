@@ -15,7 +15,7 @@ class Renderer {
   void Render(
     const RaytracedView &raytraced, int frame_width, int frame_height);
  private:
-  Shader shader_;
+  GL::Shader shader_;
   GLint uniform_main_texture_;
 };
 

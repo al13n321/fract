@@ -6,7 +6,7 @@
 #include "util/exceptions.h"
 using namespace std;
 
-namespace fract {
+namespace fract { namespace GL {
 
 static void CompileShader(GLint shader, const string &path) {
   string str = ReadFile(path);
@@ -99,4 +99,4 @@ Shader::~Shader() {
   glDeleteProgram(program_);
 }
 
-}
+}}

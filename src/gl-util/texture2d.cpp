@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-namespace fract {
+namespace fract { namespace GL {
 
 Texture2D::Texture2D(int width, int height, GLint internalFormat, GLint filter) {
 	wid_ = width;
@@ -54,4 +54,4 @@ Texture2D::~Texture2D() {
 	glDeleteTextures(1, &name_);
 }
 
-}
+}}

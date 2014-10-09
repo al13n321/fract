@@ -2,7 +2,7 @@
 
 #include "gl-common.h"
 
-namespace fract {
+namespace fract { namespace GL {
 
 class QuadRenderer{
 public:
@@ -20,4 +20,4 @@ private:
 	GLuint vao_, vbo_[2];
 };
 
-}
+}}
