@@ -9,7 +9,7 @@ class Initializer {
  public:
   Initializer() {
     if (!glfwInit())
-      throw GraphicsAPIException("couldn't init glfw");
+      throw GLException("couldn't init glfw");
   }
 
   ~Initializer() {
@@ -26,7 +26,7 @@ class Window {
       GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if (!window)
-      throw GraphicsAPIException("couldn't create window");
+      throw GLException("couldn't create window");
   }
 
   void MakeCurrent() {

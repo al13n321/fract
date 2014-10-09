@@ -17,23 +17,32 @@ SET(EXTRA_LIBS)
 IF(APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
   FIND_LIBRARY(OPENGL_LIBRARY OpenGL)
+  FIND_LIBRARY(OPENCL_LIBRARY OpenCL)
   FIND_LIBRARY(IOKIT_LIBRARY IOKit)
   FIND_LIBRARY(COREVIDEO_LIBRARY CoreVideo)
    
   MARK_AS_ADVANCED (COCOA_LIBRARY
                     OPENGL_LIBRARY
+                    OPENCL_LIBRARY
                     IOKIT_LIBRARY
                     COREVIDEO_LIBRARY)
 
   SET(EXTRA_LIBS ${EXTRA_LIBS}
    	${COCOA_LIBRARY}
    	${OPENGL_LIBRARY}
+   	${OPENCL_LIBRARY}
    	${IOKIT_LIBRARY}
    	${COREVIDEO_LIBRARY})
 ENDIF (APPLE)
 
 add_executable(fract
 	application/experimentation-application.cpp
+	cl-util/buffer.cpp
+	cl-util/command-queue.cpp
+	cl-util/context.cpp
+	cl-util/event.cpp
+	cl-util/kernel.cpp
+	cl-util/texture-2d-ref.cpp
 	cpu-raytracers/test-raytracers.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp

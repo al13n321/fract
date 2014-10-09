@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
     window->GetFramebufferSize(&winwid, &winhei);
 
     if (glewInit() != GLEW_OK)
-      throw GraphicsAPIException("couldn't initialize GLEW");
+      throw GLException("couldn't initialize GLEW");
 
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));

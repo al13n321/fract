@@ -1,7 +1,9 @@
 - OpenCL (keep CPU support for debugging)
+- Renderer in OpenCL
+- 3d sierpinski triangle
 - Runtime compilation of kernel
 - Mandelbulb/mandelbox
-- Runtime compilation of shader
+- Preprocessor
 - Normals, lighting, AO
 - Saving everything to file (kernel, shader, camera)
 - Lookup cube
