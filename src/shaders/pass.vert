@@ -1,6 +1,8 @@
-attribute vec4 inScreenPos;
-attribute vec2 inCanvasPos;
-varying vec2 fPosition;
+#version 410
+
+in vec4 inScreenPos;
+in vec2 inCanvasPos;
+out vec2 fPosition;
 
 void main(void){
 	gl_Position = inScreenPos;

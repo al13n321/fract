@@ -51,6 +51,12 @@ struct tvec3 {
   inline tvec3<ftype> Min(const tvec3 &v) const { return tvec3(std::min(x, v.x), std::min(y, v.y), std::min(z, v.z)); }
   inline tvec3<ftype> Max(const tvec3 &v) const { return tvec3(std::max(x, v.x), std::max(y, v.y), std::max(z, v.z)); }
   inline tvec3<ftype> Abs() const { return tvec3(std::abs(x), std::abs(y), std::abs(z)); }
+  inline tvec3<ftype> Clamp(float a, float b) {
+    return tvec3<ftype>(
+      x < a ? a : x > b ? b : x,
+      y < a ? a : y > b ? b : y,
+      z < a ? a : z > b ? b : z);
+  }
 
   inline bool AllSameSign(const tvec3<ftype> &v) { return x * v.x > 0 && y * v.y > 0 && z * v.z > 0; }
 

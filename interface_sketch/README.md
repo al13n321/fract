@@ -1,0 +1,1 @@
+The app won't have an interface. Instead it will monitor changes to files with OpenCL kernels, configs and parameters, and apply them on the fly. Kind of like Sublime Text does with configs. It will heavily preprocess OpenCL kernels to allow using them in a modular manner. A separate GUI is possible that will just work with these files.

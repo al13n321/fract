@@ -1,5 +1,7 @@
-- OpenCL (keep CPU support for debugging)
-- Renderer in OpenCL
+- Make sure cubemap lookup is worth the effort
+- Look for a way to avoid OpenCL (GLSL syntax is much nicer in this case)
+  + Precalculating cube in backgound might get complicated/impossible
+- Note: don't fuse raytracing with rendering! upscaling might work well
 - 3d sierpinski triangle
 - Runtime compilation of kernel
 - Mandelbulb/mandelbox

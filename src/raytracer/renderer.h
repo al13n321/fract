@@ -17,6 +17,8 @@ class Renderer {
  private:
   GL::Shader shader_;
   GLint uniform_main_texture_;
+  GLint uniform_normal_texture_;
+  GLint uniform_color_texture_;
 };
 
 }

@@ -44,6 +44,7 @@ add_executable(fract
 	cl-util/kernel.cpp
 	cl-util/texture-2d-ref.cpp
 	cpu-raytracers/test-raytracers.cpp
+	gl-util/gl-common.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp
 	gl-util/texture2d.cpp

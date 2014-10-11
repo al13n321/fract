@@ -4,7 +4,6 @@
 
 namespace fract {
 
-
 struct RaytracedView {
   // 4-channel 32-bit float: hit (0 or 1), iterations, scaled distance, error.
   GL::Texture2D main_texture;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include "experimental/cubemap-experiment.h"
 #include "raytracer/raytracing-engine.h"
 #include "raytracer/renderer.h"
 #include "cpu-raytracers/test-raytracers.h"
@@ -50,7 +51,7 @@ static void KeyCallback(
 static void ScrollCallback(GLFWwindow *w, double dx, double dy) {
   if (dy != 0) {
     camera.set_scale(camera.scale() * pow(scaling_speed, dy));
-    raytracer->UpdateScale(camera.scale());
+    //raytracer->UpdateScale(camera.scale());
   }
 }
 
@@ -78,8 +79,8 @@ static void CursorPosCallback(GLFWwindow *w, double x, double y) {
     if (prev_mousex != -1 && (dx != 0 || dy != 0)) {
       camera.set_yaw(camera.yaw() + dx * looking_speed);
       camera.set_pitch(camera.pitch() - dy * looking_speed);
-      raytracer->UpdateRotationProjectionMatrix(
-        camera.RotationProjectionMatrix());
+      //raytracer->UpdateRotationProjectionMatrix(
+      //  camera.RotationProjectionMatrix());
     }
     prev_mousex = x;
     prev_mousey = y;
@@ -99,15 +100,8 @@ static void ProcessKeyboardInput(double frame_time) {
 
   if (!movement.IsZero()) {
     camera.MoveRelative(movement * frame_time * movement_speed);
-    raytracer->UpdatePosition(camera.position());
+    //raytracer->UpdatePosition(camera.position());
   }
-}
-
-static void Render() {
-  glViewport(0, 0, winwid, winhei);
-  glClearColor(0,0,0,1);
-  glClear(GL_COLOR_BUFFER_BIT);
-  renderer->Render(raytracer->Raytrace(), winwid, winhei);
 }
 
 static void UpdateFPS() {
@@ -128,29 +122,35 @@ int main(int argc, char **argv) {
     window->MakeCurrent();
     window->GetFramebufferSize(&winwid, &winhei);
 
+    glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
       throw GLException("couldn't initialize GLEW");
+
+    //GL::LogInfo();
 
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
 
-    raytracer.reset(new RaytracingEngine(
+    /*raytracer.reset(new RaytracingEngine(
       std::make_shared<cpu_raytracers::Cube>(),
       imgwid,
-      imghei));
+      imghei));//*/
     renderer.reset(new Renderer());
 
+    /*
     raytracer->UpdatePosition(camera.position());
     raytracer->UpdateScale(camera.scale());
     raytracer->UpdateRotationProjectionMatrix(
-      camera.RotationProjectionMatrix());
+      camera.RotationProjectionMatrix());//*/
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);
     window->SetMouseButtonCallback(&MouseButtonCallback);
     window->SetCursorPosCallback(&CursorPosCallback);
 
-    Stopwatch frame_stopwatch;  
+    CubemapExperiment experiment(imgwid, imghei);
+
+    Stopwatch frame_stopwatch;
 
     while (!window->ShouldClose()) {
       double frame_time = frame_stopwatch.Restart();
@@ -158,8 +158,16 @@ int main(int argc, char **argv) {
 
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
+
+      glViewport(0, 0, winwid, winhei);
+      glClearColor(0,0,0,1);
+      glClear(GL_COLOR_BUFFER_BIT);
       
-      Render();
+      const RaytracedView &raytraced =
+        //raytracer->Raytrace()
+        experiment.Raytrace(
+          camera.position(), camera.RotationProjectionMatrix());
+      renderer->Render(raytraced, winwid, winhei);
 
       window->SwapBuffers();
       glfwPollEvents();
