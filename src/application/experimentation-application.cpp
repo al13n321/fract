@@ -6,6 +6,7 @@
 #include "gl-util/glfw-util.h"
 #include "util/camera.h"
 #include "util/stopwatch.h"
+#include "util/string-util.h"
 
 using namespace fract;
 
@@ -25,12 +26,17 @@ float looking_speed = 0.2; // degrees per pixel
 double scaling_speed = 1.1; // coefficient per scroll wheel unit
 
 Stopwatch fps_stopwatch;
-const int fps_update_period = 20;
+const int fps_update_period_frames = 10;
+const double fps_update_period_seconds = .5;
 int cur_frame_number;
+int last_fps_update_frame;
 
 Camera camera;
 
-std::unique_ptr<RaytracingEngine> raytracer;
+//std::unique_ptr<RaytracingEngine> raytracer;
+std::unique_ptr<CubemapExperiment> raytracer;
+CubemapExperiment::PerformanceCounters counters;
+
 std::unique_ptr<Renderer> renderer;
 
 // declaration order matters
@@ -41,11 +47,25 @@ static void LogGLFWError(int code, const char *message) {
   std::cerr << "glfw error " << code << ": " << message << std::endl;
 }
 
+static void PrecalcCube() {
+  counters.Clear();
+  std::cerr << "precalcing cube" << std::endl;
+  raytracer->PrecalcCube(camera.position(), counters);
+  counters.Log();
+}
+
 static void KeyCallback(
   GLFWwindow* w, int key, int scancode, int action, int mods
 ) {
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    window->SetShouldClose();
+  if (action == GLFW_PRESS) {
+    if (key == GLFW_KEY_ESCAPE)
+      window->SetShouldClose();
+    if (key == GLFW_KEY_P)
+      counters.Log();
+
+    if (key == GLFW_KEY_SPACE)
+      PrecalcCube();
+  }
 }
 
 static void ScrollCallback(GLFWwindow *w, double dx, double dy) {
@@ -105,11 +125,12 @@ static void ProcessKeyboardInput(double frame_time) {
 }
 
 static void UpdateFPS() {
-  if (cur_frame_number % fps_update_period == 0) {
-    char fps_str[100];
-    double fps = 1.0 / fps_stopwatch.Restart() * fps_update_period;
-    sprintf(fps_str, "FPS: %lf", fps);
-    window->SetTitle(fps_str);
+  if (cur_frame_number - last_fps_update_frame >= fps_update_period_frames ||
+      fps_stopwatch.TimeSinceRestart() > fps_update_period_seconds) {
+    double fps = (cur_frame_number - last_fps_update_frame)
+      / fps_stopwatch.Restart();
+    last_fps_update_frame = cur_frame_number;
+    window->SetTitle("FPS: " + ToString(fps));
   }
 }
 
@@ -122,9 +143,6 @@ int main(int argc, char **argv) {
     window->MakeCurrent();
     window->GetFramebufferSize(&winwid, &winhei);
 
-    // Reset current error.
-    glGetError();
-
     GL::LogInfo();
 
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
@@ -134,6 +152,7 @@ int main(int argc, char **argv) {
       std::make_shared<cpu_raytracers::Cube>(),
       imgwid,
       imghei));//*/
+    raytracer.reset(new CubemapExperiment(imgwid, imghei));
     renderer.reset(new Renderer());
 
     /*
@@ -146,8 +165,6 @@ int main(int argc, char **argv) {
     window->SetScrollCallback(&ScrollCallback);
     window->SetMouseButtonCallback(&MouseButtonCallback);
     window->SetCursorPosCallback(&CursorPosCallback);
-
-    CubemapExperiment experiment(imgwid, imghei);
 
     Stopwatch frame_stopwatch;
 
@@ -162,10 +179,13 @@ int main(int argc, char **argv) {
       glClearColor(0,0,0,1);
       glClear(GL_COLOR_BUFFER_BIT);
       
+      counters.Clear();
       const RaytracedView &raytraced =
         //raytracer->Raytrace()
-        experiment.Raytrace(
-          camera.position(), camera.RotationProjectionMatrix());
+        raytracer->Raytrace(
+          camera.position(), camera.RotationProjectionMatrix(),
+          !window->IsKeyPressed(GLFW_KEY_LEFT_SHIFT),
+          counters);
       renderer->Render(raytraced, winwid, winhei);
 
       window->SwapBuffers();
