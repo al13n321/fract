@@ -45,14 +45,14 @@ void Texture2DRef::EndUpdates(CommandQueue &queue) {
   if (err != CL_SUCCESS)
   	throw CLException("failed to release GL object");
 
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, pbo_);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pbo_);
   glBindTexture(GL_TEXTURE_2D, texture_->name());
 
   glTexSubImage2D(
     GL_TEXTURE_2D, 0, 0, 0, texture_->width(), texture_->height(),
     GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-  glBindBuffer(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+  glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 }
 
 void Texture2DRef::CopyFrom(

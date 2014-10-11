@@ -1,19 +1,20 @@
-#ifdef WIN32
-#include <glew.h>
-#endif
-
 #ifdef __APPLE__
-#include <GL/glew.h>
 #include <OpenGL/OpenGL.h>
 #endif
 
+#define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
 namespace fract { namespace GL {
 
 // Throw if glGetError() returns non-success.
-void CheckError(const char *file, int line);
-#define CHECK_GL_ERROR() CheckError(__FILE__, __LINE__)
+void ThrowIfError(const char *file, int line);
+
+// Returns true if glError() returns non-success.
+bool LogIfError(const char *file, int line);
+
+#define CHECK_GL_ERROR() ThrowIfError(__FILE__, __LINE__)
+#define SOFT_CHECK_GL_ERROR() LogIfError(__FILE__, __LINE__)
 
 // Log OpenGL vendor, version, extensions etc.
 void LogInfo();

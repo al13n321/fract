@@ -122,11 +122,10 @@ int main(int argc, char **argv) {
     window->MakeCurrent();
     window->GetFramebufferSize(&winwid, &winhei);
 
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
-      throw GLException("couldn't initialize GLEW");
+    // Reset current error.
+    glGetError();
 
-    //GL::LogInfo();
+    GL::LogInfo();
 
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
