@@ -1,7 +1,16 @@
+Critical features:
+- Cubemap?
+- Saving everything to a file
+- Runtime reloading and rebuilding of everything
+- Windows
+- Rift
+
+Important features:
+- Loading values for uniforms from separate file
+
+Plan:
 - Make sure cubemap lookup is worth the effort
-- Look for a way to avoid OpenCL (GLSL syntax is much nicer in this case)
-  + Precalculating cube in backgound might get complicated/impossible
-- Note: don't fuse raytracing with rendering! upscaling might work well
+- Throw away OpenCL.
 - 3d sierpinski triangle
 - Runtime compilation of kernel
 - Mandelbulb/mandelbox
@@ -9,7 +18,15 @@
 - Normals, lighting, AO
 - Saving everything to file (kernel, shader, camera)
 - Lookup cube
-- Resizable window
 - Loading uniforms from file at runtime
 - Windows?
 - Riiiiift!
+
+Wishlist:
+- An space-style camera with no up and down
+- Resizable window
+
+Notes:
+- Can use multiple OpenGL contexts for background rendering.
+- Don't fuse raytracing with rendering! upscaling might work well
+- Cubemap face resolution is not image resolution; it depends on image FOV

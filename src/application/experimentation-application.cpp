@@ -184,7 +184,8 @@ int main(int argc, char **argv) {
         //raytracer->Raytrace()
         raytracer->Raytrace(
           camera.position(), camera.RotationProjectionMatrix(),
-          !window->IsKeyPressed(GLFW_KEY_LEFT_SHIFT),
+          window->IsKeyPressed(GLFW_KEY_LEFT_SHIFT),
+          window->IsKeyPressed(GLFW_KEY_LEFT_SUPER),
           counters);
       renderer->Render(raytraced, winwid, winhei);
 
