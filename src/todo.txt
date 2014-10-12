@@ -11,16 +11,19 @@ Important features:
 Plan:
 - Check that interfaces make sense
 - Loading shaders from configurable files at runtime
-- Mandelbulb/mandelbox
+- Mandelbulb
+- Saving everything to file (shaders, camera)
 - Preprocessor
 - Normals, lighting, AO
-- Saving everything to file (kernel, shader, camera)
-- Lookup cube
+- Mandelbox
+- Lookup cube, precalcing synchronously, manually
 - Loading uniforms from file at runtime
-- Windows?
+- Lookup cube rendering in background thread,
+  automatically triggered by timeouts
+- Windows
 - Riiiiift!
 
-Wishlist:
+Wishlist, to keep in mind:
 - Progressive enhancement
   + Progressively increasing cubemap resolution
   + Automaticaly adapting screen resolution for goal FPS?
@@ -28,6 +31,7 @@ Wishlist:
 - Resizable window
 - Changing image resolution on the fly
 - Environment maps
+- Fix mouse movement initialization with low FPS
 
 Notes:
 - Make cubemap resolution independent of screen resolution
