@@ -1,9 +1,9 @@
 Critical features:
-- Cubemap?
 - Saving everything to a file
 - Runtime reloading and rebuilding of everything
-- Windows
+- Cubemap
 - Rift
+- Windows
 
 Important features:
 - Loading values for uniforms from separate file
@@ -23,10 +23,19 @@ Plan:
 - Riiiiift!
 
 Wishlist:
+- Progressive enhancement
+  + Progressively increasing cubemap resolution
+  + Automaticaly adapting screen resolution for goal FPS?
 - An space-style camera with no up and down
 - Resizable window
+- Changing image resolution on the fly
 
 Notes:
+- Make cubemap resolution independent of screen resolution
+- Limit quality degradation when using cubemap:
+  use pixel size when tracing through cubemap;
+  ignore cubemap texels that are too big on screen, including side hits
 - Can use multiple OpenGL contexts for background rendering.
-- Don't fuse raytracing with rendering! upscaling might work well
-- Cubemap face resolution is not image resolution; it depends on image FOV
+- Don't fuse raytracing with rendering! upscaling might work well.
+- Cubemap face resolution is not image resolution; it depends on image FOV.
+  Also, better make it even more for better quality

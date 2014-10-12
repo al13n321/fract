@@ -183,21 +183,41 @@ private:
   // going in negative Z direction. In other words: z <= -max(|x|, |y|).
   std::pair<float, float> RayFrustumIntersection(fvec3 p, fvec3 d) {
     std::pair<float, float> res(0, 1e20);
+    
+    // Intersecting 4 half-spaces. This code sucks.
+
     if (d.z > d.x) {
       // A numeric-stability-paranoid way to do
       //  res.second = min(res.second, (p.x - p.z) / (d.z - d.x)).
       if (p.x - p.z < res.second * (d.z - d.x))
         res.second = (p.x - p.z) / (d.z - d.x);
     } else {
-      if (p.x - p.z > res.first * (d.z - d.x))
+      if (p.x - p.z < res.first * (d.z - d.x))
         res.first = (p.x - p.z) / (d.z - d.x);
     }
+
+    if (d.z > -d.x) {
+      if (-p.x - p.z < res.second * (d.z + d.x))
+        res.second = (-p.x - p.z) / (d.z + d.x);
+    } else {
+      if (-p.x - p.z < res.first * (d.z + d.x))
+        res.first = (-p.x - p.z) / (d.z + d.x);
+    }
+
     if (d.z > d.y) {
       if (p.y - p.z < res.second * (d.z - d.y))
         res.second = (p.y - p.z) / (d.z - d.y);
     } else {
-      if (p.y - p.z > res.first * (d.z - d.y))
+      if (p.y - p.z < res.first * (d.z - d.y))
         res.first = (p.y - p.z) / (d.z - d.y);
+    }
+
+    if (d.z > -d.y) {
+      if (-p.y - p.z < res.second * (d.z + d.y))
+        res.second = (-p.y - p.z) / (d.z + d.y);
+    } else {
+      if (-p.y - p.z < res.first * (d.z + d.y))
+        res.first = (-p.y - p.z) / (d.z + d.y);
     }
 
     return res;
@@ -213,7 +233,7 @@ private:
     float dist = range.first;
     fvec3 p = origin + direction * dist;
 
-    if (origin.z > -1e-5) {
+    if (p.z > -1e-5) {
       int x = static_cast<int>((direction.x / -direction.z + 1.f) / 2.f
         * cube_resolution_);
       int y = static_cast<int>((direction.y / -direction.z + 1.f) / 2.f
@@ -234,28 +254,27 @@ private:
         out_color[0] = face_image.color_buf[index * 4 + 0];
         out_color[1] = face_image.color_buf[index * 4 + 1];
         out_color[2] = face_image.color_buf[index * 4 + 2];
-        return;
-      }
+      } else
+        out_hit = false;
+      return;
     }
-    out_hit = false;
-    return;
 
     // This code sucks.
 
     int x = static_cast<int>((p.x / -p.z + 1.f) / 2.f * cube_resolution_);
-    x = std::max(0, std::min(cube_resolution_, x));
+    x = std::max(0, std::min(cube_resolution_ - 1, x));
     int y = static_cast<int>((p.y / -p.z + 1.f) / 2.f * cube_resolution_);
-    y = std::max(0, std::min(cube_resolution_, y));
+    y = std::max(0, std::min(cube_resolution_ - 1, y));
     int dx = sign(p.x * direction.z - p.z * direction.x);
     int dy = sign(p.y * direction.z - p.z * direction.y);
     while (true) {
       int index = y * cube_resolution_ + x;
       float z = face_image.depth_buf[index];
-      // We hit the side of pixel (x, y).
       if (z > 0 && -p.z > z) {
+        // We hit the side of pixel (x, y).
         out_hit = true;
         out_good_hit = false;
-        out_main[0] = 1;
+        out_main[0] = face_image.main_buf[index * 4 + 0];
         out_main[1] = face_image.main_buf[index * 4 + 1];
         out_main[2] = dist;
         out_main[3] = face_image.main_buf[index * 4 + 3];
@@ -271,10 +290,10 @@ private:
       float k;
 
       k = (x + (dx+1)/2) * 2.f / cube_resolution_ - 1.f;
-      float tx = PositiveDiv(k*p.z-p.x, direction.x - k*direction.z);
+      float tx = PositiveDiv(-k*p.z-p.x, direction.x + k*direction.z);
 
       k = (y + (dy+1)/2) * 2.f / cube_resolution_ - 1.f;
-      float ty = PositiveDiv(k*p.z-p.y, direction.y - k*direction.z);
+      float ty = PositiveDiv(-k*p.z-p.y, direction.y + k*direction.z);
 
       float tz = z < 0 ? 1e30 : PositiveDiv(-z - p.z, direction.z);
 
@@ -282,11 +301,11 @@ private:
         break;
 
       if (tz < tx && tz < ty) {
-      // We hit the front of pixel (x, y).
+        // We hit the front of pixel (x, y).
         dist += tz;
         out_hit = true;
         out_good_hit = true;
-        out_main[0] = 1;
+        out_main[0] = face_image.main_buf[index * 4 + 0];
         out_main[1] = face_image.main_buf[index * 4 + 1];
         out_main[2] = dist;
         out_main[3] = face_image.main_buf[index * 4 + 3];
@@ -340,7 +359,7 @@ private:
 
     RayOnFace face_candidates[6];
     int candidate_count = 0;
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 1; ++i) {
       RayOnFace &candidate = face_candidates[candidate_count];
       candidate.face_index = i;
       candidate.origin = face_rotations_[i].Transform(origin - cube_center_);
@@ -368,6 +387,9 @@ private:
         if (good_hit)
           return;
         if (!fallback_to_real_tracing) {
+          out_main[0] = 0;
+          out_main[1] = 0;
+          out_main[2] = 0;
           out_main[3] = 1;
           return;
         }
@@ -390,7 +412,7 @@ private:
   CubemapExperiment(int width, int height): view_(width, height) {
     image_.Resize(width, height);
 
-    cube_resolution_ = std::max(width, height);
+    cube_resolution_ = std::max(width, height) * 3;
     cube_projection_ = fmat4::PerspectiveProjectionMatrix(90, 1, 1, 0);
     face_rotations_[0] = fmat4::IdentityMatrix();
     face_rotations_[1] = fmat4::RotationMatrixZ(180);
@@ -438,7 +460,6 @@ private:
             &face_image.color_buf[index * 4],
             counters);
           float dist_coef = dir.Dot(face_direction);
-          assert(dist_coef > 0);
           bool hit = face_image.main_buf[index * 4 + 0] > .5f;
           float dist = face_image.main_buf[index * 4 + 2];
           face_image.depth_buf[index] = hit ? dist * dist_coef : -1;
