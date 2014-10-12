@@ -9,10 +9,8 @@ Important features:
 - Loading values for uniforms from separate file
 
 Plan:
-- Make sure cubemap lookup is worth the effort
-- Throw away OpenCL.
-- 3d sierpinski triangle
-- Runtime compilation of kernel
+- Check that interfaces make sense
+- Loading shaders from configurable files at runtime
 - Mandelbulb/mandelbox
 - Preprocessor
 - Normals, lighting, AO
@@ -29,6 +27,7 @@ Wishlist:
 - An space-style camera with no up and down
 - Resizable window
 - Changing image resolution on the fly
+- Environment maps
 
 Notes:
 - Make cubemap resolution independent of screen resolution
