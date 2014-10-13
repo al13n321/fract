@@ -1,0 +1,1 @@
+The app won't have an interface. Instead it will monitor changes to shader and config files and apply them on the fly. Kind of like Sublime Text does with settings. It will preprocess shaders to allow using them in a modular manner, a bit like Fragmentarium but perhaps with less freedom. A separate GUI is possible that will just work with these files.

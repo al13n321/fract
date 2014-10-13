@@ -1,0 +1,11 @@
+{
+  "include": "../code",
+  "entry": "main.frag",
+
+  "//": "The app should be able to save current view as a camera, so it can be loaded later",
+  "//": "Or save the entire state, with camera inlined",
+  "//": "Or get everything necessary to reproduce current view (code, configs) in a separate directory,",
+  "//": "in a clean and editable way; export current state as an editable project",
+  "#include": "cameras/Default.json"
+}
+

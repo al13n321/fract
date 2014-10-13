@@ -32,6 +32,9 @@ Wishlist, to keep in mind:
 - Changing image resolution on the fly
 - Environment maps
 - Fix mouse movement initialization with low FPS
+- Background precalc progress indication
+- Rewinding movements
+	+ Saving precalc checkpoints for faster re-rendering?
 
 Notes:
 - Make cubemap resolution independent of screen resolution
