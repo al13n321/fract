@@ -7,19 +7,6 @@
 namespace fract {
 
 // Draws the image, using the provided callback to trace the rays.
-// NOTE: Wishlist:
-//  - multithreaded tracing (CPU)
-//  - lookup cube
-//    + tracing asynchronously in background thread
-//    + interrupt any previous tracing if viewport changes
-//    + indicate progress
-//    + don't start tracing when moving?
-//    	* guess movement from VP matrix updates? some timeout?
-//    	* or, have interface to start and stop background tracing?
-//  - progressive enhancement
-//    + render some minimal resolution synchronously?
-//  - saving checkpoints to allow rewinding trajectory without re-rendering?
-//  - multi-GPU tracing?
 class RaytracingEngine {
  public:
   RaytracingEngine(

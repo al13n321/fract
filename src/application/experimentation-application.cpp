@@ -22,7 +22,7 @@ double prev_mousex;
 double prev_mousey;
 
 float movement_speed = 0.5; // units per pixel at scale 1
-float looking_speed = 0.2; // degrees per pixel
+float looking_speed = 0.4; // degrees per pixel
 double scaling_speed = 1.1; // coefficient per scroll wheel unit
 
 Stopwatch fps_stopwatch;
@@ -33,10 +33,7 @@ int last_fps_update_frame;
 
 Camera camera;
 
-//std::unique_ptr<RaytracingEngine> raytracer;
-std::unique_ptr<CubemapExperiment> raytracer;
-CubemapExperiment::PerformanceCounters counters;
-
+std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
 
 // declaration order matters
@@ -60,18 +57,12 @@ static void KeyCallback(
   if (action == GLFW_PRESS) {
     if (key == GLFW_KEY_ESCAPE)
       window->SetShouldClose();
-    if (key == GLFW_KEY_P)
-      counters.Log();
-
-    if (key == GLFW_KEY_SPACE)
-      PrecalcCube();
   }
 }
 
 static void ScrollCallback(GLFWwindow *w, double dx, double dy) {
   if (dy != 0) {
     camera.set_scale(camera.scale() * pow(scaling_speed, dy));
-    //raytracer->UpdateScale(camera.scale());
   }
 }
 
@@ -82,6 +73,7 @@ static void MouseButtonCallback(
     if (action == GLFW_PRESS) {
       mouse_pressed = true;
       window->GetCursorPos(&initial_mousex, &initial_mousey);
+      // TODO: this causes glitches with low FPS; look for a better way
       window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
       prev_mousex = -1;
     } else {
@@ -99,8 +91,6 @@ static void CursorPosCallback(GLFWwindow *w, double x, double y) {
     if (prev_mousex != -1 && (dx != 0 || dy != 0)) {
       camera.set_yaw(camera.yaw() + dx * looking_speed);
       camera.set_pitch(camera.pitch() - dy * looking_speed);
-      //raytracer->UpdateRotationProjectionMatrix(
-      //  camera.RotationProjectionMatrix());
     }
     prev_mousex = x;
     prev_mousey = y;
@@ -120,7 +110,6 @@ static void ProcessKeyboardInput(double frame_time) {
 
   if (!movement.IsZero()) {
     camera.MoveRelative(movement * frame_time * movement_speed);
-    //raytracer->UpdatePosition(camera.position());
   }
 }
 
@@ -148,18 +137,11 @@ int main(int argc, char **argv) {
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
 
-    /*raytracer.reset(new RaytracingEngine(
+    raytracer.reset(new RaytracingEngine(
       std::make_shared<cpu_raytracers::Cube>(),
       imgwid,
-      imghei));//*/
-    raytracer.reset(new CubemapExperiment(imgwid, imghei));
+      imghei));
     renderer.reset(new Renderer());
-
-    /*
-    raytracer->UpdatePosition(camera.position());
-    raytracer->UpdateScale(camera.scale());
-    raytracer->UpdateRotationProjectionMatrix(
-      camera.RotationProjectionMatrix());//*/
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);
@@ -181,12 +163,8 @@ int main(int argc, char **argv) {
       
       counters.Clear();
       const RaytracedView &raytraced =
-        //raytracer->Raytrace()
         raytracer->Raytrace(
-          camera.position(), camera.RotationProjectionMatrix(),
-          window->IsKeyPressed(GLFW_KEY_LEFT_SHIFT),
-          window->IsKeyPressed(GLFW_KEY_LEFT_SUPER),
-          counters);
+          camera.position(), camera.scale(), camera.RotationProjectionMatrix());
       renderer->Render(raytraced, winwid, winhei);
 
       window->SwapBuffers();

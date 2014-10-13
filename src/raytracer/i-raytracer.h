@@ -6,11 +6,11 @@
 namespace fract {
 
 // An abstract callback that does the actual tracing/marching of rays.
-// Must be thread-safe.
+// TODO: thread safety contract for background rendering.
 class IRaytracer {
  public:
   // TODO: Separate methods for lookup cube and final view tracing.
-  virtual void TraceGrid(const RayGrid &grid, std::vector<float> &out_results)
+  virtual void TraceGrid(const RayGrid &grid, RaytracedView &target)
     = 0;
   virtual ~IRaytracer() {};
 };
