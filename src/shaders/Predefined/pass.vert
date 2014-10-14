@@ -2,9 +2,9 @@
 
 in vec4 inScreenPos;
 in vec2 inCanvasPos;
-out vec2 fPosition;
+out vec2 ScreenPosition;
 
 void main(void){
 	gl_Position = inScreenPos;
-	fPosition=inCanvasPos;
+	ScreenPosition=inCanvasPos;
 }
