@@ -1,0 +1,8 @@
+{
+  "code_root": "../../code",
+  "conf_root": "../",
+  "entry": "examples/sphere.frag",
+
+  "#include": "cameras/Default.json"
+}
+
