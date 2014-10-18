@@ -1,8 +1,6 @@
 #include <iostream>
-#include "experimental/cubemap-experiment.h"
 #include "raytracer/raytracing-engine.h"
 #include "raytracer/renderer.h"
-#include "cpu-raytracers/test-raytracers.h"
 #include "gl-util/glfw-util.h"
 #include "util/camera.h"
 #include "util/stopwatch.h"
@@ -12,8 +10,8 @@ using namespace fract;
 
 int winhei = 512;
 int winwid = 512;
-const int imgwid = 256;
-const int imghei = 256;
+//const int imgwid = 256;
+//const int imghei = 256;
 
 bool mouse_pressed;
 double initial_mousex;
@@ -33,7 +31,7 @@ int last_fps_update_frame;
 
 Camera camera;
 
-std::unique_ptr<RaytracingEngine> raytracer;
+//std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
 
 // declaration order matters
@@ -42,13 +40,6 @@ std::unique_ptr<glfw::Window> window;
 
 static void LogGLFWError(int code, const char *message) {
   std::cerr << "glfw error " << code << ": " << message << std::endl;
-}
-
-static void PrecalcCube() {
-  counters.Clear();
-  std::cerr << "precalcing cube" << std::endl;
-  raytracer->PrecalcCube(camera.position(), counters);
-  counters.Log();
 }
 
 static void KeyCallback(
@@ -137,11 +128,12 @@ int main(int argc, char **argv) {
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
 
+    /*
     raytracer.reset(new RaytracingEngine(
       std::make_shared<cpu_raytracers::Cube>(),
       imgwid,
       imghei));
-    renderer.reset(new Renderer());
+    renderer.reset(new Renderer());*/
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);
@@ -161,11 +153,10 @@ int main(int argc, char **argv) {
       glClearColor(0,0,0,1);
       glClear(GL_COLOR_BUFFER_BIT);
       
-      counters.Clear();
-      const RaytracedView &raytraced =
+      /*const RaytracedView &raytraced =
         raytracer->Raytrace(
           camera.position(), camera.scale(), camera.RotationProjectionMatrix());
-      renderer->Render(raytraced, winwid, winhei);
+      renderer->Render(raytraced, winwid, winhei);*/
 
       window->SwapBuffers();
       glfwPollEvents();

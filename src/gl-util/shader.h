@@ -7,9 +7,6 @@ namespace fract { namespace GL {
 
 const char * const kDefaultShaderAttribnames[]={"inScreenPos","inCanvasPos"};
 
-// TODO: add some mechanism to share a shader between multiple users instead of having copies of common shaders everywhere
-// and add a mechanism to manage uniforms in some easier way than lots of glGetUniformLocation, then lots of glUniform* (c++ code generation for each shader would be nice)
-
 #define SHADER_INFO_LOG
 
 class Shader {
@@ -17,7 +14,9 @@ public:
 	Shader(std::string vert, std::string frag, int attribcnt = 2, const char * const *attribnames = kDefaultShaderAttribnames);
 	~Shader();
 
+  // TODO: methods to set uniforms by name instead. Memoizing name->location.
   GLint GetUniformLocation(const std::string &name);
+
 	void Use();
 	GLuint program_id();
 	void LogUniforms(); // writes information about all active uniforms to stdout

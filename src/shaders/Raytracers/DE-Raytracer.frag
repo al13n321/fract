@@ -1,4 +1,4 @@
-#include <Common/Api.frag>
+#include <Common/Raytracer-Api.frag>
 
 struct SurfaceInfo {
   vec3 normal;

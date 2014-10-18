@@ -34,13 +34,16 @@ ENDIF (APPLE)
 
 add_executable(fract
 	application/experimentation-application.cpp
-	cpu-raytracers/test-raytracers.cpp
 	gl-util/gl-common.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp
 	gl-util/texture2d.cpp
+	raytracer/raytracer.cpp
 	raytracer/raytracing-engine.cpp
 	raytracer/renderer.cpp
+	resources/config.cpp
+	resources/shader-preprocessor.cpp
+	resources/shader-provider.cpp
 	util/camera.cpp
 	util/mat.cpp
 	util/stopwatch.cpp
@@ -54,5 +57,6 @@ file(COPY shaders DESTINATION .)
 target_link_libraries(fract
 	glfw
 	glew
+	jsoncpp.a
 	${EXTRA_LIBS}
 )

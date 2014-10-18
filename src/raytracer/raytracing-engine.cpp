@@ -3,28 +3,16 @@
 
 namespace fract {
 
-RaytracingEngine::RaytracingEngine(
-  std::shared_ptr<IRaytracer> tracer,
-  int width, int height)
-: width_(width), height_(height), tracer_(tracer), view_(width, height) {}
+RaytracingEngine::RaytracingEngine(int width, int height, ConfigPtr config)
+: width_(width), height_(height), config_(config), view_(width, height) {}
 
-void RaytracingEngine::UpdatePosition(dvec3 position) {
-  camera_position_ = position;
-}
-
-void RaytracingEngine::UpdateScale(double scale) {
-  camera_scale_ = scale;
-}
-
-void RaytracingEngine::UpdateRotationProjectionMatrix(fmat4 mat) {
-  camera_rotation_projection_ = mat;
-}
-
-const RaytracedView& RaytracingEngine::Raytrace(fvec3 position_delta) {
+const RaytracedView& RaytracingEngine::Raytrace(
+  dvec3 camera_position, double camera_scale, fmat4 camera_rotation_projection
+) {
   RayGrid grid;
-  grid.position = camera_position_;
-  grid.rotation_projection_inv = camera_rotation_projection_.Inverse();
-  grid.scale = camera_scale_;
+  grid.position = camera_position;
+  grid.rotation_projection_inv = camera_rotation_projection.Inverse();
+  grid.scale = camera_scale;
   grid.resolution_width = width_;
   grid.resolution_height = height_;
   grid.min_x = 0;
@@ -33,8 +21,7 @@ const RaytracedView& RaytracingEngine::Raytrace(fvec3 position_delta) {
   grid.size_y = height_;
 
   static std::vector<float> data(4 * width_ * height_);
-  tracer_->TraceGrid(grid, data);
-  view_.main_texture.SetPixels(GL_RGBA, GL_FLOAT, &data[0]);
+  tracer_.TraceGrid(grid, view_);
 
   return view_;
 }

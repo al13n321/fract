@@ -18,6 +18,11 @@ EXCEPTION_TYPE(NotImplementedException, std::logic_error);
 EXCEPTION_TYPE(GLException, std::runtime_error);
 EXCEPTION_TYPE(IOException, std::runtime_error);
 EXCEPTION_TYPE(ShaderCompilationException, std::runtime_error);
+EXCEPTION_TYPE(NoConfigKeyException, std::runtime_error);
+EXCEPTION_TYPE(ConfigValueFormatException, std::runtime_error);
+EXCEPTION_TYPE(JSONException, std::runtime_error);
+EXCEPTION_TYPE(PreprocessorSyntaxException, std::runtime_error);
+EXCEPTION_TYPE(PreprocessorUndefinedTokenException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 

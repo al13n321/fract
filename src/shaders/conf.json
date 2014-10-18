@@ -1,20 +1,26 @@
 {
-  "//": "Can be omitted, it's the default",
+  // Can be omitted, it's the default
+  // (btw if you're wondering, C-style comments is a non-standard JSON
+  //  extension by libjsoncpp)
   "root_dir": "./",
   "raytracer": "Examples/Sphere.frag",
   "renderer": "Renderers/Default.frag",
 
-  "//": "The app should be able to save current view as a camera, so it can be pasted here later to restore view",
-  "//": "Or save the entire state, with camera inlined",
-  "//": "Or get everything necessary to reproduce current view (code, configs) in a separate directory,",
-  "//": "i.e. export current state as an isolated editable project",
+  // The app should be able to save current view as a camera, so it can be pasted here later to restore view
+  // Or save the entire state, with camera inlined
+  // Or get everything necessary to reproduce current view (code, configs) in a separate directory,
+  //  i.e. export current state as an isolated editable project
   "camera": {
-    "type": "fps",
-    "fov": "90",
-    "pos": { "x": "0", "y": "0", "z": "-10" },
-    "yaw": "0",
-    "pitch": "0",
-    "scale": "1"
+    "type": "fps", // Can add "space" camera: no up and down.
+    "fov": 90,
+    "pos": { "x": 0, "y": 0, "z": -10 },
+    "yaw": 0,
+    "pitch": 0,
+    "scale": 1
+  },
+
+  "uniforms": {
+    "radius": 1
   }
 }
 

@@ -21,7 +21,7 @@ string ReadFile(const string &file) {
   return res;
 }
 
-vector<string> Tokenize(string &s, const string &delims) {
+vector<string> Tokenize(const string &s, const string &delims) {
 	vector<string> res;
 	res.push_back("");
 	for (int i = 0; i < (int)s.length(); ++i) {
@@ -41,13 +41,32 @@ std::string RemoveFileNameFromPath(const string &s) {
 	return s.substr(0,p + 1);
 }
 
-std::string CombinePaths(string path1, string path2) {
+std::string PathConcat(string path1, string path2) {
 	if (path1 == "")
 		return path2;
 	char l = path1[path1.length() - 1];
 	if (l != '/' && l != '\\')
 		path1 += "/";
 	return path1 + path2;
+}
+
+bool StartsWith(const std::string &string, const std::string &prefix) {
+  return
+    string.size() >= prefix.size() &&
+    string.substr(0, prefix.size()) == prefix;
+}
+
+bool IsWhitespace(char c) {
+  return c == ' ' || c == '\n' || c == '\t' || c == '\r';
+}
+
+std::string Strip(std::string s) {
+  for (int i = 0; i < 2; ++i) {
+    while (!s.empty() && IsWhitespace(s[s.size() - 1]))
+      s.erase(s.end() - 1);
+    std::reverse(s.begin(), s.end());
+  }
+  return s;
 }
 
 }

@@ -1,39 +1,31 @@
 #pragma once
 
-#include "i-raytracer.h"
+#include "raytracer.h"
 #include "util/camera.h"
 #include "raytraced-view.h"
+#include "resources/config.h"
 
 namespace fract {
 
-// Draws the image, using the provided callback to trace the rays.
 class RaytracingEngine {
  public:
-  RaytracingEngine(
-    std::shared_ptr<IRaytracer> tracer,
-    int width, int height);
+  RaytracingEngine(int width, int height, ConfigPtr config);
 
-  // Invalidates lookup cube.
-  void UpdatePosition(dvec3 position);
-  // Can invalidate lookup cube (because of normals mostly)
-  // or can do something smart.
-  void UpdateScale(double scale);
-  // Can keep lookup cube.
-  void UpdateRotationProjectionMatrix(fmat4 mat);
+  // TODO:
+  //void SetCubeEnabled(bool enabled);
+  //void RepositionCube(dvec3 position);
 
-  // position_delta allows rendering stereo image and reacting to oculus rift
-  // head movement without invalidating lookup cube.
-  const RaytracedView& Raytrace(fvec3 position_delta = fvec3(0, 0, 0));
+  const RaytracedView& Raytrace(
+    dvec3 camera_position,
+    double camera_scale,
+    fmat4 camera_rotation_projection_);
  private:
   int width_;
   int height_;
+  ConfigPtr config_;
 
-  std::shared_ptr<IRaytracer> tracer_;
+  Raytracer tracer_;
   RaytracedView view_;
-
-  double camera_scale_;
-  dvec3 camera_position_;
-  fmat4 camera_rotation_projection_;
 };
 
 }
