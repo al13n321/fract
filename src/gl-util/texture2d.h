@@ -1,3 +1,5 @@
+#pragma once
+
 #include "gl-common.h"
 
 namespace fract { namespace GL {

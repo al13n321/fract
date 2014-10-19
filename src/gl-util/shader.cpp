@@ -34,7 +34,9 @@ static void CompileShader(GLint shader, const string &path) {
   }
 }
 
-Shader::Shader(string vert, string frag, int attribcnt, const char * const * attribnames) {
+Shader::Shader(
+  string vert, string frag, int attribcnt, const char * const * attribnames
+) {
   GLint ret;
 
   vs_ = glCreateShader(GL_VERTEX_SHADER);
@@ -67,9 +69,19 @@ Shader::Shader(string vert, string frag, int attribcnt, const char * const * att
       throw ShaderCompilationException(
         "linking error in " + vert + " and " + frag);
   }
-}
-GLint Shader::GetUniformLocation(const std::string &name) {
-  return glGetUniformLocation(program_, name.c_str());
+
+  int cnt;
+  glGetProgramiv(program_, GL_ACTIVE_UNIFORMS, &cnt);
+  for (int i = 0; i < cnt; ++i) {
+    char name[GL_ACTIVE_UNIFORM_MAX_LENGTH];
+    GLsizei namelen;
+    Uniform uni;
+    uni.location = i;
+    glGetActiveUniform(
+      program_, i, GL_ACTIVE_UNIFORM_MAX_LENGTH,
+      &namelen, &uni.size, &uni.type, name);
+    uniforms_[name] = uni;
+  }
 }
 void Shader::Use() {
   glUseProgram(program_);
@@ -78,19 +90,21 @@ GLuint Shader::program_id() {
   return program_;
 }
 void Shader::LogUniforms() {
-  int cnt;
-  glGetProgramiv(program_, GL_ACTIVE_UNIFORMS, &cnt);
-  cerr << cnt << " active uniforms:" << endl;
-  for (int i = 0; i < cnt; ++i) {
-    char name[GL_ACTIVE_UNIFORM_MAX_LENGTH];
-    GLsizei namelen;
-    GLint size;
-    GLenum type;
-    glGetActiveUniform(program_, i, GL_ACTIVE_UNIFORM_MAX_LENGTH, &namelen, &size, &type, name);
-    cerr << name << " size: " << size << ", type: " << type << endl;
+  cerr << uniforms_.size() << " active uniforms:" << endl;
+  for (const auto it: uniforms_) {
+    cerr << it.first << " size: " << it.second.size
+      << ", type: " << it.second.type << endl;
   }
   cerr << endl;
 }
+
+void Shader::SetTexture(
+  const std::string &name, const Texture2D &texture, int unit
+) {
+  if (uniforms_.count(name))
+    texture.AssignToUniform(uniforms_[name].location, unit);
+}
+
 Shader::~Shader() {
   glDetachShader(program_, vs_);
   glDetachShader(program_, ps_);

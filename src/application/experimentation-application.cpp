@@ -10,8 +10,8 @@ using namespace fract;
 
 int winhei = 512;
 int winwid = 512;
-//const int imgwid = 256;
-//const int imghei = 256;
+const int imgwid = 256;
+const int imghei = 256;
 
 bool mouse_pressed;
 double initial_mousex;
@@ -31,7 +31,7 @@ int last_fps_update_frame;
 
 Camera camera;
 
-//std::unique_ptr<RaytracingEngine> raytracer;
+std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
 
 // declaration order matters
@@ -117,6 +117,18 @@ static void UpdateFPS() {
 int main(int argc, char **argv) {
   try {
     freopen("log.txt", "w", stderr);
+
+    std::string config_path;
+    if (argc == 1)
+      config_path = "shaders/conf.json";
+    else if (argc == 2)
+      config_path = argv[1];
+    else
+      throw CommandLineArgumentsException(
+        "0 or 1 command line arguments expected");
+
+    ConfigPtr config = std::make_shared<Config>(config_path);
+
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
     window.reset(new glfw::Window(winwid, winhei, "upchk"));
@@ -128,12 +140,8 @@ int main(int argc, char **argv) {
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
 
-    /*
-    raytracer.reset(new RaytracingEngine(
-      std::make_shared<cpu_raytracers::Cube>(),
-      imgwid,
-      imghei));
-    renderer.reset(new Renderer());*/
+    raytracer.reset(new RaytracingEngine(imgwid, imghei, config));
+    renderer.reset(new Renderer(config));
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);
@@ -153,10 +161,10 @@ int main(int argc, char **argv) {
       glClearColor(0,0,0,1);
       glClear(GL_COLOR_BUFFER_BIT);
       
-      /*const RaytracedView &raytraced =
+      const RaytracedView &raytraced =
         raytracer->Raytrace(
           camera.position(), camera.scale(), camera.RotationProjectionMatrix());
-      renderer->Render(raytraced, winwid, winhei);*/
+      renderer->Render(raytraced, winwid, winhei);
 
       window->SwapBuffers();
       glfwPollEvents();

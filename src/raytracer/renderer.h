@@ -2,23 +2,21 @@
 
 #include "raytraced-view.h"
 #include "gl-util/shader.h"
+#include "resources/config.h"
+#include "resources/shader-provider.h"
 
 namespace fract {
 
 // Renders raw raytracing result into a pretty image on screen.
-// TODO: may add runtime shader reloading for fast experimentation;
-//       or tweakable parameters
 class Renderer {
  public:
-  Renderer();
+  Renderer(ConfigPtr config);
 
   void Render(
     const RaytracedView &raytraced, int frame_width, int frame_height);
  private:
-  GL::Shader shader_;
-  GLint uniform_main_texture_;
-  GLint uniform_normal_texture_;
-  GLint uniform_color_texture_;
+  ConfigPtr config_;
+  ShaderProvider shader_provider_;
 };
 
 }

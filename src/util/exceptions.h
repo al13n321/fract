@@ -23,6 +23,7 @@ EXCEPTION_TYPE(ConfigValueFormatException, std::runtime_error);
 EXCEPTION_TYPE(JSONException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorSyntaxException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorUndefinedTokenException, std::runtime_error);
+EXCEPTION_TYPE(CommandLineArgumentsException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 

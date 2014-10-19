@@ -4,19 +4,18 @@
 
 namespace fract {
 
-Renderer::Renderer(): shader_("shaders/pass.vert", "shaders/main.frag") {
-  uniform_main_texture_ = shader_.GetUniformLocation("main_texture");
-  uniform_normal_texture_ = shader_.GetUniformLocation("normal_texture");
-  uniform_color_texture_ = shader_.GetUniformLocation("color_texture");
-}
+Renderer::Renderer(ConfigPtr config)
+  : config_(config)
+  , shader_provider_(config, "Predefined/pass.vert", {"renderer"}, {}) {}
 
 void Renderer::Render(
   const RaytracedView &raytraced, int frame_width, int frame_height
 ) {
-  shader_.Use();
-  raytraced.main_texture.AssignToUniform(uniform_main_texture_, 0);
-  raytraced.normal_texture.AssignToUniform(uniform_normal_texture_, 1);
-  raytraced.color_texture.AssignToUniform(uniform_color_texture_, 2);
+  std::shared_ptr<GL::Shader> shader = shader_provider_.Get();
+  shader->Use();
+  shader->SetTexture("MainTexture", raytraced.main_texture, 0);
+  shader->SetTexture("NormalTexture", raytraced.normal_texture, 1);
+  shader->SetTexture("ColorTexture", raytraced.color_texture, 2);
   GL::QuadRenderer::defaultInstance()->Render();
 }
 
