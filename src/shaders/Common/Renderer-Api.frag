@@ -4,15 +4,18 @@
 
 vec4 GetColor(RaytracerOutput ray);
 
-sampler2D MainTexture;
-sampler2D NormalTexture;
-sampler2D ColorTexture;
+uniform sampler2D MainTexture;
+uniform sampler2D NormalTexture;
+uniform sampler2D ColorTexture;
 
 in vec2 ScreenPosition;
+
+layout (location = 0) out vec4 OutColor;
 
 void main() {
   RaytracerOutput ray;
   // TODO: fill ray with data from textures
-  gl_FragColor = GetColor(ray);
+  //OutColor = GetColor(ray);
+  OutColor = vec4(ScreenPosition, 0, 1);
 }
 

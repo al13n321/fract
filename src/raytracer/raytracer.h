@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "resources/shader-provider.h"
 #include "ray-grid.h"
 #include "raytraced-view.h"
 
@@ -11,8 +12,13 @@ namespace fract {
 // TODO: thread safety contract for background rendering.
 class Raytracer {
  public:
+  Raytracer(ConfigPtr config);
+
   // TODO: Separate methods for lookup cube and final view tracing.
   void TraceGrid(const RayGrid &grid, RaytracedView &target);
+ private:
+  ConfigPtr config_;
+  ShaderProvider shader_provider_;
 };
 
 }

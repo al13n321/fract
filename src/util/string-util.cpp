@@ -21,6 +21,13 @@ string ReadFile(const string &file) {
   return res;
 }
 
+void WriteFile(const std::string &file, const std::string &contents) {
+  ofstream out(file.c_str());
+  if(out.fail())
+    throw IOException("Can't open file " + file + " for writing");
+  out << contents;
+}
+
 vector<string> Tokenize(const string &s, const string &delims) {
 	vector<string> res;
 	res.push_back("");
@@ -41,13 +48,22 @@ std::string RemoveFileNameFromPath(const string &s) {
 	return s.substr(0,p + 1);
 }
 
-std::string PathConcat(string path1, string path2) {
-	if (path1 == "")
-		return path2;
-	char l = path1[path1.length() - 1];
-	if (l != '/' && l != '\\')
-		path1 += "/";
-	return path1 + path2;
+std::string PathConcat(const string &path1, const string &path2) {
+	return PathConcat({path1, path2});
+}
+std::string PathConcat(std::initializer_list<std::string> paths) {
+  std::string res;
+  for (const std::string &path : paths) {
+    if (res.empty())
+      res = path;
+    else {
+      char l = res[res.length() - 1];
+      if (l != '/' && l != '\\')
+        res += "/";
+      res += path;
+    }
+  }
+  return res;
 }
 
 bool StartsWith(const std::string &string, const std::string &prefix) {

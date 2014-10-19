@@ -22,13 +22,16 @@ std::shared_ptr<GL::Shader> ShaderProvider::Get() {
 }
 
 std::shared_ptr<GL::Shader> ShaderProvider::LoadShader(Config::Version conf) {
-  std::string root_dir = conf.GetString({"root_dir"});
+  std::string root_dir =
+    PathConcat(config_->GetDir(), conf.GetString({"root_dir"}));
   std::string vert = ReadFile(PathConcat(root_dir, vert_shader_path_));
+  std::string frag_shader_path = conf.GetString(config_path_);
   std::string frag;
   std::set<std::string> deps;
   preprocessor_.LoadAndPreprocess(
-    conf.GetString(config_path_), root_dir, frag, deps);
-  return std::make_shared<GL::Shader>(vert, frag);
+    frag_shader_path, root_dir, frag, deps);
+  return std::make_shared<GL::Shader>(
+    vert_shader_path_, frag_shader_path, vert, frag);
 }
 
 }

@@ -4,7 +4,8 @@
 namespace fract {
 
 RaytracingEngine::RaytracingEngine(int width, int height, ConfigPtr config)
-: width_(width), height_(height), config_(config), view_(width, height) {}
+: width_(width), height_(height), config_(config), tracer_(config)
+, view_(width, height) {}
 
 const RaytracedView& RaytracingEngine::Raytrace(
   dvec3 camera_position, double camera_scale, fmat4 camera_rotation_projection

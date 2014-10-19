@@ -13,7 +13,7 @@ class Texture2D{
   Texture2D(int width, int height, GLint internalFormat, GLenum format, GLenum type, const GLvoid *data, GLint filter = GL_NEAREST);
   ~Texture2D();
 
-  GLuint name() const { return name_; }
+  GLuint name() { return name_; } // Not const because can render to it.
   int width() const { return wid_; }
   int height() const { return hei_; }
   void AssignToUniform(GLint uniform, int unit) const;

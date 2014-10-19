@@ -13,7 +13,13 @@ const char * const kDefaultShaderAttribnames[]={"inScreenPos","inCanvasPos"};
 
 class Shader {
 public:
-	Shader(std::string vert, std::string frag, int attribcnt = 2, const char * const *attribnames = kDefaultShaderAttribnames);
+	Shader(
+    const std::string &vert_path, // For logging and exception messages only.
+    const std::string &frag_path, // For logging and exception messages only.
+    const std::string &vert_text,
+    const std::string &frag_text,
+    int attribcnt = 2,
+    const char * const *attribnames = kDefaultShaderAttribnames);
 	~Shader();
 
   void SetTexture(const std::string &name, const Texture2D &texture, int unit);

@@ -54,6 +54,7 @@ std::string ShaderPreprocessor::LoadAndPreprocessRecursive(
       res += "\n";
     } else {
       res += line;
+      res += "\n";
     }
   }
 

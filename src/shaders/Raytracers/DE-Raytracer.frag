@@ -5,6 +5,4 @@ struct SurfaceInfo {
   // not necessarily color itself, just anything contributing to it
   // (traps, conditional paths, whatever)
   vec4 color;
-}
-
-
+};

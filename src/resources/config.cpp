@@ -7,7 +7,9 @@ namespace fract {
 
 static Json::Value NullValue;
 
-Config::Config(const std::string &path): path_(path) {
+Config::Config(const std::string &path)
+  : path_(path), directory_(RemoveFileNameFromPath(path))
+{
   std::ifstream in(path);
   if (!in.good())
     throw IOException("can't open file " + path);
@@ -64,6 +66,10 @@ std::string Config::Version::GetString(
   std::initializer_list<std::string> path
 ) {
   return GetString(std::vector<std::string>(path.begin(), path.end()));
+}
+
+std::string Config::GetDir() const {
+  return directory_;
 }
 
 Config::Version Config::Current() {

@@ -116,6 +116,7 @@ static void UpdateFPS() {
 
 int main(int argc, char **argv) {
   try {
+    srand(time(nullptr));
     freopen("log.txt", "w", stderr);
 
     std::string config_path;
@@ -157,13 +158,11 @@ int main(int argc, char **argv) {
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
 
-      glViewport(0, 0, winwid, winhei);
-      glClearColor(0,0,0,1);
-      glClear(GL_COLOR_BUFFER_BIT);
-      
       const RaytracedView &raytraced =
         raytracer->Raytrace(
           camera.position(), camera.scale(), camera.RotationProjectionMatrix());
+      
+      glViewport(0, 0, winwid, winhei);CHECK_GL_ERROR();
       renderer->Render(raytraced, winwid, winhei);
 
       window->SwapBuffers();

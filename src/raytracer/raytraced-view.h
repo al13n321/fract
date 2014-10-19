@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gl-util/texture2d.h"
+#include "gl-util/framebuffer.h"
 
 namespace fract {
 
@@ -16,10 +16,14 @@ struct RaytracedView {
   // (attractors, branching, whatever).
   GL::Texture2D color_texture;
 
+  // To render to all these textures. Order of declarations matters.
+  GL::Framebuffer framebuffer;
+
   RaytracedView(int width, int height):
     main_texture(width, height, GL_RGBA32F, GL_LINEAR),
     normal_texture(width, height, GL_RGBA32F, GL_LINEAR),
-    color_texture(width, height, GL_RGBA32F, GL_LINEAR) {}
+    color_texture(width, height, GL_RGBA32F, GL_LINEAR),
+    framebuffer({&main_texture, &normal_texture, &color_texture}) {}
 };
 
 }

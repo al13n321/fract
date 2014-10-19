@@ -35,6 +35,7 @@ ENDIF (APPLE)
 add_executable(fract
 	application/experimentation-application.cpp
 	gl-util/gl-common.cpp
+	gl-util/framebuffer.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp
 	gl-util/texture2d.cpp
@@ -45,6 +46,7 @@ add_executable(fract
 	resources/shader-preprocessor.cpp
 	resources/shader-provider.cpp
 	util/camera.cpp
+	util/logging.cpp
 	util/mat.cpp
 	util/stopwatch.cpp
 	util/string-util.cpp

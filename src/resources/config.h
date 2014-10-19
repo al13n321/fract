@@ -44,11 +44,15 @@ class Config {
   Config(const Config &rhs) = delete;
   Config& operator=(const Config &rhs) = delete;
 
+  // Directory in which the config file is located.
+  std::string GetDir() const;
+
   Version Current();
 
   // TODO: subscriptions and reloading. Callbacks should receive a Version.
  private:
   std::string path_;
+  std::string directory_;
   Json::Reader reader_;
   std::shared_ptr<const Json::Value> root_;
 };
