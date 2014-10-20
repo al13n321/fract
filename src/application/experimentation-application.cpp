@@ -64,7 +64,7 @@ static void MouseButtonCallback(
     if (action == GLFW_PRESS) {
       mouse_pressed = true;
       window->GetCursorPos(&initial_mousex, &initial_mousey);
-      // TODO: this causes glitches with low FPS; look for a better way
+      // NOTE: this causes glitches with low FPS; look for a better way
       window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
       prev_mousex = -1;
     } else {

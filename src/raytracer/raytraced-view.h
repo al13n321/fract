@@ -7,7 +7,6 @@ namespace fract {
 // Raytracing result.
 // Used for both screen-space images and lookup cube faces.
 struct RaytracedView {
-  // TODO: make them render targets.
   // 4-channel 32-bit float: hit (0 or 1), iterations, scaled distance, error.
   GL::Texture2D main_texture;
   // 4-channel 32-bit float: normal xyz, "roughness" (or unused).

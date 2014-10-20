@@ -10,14 +10,7 @@ static Json::Value NullValue;
 Config::Config(const std::string &path)
   : path_(path), directory_(RemoveFileNameFromPath(path))
 {
-  std::ifstream in(path);
-  if (!in.good())
-    throw IOException("can't open file " + path);
-  std::shared_ptr<Json::Value> root = std::make_shared<Json::Value>();
-  if (!reader_.parse(in, *root, false))
-    throw JSONException(
-      "bad JSON at " + path + ": " + reader_.getFormattedErrorMessages());
-  root_ = root;
+  root_ = Load();
 }
 
 Config::Version::Version(std::shared_ptr<const Json::Value> root)
@@ -52,20 +45,14 @@ std::string Config::Version::GetString(const std::vector<std::string> &path) {
   return value.asString();
 }
 
-const Json::Value& Config::Version::TryGet(
-  std::initializer_list<std::string> path
-) {
-  return TryGet(std::vector<std::string>(path.begin(), path.end()));
-}
-const Json::Value& Config::Version::Get(
-  std::initializer_list<std::string> path
-) {
-  return Get(std::vector<std::string>(path.begin(), path.end()));
-}
-std::string Config::Version::GetString(
-  std::initializer_list<std::string> path
-) {
-  return GetString(std::vector<std::string>(path.begin(), path.end()));
+std::shared_ptr<const Json::Value> Config::Load() {
+  std::string text = ReadFile(path_);
+  std::shared_ptr<Json::Value> root = std::make_shared<Json::Value>();
+  Json::Reader reader;
+  if (!reader.parse(text, *root, false))
+    throw JSONException(
+      "bad JSON at " + path_ + ": " + reader.getFormattedErrorMessages());
+  return root;
 }
 
 std::string Config::GetDir() const {

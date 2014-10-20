@@ -20,23 +20,27 @@ class Config {
     const Json::Value& GetRoot();
 
     // nullValue if doesn't exist. Makes a deep copy.
-    const Json::Value& TryGet(std::initializer_list<std::string> path);
     const Json::Value& TryGet(const std::vector<std::string> &path);
 
     // Exception if doesn't exist. Makes a deep copy.
     // Examples:
     // Get({"renderer"})
     // Get({"camera", "pos", "x"})
-    // (actually don't do the last one, get whole camera at once and then
-    //  access its fields to avoid race conditions when reloading)
-    const Json::Value& Get(std::initializer_list<std::string> path);
     const Json::Value& Get(const std::vector<std::string> &path);
 
-    // Exception if doesn't exist or not string.
-    std::string GetString(std::initializer_list<std::string> path);
+    // Exception if doesn't exist or is not a string.
     std::string GetString(const std::vector<std::string> &path);
    private:
     std::shared_ptr<const Json::Value> root_;
+  };
+
+  typedef std::function<void(Version conf)> UpdateHandler;
+
+  class Listener {
+   public:
+    ~Listener();
+   private:
+
   };
 
   Config(const std::string &path);
@@ -49,12 +53,16 @@ class Config {
 
   Version Current();
 
-  // TODO: subscriptions and reloading. Callbacks should receive a Version.
+  // Subscribe to changes to listed paths and their subpaths.
+  Listener Subscribe(
+    std::initializer_list<std::vector<std::string>> paths,
+    UpdateHandler handler);
  private:
   std::string path_;
   std::string directory_;
-  Json::Reader reader_;
   std::shared_ptr<const Json::Value> root_;
+
+  std::shared_ptr<const Json::Value> Load();
 };
 
 typedef std::shared_ptr<Config> ConfigPtr;

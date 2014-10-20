@@ -3,7 +3,7 @@
 namespace fract {
 
 struct LookupCubeFace {
-  // TODO: Some OpenCL buffers.
+  // TODO: RaytracedView or something.
 };
 
 // TODO: class LookupCube or something.
