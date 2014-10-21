@@ -6,7 +6,10 @@
 namespace fract {
 
 // Base class for exceptions. Can add stack trace here later.
-class ExceptionBase {};
+class ExceptionBase {
+ public:
+  virtual ~ExceptionBase() {}
+};
 
 #define EXCEPTION_TYPE(name, base) \
   class name: public base, public ExceptionBase { \
@@ -24,7 +27,10 @@ EXCEPTION_TYPE(JSONException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorSyntaxException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorUndefinedTokenException, std::runtime_error);
 EXCEPTION_TYPE(CommandLineArgumentsException, std::runtime_error);
+EXCEPTION_TYPE(AppleException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
+
+void LogCurrentException();
 
 }

@@ -19,17 +19,20 @@ IF(APPLE)
   FIND_LIBRARY(OPENGL_LIBRARY OpenGL)
   FIND_LIBRARY(IOKIT_LIBRARY IOKit)
   FIND_LIBRARY(COREVIDEO_LIBRARY CoreVideo)
-   
+  FIND_LIBRARY(CORESERVICES_LIBRARY CoreServices)
+
   MARK_AS_ADVANCED (COCOA_LIBRARY
                     OPENGL_LIBRARY
                     IOKIT_LIBRARY
-                    COREVIDEO_LIBRARY)
+                    COREVIDEO_LIBRARY
+                    CORESERVICES_LIBRARY)
 
   SET(EXTRA_LIBS ${EXTRA_LIBS}
    	${COCOA_LIBRARY}
    	${OPENGL_LIBRARY}
    	${IOKIT_LIBRARY}
-   	${COREVIDEO_LIBRARY})
+   	${COREVIDEO_LIBRARY}
+   	${CORESERVICES_LIBRARY})
 ENDIF (APPLE)
 
 add_executable(fract
@@ -46,6 +49,8 @@ add_executable(fract
 	resources/shader-preprocessor.cpp
 	resources/shader-provider.cpp
 	util/camera.cpp
+	util/exceptions.cpp
+	util/file-watcher.cpp
 	util/logging.cpp
 	util/mat.cpp
 	util/stopwatch.cpp

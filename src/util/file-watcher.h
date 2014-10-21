@@ -1,9 +1,14 @@
 #pragma once
 
+#include <functional>
+#include <vector>
+#include <string>
+
 namespace fract {
 
 // Notifies when any file from the given list changes.
 // Calls all callbacks from single background thread.
+// Depending on platform, may miss events in rare cases.
 class FileWatcher {
  public:
   typedef std::function<void()> UpdateHandler;
@@ -12,7 +17,8 @@ class FileWatcher {
     UpdateHandler handler);
   ~FileWatcher();
  private:
-  std::thread thread_;
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
 };
 
 }
