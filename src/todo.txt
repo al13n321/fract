@@ -37,6 +37,7 @@ Wishlist, to keep in mind:
 	+ Saving precalc checkpoints for faster re-rendering?
 
 Notes:
+- Can't compile shaders in background thread because OpenGL is not thread-safe.
 - Make cubemap resolution independent of screen resolution
 - Limit quality degradation when using cubemap:
   use pixel size when tracing through cubemap;
