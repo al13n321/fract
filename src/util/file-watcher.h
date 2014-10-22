@@ -12,6 +12,9 @@ namespace fract {
 class FileWatcher {
  public:
   typedef std::function<void()> UpdateHandler;
+  // Also calls the handler inside or right after construction, even if
+  // there were no changes to the file and even if it doesn't exist.
+  // (If you don't need this behavior, you can add a parameter to disable it.)
   FileWatcher(
     const std::vector<std::string> &paths,
     UpdateHandler handler);

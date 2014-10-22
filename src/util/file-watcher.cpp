@@ -103,8 +103,18 @@ struct FileWatcher::Impl {
 
   ~Impl() {
     if (run_loop_) {
+      // If CFRunLoopStop only works when CFRunLoopRun is running, there's
+      // a race condition here.
       CFRunLoopStop(run_loop_);
       thread_.join();
+    }
+  }
+
+  void CallHandlerNoThrow() {
+    try {
+      handler_();
+    } catch (...) {
+      LogCurrentException();
     }
   }
 
@@ -116,12 +126,8 @@ struct FileWatcher::Impl {
     const FSEventStreamEventFlags eventFlags[],
     const FSEventStreamEventId eventIds[]
   ) {
-    try {
-      Impl *impl = reinterpret_cast<Impl*>(clientCallBackInfo);
-      impl->handler_();
-    } catch (...) {
-      LogCurrentException();
-    }
+    Impl *impl = reinterpret_cast<Impl*>(clientCallBackInfo);
+    impl->CallHandlerNoThrow();
   }
 
   void ThreadFunc() {
@@ -139,6 +145,13 @@ struct FileWatcher::Impl {
       cv_.notify_one();
       return;
     }
+
+    {
+      std::lock_guard<std::mutex> lk(mutex_);
+      run_loop_ = run_loop;
+      initialized_ = true;
+    }
+    cv_.notify_one();
 
     FSEventStreamContext context {
       .version = 0,
@@ -160,12 +173,8 @@ struct FileWatcher::Impl {
       stream, run_loop, kCFRunLoopDefaultMode);
     FSEventStreamStart(stream);
 
-    {
-      std::lock_guard<std::mutex> lk(mutex_);
-      run_loop_ = run_loop;
-      initialized_ = true;
-    }
-    cv_.notify_one();
+    // Need to call this after creating the stream to avoid missing an update.
+    CallHandlerNoThrow();
 
     CFRunLoopRun();
 
@@ -176,6 +185,7 @@ struct FileWatcher::Impl {
 #else // neither WIN32 nor __APPLE__
 
 // A fallback implementation that just checks timestamp each second.
+// It probably doesn't work - I didn't even try to compile it.
 // Note that it may miss updates if they hapen within timestamp resolution unit.
 
 struct FileWatcher::Impl {
@@ -196,9 +206,8 @@ struct FileWatcher::Impl {
 
   Impl(
     const std::vector<std::string> &paths,
-    UpdateHandler handler): handler_(handler)
+    UpdateHandler handler): handler_(handler), paths_(paths)
   {
-    UpdateAll(false);
     thread_ = std::thread(std::bind(FileWatcher::Impl::ThreadFunc, this));
   }
 
@@ -211,11 +220,13 @@ struct FileWatcher::Impl {
     thread_.join();
   }
 
-  void UpdateAll(bool notify) {
-    for (auto &it: files_) {
-      uint64_t t = GetModificationTime(it.first);
-      if (t != it.second.modification_time) {
-        it.second.modification_time = t;
+  void UpdateAll() {
+    bool notify = true;
+    for (const std::string &path: paths_) {
+      uint64_t t = GetModificationTime(path);
+      if (!modification_times_.count(path) ||
+          modification_times_[path] != t) {
+        modification_times_[path] = t;
         if (notify) {
           notify = false;
           hander_();
@@ -233,11 +244,19 @@ struct FileWatcher::Impl {
           break;
       }
 
-      UpdateAll(true);
+      UpdateAll();
     }
   }
 };
 
 #endif
+
+
+FileWatcher::FileWatcher(
+    const std::vector<std::string> &paths,
+    UpdateHandler handler) {
+  impl_.reset(new Impl(paths, handler));
+}
+FileWatcher::~FileWatcher() {}
 
 }

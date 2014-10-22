@@ -11,6 +11,11 @@ Raytracer::Raytracer(ConfigPtr config)
 void Raytracer::TraceGrid(const RayGrid &grid, RaytracedView &target) {
   std::shared_ptr<GL::Shader> shader = shader_provider_.Get();
   target.framebuffer.BindForWriting();
+  if (!shader) {
+    glClearColor(0.0f,0.0f,0.0f,0.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    return;
+  }
   shader->Use();
   // TODO: set uniforms from grid.
   GL::QuadRenderer::defaultInstance()->Render();
