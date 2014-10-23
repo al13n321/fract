@@ -12,4 +12,3 @@ vec4 GetColor(RaytracerOutput ray) {
   return mix(mix(background, foreground, smoothstep(0., 1., ray.hit)),
              error_color, smoothstep(0., 1., ray.error));
 }
-

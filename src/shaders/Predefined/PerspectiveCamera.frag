@@ -10,7 +10,7 @@ layout (location = 2) out vec4 OutColor;
 
 void main() {
   // TODO: unproject, call TraceRay, put result to MRT
-  OutMain = vec4(1,1,1,1);
+  OutMain = vec4(ScreenPosition,1,1);
   OutNormal = vec4(1,1,1,1);
   OutColor = vec4(1,1,1,1);
 }

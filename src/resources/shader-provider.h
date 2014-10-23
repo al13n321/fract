@@ -11,6 +11,9 @@ namespace fract {
 // Reloads and recompiles when either the shader source file changes
 // or path to it changes in config.
 // If the new version doesn't compile keeps the last working one.
+// Does the compilation synchronously in Get(). Doing it in background would
+// require multiple GL contexts and would usually be single-threaded in
+// the driver anyway.
 class ShaderProvider {
  public:
   ShaderProvider(
@@ -19,7 +22,6 @@ class ShaderProvider {
     std::initializer_list<std::string> config_path,
     std::initializer_list<std::pair<std::string, std::string>>
       preprocessor_definitions);
-  ~ShaderProvider();
 
   std::shared_ptr<GL::Shader> Get();
  private:
@@ -34,19 +36,9 @@ class ShaderProvider {
   std::unique_ptr<FileWatcher> file_watcher_;
   std::set<std::string> cur_deps_;
 
-  std::thread thread_;
-  bool need_update_{};
-  bool need_shutdown_{};
-  std::mutex mutex_; // only for need_* and cv_
-  std::condition_variable cv_;
+  std::atomic<bool> need_update_{};
 
-  // Throws.
-  std::shared_ptr<GL::Shader> LoadShader(
-    Config::Version conf, std::set<std::string> &out_deps);
   void Update();
-
-  void ThreadFunc();
-  void SetNeedsUpdate();
 };
 
 }

@@ -18,4 +18,3 @@ void main() {
   //OutColor = GetColor(ray);
   OutColor = vec4(ScreenPosition, 0, 1);
 }
-

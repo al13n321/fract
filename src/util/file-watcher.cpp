@@ -33,8 +33,10 @@ class CFString {
       throw AppleException("can't create CFString from string " + str);
   }
   CFString(const CFString &rhs) = delete;
-  CFString(CFString &&rhs) = default;
   CFString& operator=(const CFString &rhs) = delete;
+  CFString(CFString &&rhs) {
+    std::swap(ref_, rhs.ref_);
+  }
   ~CFString() {
     if (ref_)
       CFRelease(ref_);
@@ -146,12 +148,14 @@ struct FileWatcher::Impl {
       return;
     }
 
+
     {
       std::lock_guard<std::mutex> lk(mutex_);
       run_loop_ = run_loop;
       initialized_ = true;
     }
     cv_.notify_one();
+
 
     FSEventStreamContext context {
       .version = 0,
@@ -173,8 +177,10 @@ struct FileWatcher::Impl {
       stream, run_loop, kCFRunLoopDefaultMode);
     FSEventStreamStart(stream);
 
+
     // Need to call this after creating the stream to avoid missing an update.
     CallHandlerNoThrow();
+
 
     CFRunLoopRun();
 

@@ -1,5 +1,6 @@
 #include "config.h"
 #include <fstream>
+#include <iostream>
 #include "util/exceptions.h"
 #include "util/string-util.h"
 
@@ -112,6 +113,7 @@ bool Config::Diff(
 
 void Config::Update() {
   std::lock_guard<std::mutex> lock(mutex_);
+  std::cerr << "loading " << path_ << std::endl;
   std::shared_ptr<const Json::Value> old_root = std::atomic_load(&root_);
   std::shared_ptr<const Json::Value> new_root = Load();
   std::atomic_store(&root_, new_root);
@@ -120,6 +122,7 @@ void Config::Update() {
   Diff(*old_root, *new_root, temp_path, handlers);
   for (auto &handler: handlers)
     handler.handler(Version(new_root));
+  std::cerr << "loaded " << path_ << std::endl;
 }
 
 Config::SubscriptionPtr Config::Subscribe(
