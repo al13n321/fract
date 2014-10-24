@@ -29,6 +29,8 @@ std::shared_ptr<GL::Shader> ShaderProvider::Get() {
 }
 
 void ShaderProvider::Update() {
+  std::set<std::string> deps;
+
   try {
     auto conf = config_->Current();
     std::string root_dir =
@@ -37,23 +39,21 @@ void ShaderProvider::Update() {
     std::cerr << "loading " << frag_shader_path << std::endl;
     std::string vert = ReadFile(PathConcat(root_dir, vert_shader_path_));
     std::string frag;
-    std::set<std::string> deps;
     preprocessor_.LoadAndPreprocess(
       frag_shader_path, root_dir, frag, deps);
 
-    if (deps != cur_deps_) {
-      cur_deps_ = deps;
-      file_watcher_.reset(new FileWatcher(
-        std::vector<std::string>(deps.begin(), deps.end()),
-        [&]{ need_update_.store(true); }));
-    }
-
     shader_ = std::make_shared<GL::Shader>(
       vert_shader_path_, frag_shader_path, vert, frag);
-
-    std::cerr << "loaded " << frag_shader_path << std::endl;
   } catch (...) {
     LogCurrentException();
+  }
+
+  // Need to start watching for updates even if something failed.
+  if (deps != cur_deps_) {
+    cur_deps_ = deps;
+    file_watcher_.reset(new FileWatcher(
+      std::vector<std::string>(deps.begin(), deps.end()),
+      [&]{ need_update_.store(true); }));
   }
 }
 

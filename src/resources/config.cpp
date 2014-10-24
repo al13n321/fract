@@ -122,7 +122,6 @@ void Config::Update() {
   Diff(*old_root, *new_root, temp_path, handlers);
   for (auto &handler: handlers)
     handler.handler(Version(new_root));
-  std::cerr << "loaded " << path_ << std::endl;
 }
 
 Config::SubscriptionPtr Config::Subscribe(

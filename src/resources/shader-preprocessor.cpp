@@ -23,12 +23,13 @@ std::string ShaderPreprocessor::LoadAndPreprocessRecursive(
   const std::string &root_path,
   std::set<std::string> &included
 ) {
-  if (included.count(path)) {
+  std::string full_path = PathConcat(root_path, path);
+  if (included.count(full_path)) {
     return "// " + path + " is already included\n";
   }
-  included.insert(path);
+  included.insert(full_path);
   std::vector<std::string> lines =
-    Tokenize(ReadFile(PathConcat(root_path, path)), "\n\r");
+    Tokenize(ReadFile(full_path), "\n\r");
   std::string res;
   for (const std::string &line: lines) {
     if (StartsWith(line, "#include")) {

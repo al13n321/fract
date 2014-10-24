@@ -2,7 +2,7 @@
   // Can be omitted, it's the default
   // (btw if you're wondering, C-style comments is a non-standard JSON
   //  extension by libjsoncpp)
-  "root_dir": "./",
+  "root_dir": "",
   "raytracer": "Examples/Sphere.frag",
   "renderer": "Renderers/Default.frag",
 
@@ -23,3 +23,4 @@
     "radius": 1
   }
 }
+

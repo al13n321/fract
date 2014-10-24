@@ -13,6 +13,9 @@ class ShaderPreprocessor {
     std::initializer_list<std::pair<std::string, std::string>>
       definitions);
 
+  // Throws exception on syntax or I/O error.
+  // In this case out_dependencies are still populated with dependencies
+  // detected before the error.
   void LoadAndPreprocess(
     const std::string &path,
     const std::string &root_path,
