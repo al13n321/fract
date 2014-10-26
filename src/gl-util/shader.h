@@ -2,8 +2,11 @@
 
 #include "gl-common.h"
 #include "texture2d.h"
+#include "util/vec.h"
+#include "util/mat.h"
 #include <string>
 #include <map>
+#include <set>
 
 namespace fract { namespace GL {
 
@@ -22,7 +25,15 @@ public:
     const char * const *attribnames = kDefaultShaderAttribnames);
 	~Shader();
 
+  // Setting uniforms. Float and double are interchangeable.
+  // If the uniform doesn't exist or the type is incorrect, logs and doesn't
+  // throw. Logs only once for each name to avoid flooding the log.
   void SetTexture(const std::string &name, const Texture2D &texture, int unit);
+  void SetScalar(const std::string &name, double value);
+  void SetVec2(const std::string &name, dvec2 value);
+  void SetVec3(const std::string &name, dvec3 value);
+  void SetVec4(const std::string &name, dvec4 value);
+  void SetMat4(const std::string &name, const fmat4 &value);
 
 	void Use();
 	GLuint program_id();
@@ -34,8 +45,17 @@ private:
     GLenum type;
   };
 
-	GLuint vs_, ps_, program_;
+	GLuint vs_{};
+  GLuint ps_{};
+  GLuint program_{};
   std::map<std::string, Uniform> uniforms_;
+
+  // For what uniforms we already logged an error.
+  std::set<std::string> uniform_errors_;
+
+  const Uniform* GetUniformLocation(const std::string &name, GLenum type);
+  const Uniform* GetUniformLocation(
+    const std::string &name, GLenum type1, GLenum type2);
 };
 
 }}

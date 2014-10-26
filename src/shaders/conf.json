@@ -13,7 +13,7 @@
   "camera": {
     "type": "fps", // Can add "space" camera: no up and down.
     "fov": 90,
-    "pos": { "x": 0, "y": 0, "z": -10 },
+    "pos": { "x": 0, "y": 0, "z": 10 },
     "yaw": 0,
     "pitch": 0,
     "scale": 1

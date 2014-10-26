@@ -182,11 +182,7 @@ struct FileWatcher::Impl {
     // Need to call this after creating the stream to avoid missing an update.
     CallHandlerNoThrow();
 
-    std::cerr << "Starting to watch " << paths_.size() << " files including "
-      << paths_[0] << std::endl;
     CFRunLoopRun();
-    std::cerr << "Stopping to watch " << paths_.size() << " files including "
-      << paths_[0] << std::endl;
 
     FSEventStreamRelease(stream);
   }

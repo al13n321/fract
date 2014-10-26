@@ -51,6 +51,7 @@ add_executable(fract
 	util/camera.cpp
 	util/exceptions.cpp
 	util/file-watcher.cpp
+	util/json.cpp
 	util/logging.cpp
 	util/mat.cpp
 	util/stopwatch.cpp

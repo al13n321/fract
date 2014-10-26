@@ -48,6 +48,10 @@ class Window {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
 
+  void SwapInterval(int interval) {
+    glfwSwapInterval(interval);
+  }
+
   void SwapBuffers() {
     glfwSwapBuffers(window);
   }
@@ -86,6 +90,10 @@ class Window {
 
   void SetTitle(const std::string &title) {
     glfwSetWindowTitle(window, title.c_str());
+  }
+
+  void SetPosition(int x, int y) {
+    glfwSetWindowPos(window, x, y);
   }
 
   ~Window() {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mat.h"
+#include "json.h"
 
 namespace fract {
 
@@ -43,10 +44,13 @@ namespace fract {
 
     fmat4 RotationMatrix() const;
     
-    // near clip plane for projection is set arbitrarily and should be ignored
-    // to transform from world to camera coordinates:
+    // Near clip plane for projection is set arbitrarily and should be ignored.
+    // To transform from world to camera coordinates:
     // y = RotationProjectionMatrix() * ((x - position()) * scale())
     fmat4 RotationProjectionMatrix() const;
+
+    // On error logs and keeps current state.
+    void FromJson(const Json::Value &value);
    private:
     float yaw_ = 0;
     float pitch_ = 0;

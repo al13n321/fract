@@ -111,6 +111,14 @@ bool Config::Diff(
   return diff;
 }
 
+void Config::CallHandler(UpdateHandler handler, Version version) {
+  try {
+    handler(version);
+  } catch (...) {
+    LogCurrentException();
+  }
+}
+
 void Config::Update() {
   std::lock_guard<std::mutex> lock(mutex_);
   std::cerr << "loading " << path_ << std::endl;
@@ -120,22 +128,34 @@ void Config::Update() {
   std::set<HandlerInfo> handlers;
   std::vector<std::string> temp_path;
   Diff(*old_root, *new_root, temp_path, handlers);
-  for (auto &handler: handlers)
-    handler.handler(Version(new_root));
+  for (auto &handler: handlers) {
+    if (handler.sync == SYNC)
+      pending_handlers_.insert(handler);
+    else
+      CallHandler(handler.handler, Version(new_root));
+  }
 }
 
 Config::SubscriptionPtr Config::Subscribe(
     std::initializer_list<std::vector<std::string>> paths,
-    UpdateHandler handler) {
+    UpdateHandler handler, HandlerSyncMode sync) {
   std::lock_guard<std::mutex> lock(mutex_);
   SubscriptionPtr subscription(new Subscription(*this));
   for (const auto &path: paths) {
     subscription->iterators_.push_back(
       subscriptions_.insert(std::make_pair(
-        path, HandlerInfo(handler, handler_id_increment_++))));
+        path, HandlerInfo(handler, sync, handler_id_increment_++))));
   }
-  handler(Current());
+  CallHandler(handler, Version(root_));
   return subscription;
+}
+
+void Config::PollUpdates() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  for (auto &handler: pending_handlers_) {
+    CallHandler(handler.handler, Version(root_));
+  }
+  pending_handlers_.clear();
 }
 
 }

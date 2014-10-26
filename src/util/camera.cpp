@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "exceptions.h"
 
 namespace fract {
 
@@ -20,6 +21,29 @@ fmat4 Camera::RotationProjectionMatrix() const {
     fmat4::PerspectiveProjectionMatrix(fov_, aspect_ratio_, near_clip_plane_, 0) *
     // 1. rotate coordinate system (transposition is same as inverse here)
 	  fmat4::RotationMatrix(-yaw_, pitch_, -roll_).Transposed();
+}
+
+void Camera::FromJson(const Json::Value &value) {
+  try {
+    if (!value.isObject())
+      throw ConfigValueFormatException("camera is not an object");
+    const auto &type = value["type"];
+    if (!type.isNull() && type != "fps")
+      throw ConfigValueFormatException("unrecognized camera type");
+    double new_fov = JsonUtil::doubleValue(value["fov"]);
+    dvec3 new_pos = JsonUtil::vec3Value(value["pos"]);
+    double new_yaw = JsonUtil::doubleValue(value["yaw"]);
+    double new_pitch = JsonUtil::doubleValue(value["pitch"]);
+    double new_scale = JsonUtil::doubleValue(value["scale"]);
+
+    fov_ = new_fov;
+    position_ = new_pos;
+    yaw_ = new_yaw;
+    pitch_ = new_pitch;
+    scale_ = new_scale;
+  } catch (...) {
+    LogCurrentException();
+  }
 }
 
 }

@@ -16,6 +16,11 @@ namespace fract {
 // Contains directory where the config file is located under key "_dir".
 class Config {
  public:
+  enum HandlerSyncMode {
+    SYNC,
+    ASYNC,
+  };
+
   // Has the same thread safety as shared_ptr.
   class Version {
    public:
@@ -44,10 +49,12 @@ class Config {
  private:
   struct HandlerInfo {
     UpdateHandler handler;
+    HandlerSyncMode sync;
     uint64_t id;
 
     HandlerInfo() {}
-    HandlerInfo(UpdateHandler handler, uint64_t id): handler(handler), id(id) {}
+    HandlerInfo(UpdateHandler handler, HandlerSyncMode sync, uint64_t id):
+      handler(handler), sync(sync), id(id) {}
 
     bool operator<(const HandlerInfo &rhs) const {
       return id < rhs.id;
@@ -63,6 +70,7 @@ public:
       std::lock_guard<std::mutex> lock(config_.mutex_);
       for (auto it: iterators_)
         config_.subscriptions_.erase(it);
+      config_.pending_handlers_.erase(handler_);
     }
     Subscription(const Subscription &rhs) = delete;
     Subscription& operator=(const Subscription &rhs) = delete;
@@ -71,6 +79,7 @@ public:
     Subscription(Config &config): config_(config) {}
     Config &config_;
     std::vector<Subscriptions::iterator> iterators_;
+    HandlerInfo handler_;
   };
 
   typedef std::unique_ptr<Subscription> SubscriptionPtr;
@@ -85,16 +94,18 @@ public:
   Version Current();
 
   // Subscribe to changes to listed paths and their subpaths.
-  // Also calls the handler during or right afer this call, even if there were
-  // no changes or config is not yet loaded.
+  // Also calls the handler during this call, even if there were no changes
+  // or config is not yet loaded.
   // (If you don't need this behavior, you can add a parameter to disable it.)
+  // If sync, the handler will only be called in PollUpdates() call.
   // The subsription is active until the returned Subscription is destroyed.
   // The Subscription must be destroyed before the Config.
   SubscriptionPtr Subscribe(
     std::initializer_list<std::vector<std::string>> paths,
-    UpdateHandler handler);
+    UpdateHandler handler, HandlerSyncMode sync = ASYNC);
 
-  // TODO: Can add method to switch to different file.
+  // Calls sync handlers for updates that happened since the last call.
+  void PollUpdates();
  private:
   std::string path_;
   std::string directory_;
@@ -103,8 +114,11 @@ public:
   Subscriptions subscriptions_;
   uint64_t handler_id_increment_{};
 
+  std::set<HandlerInfo> pending_handlers_;
+
   // For
   //  - subscriptions_
+  //  - pending_handlers_
   //  - calling handlers
   //  - loading json
   // (note: not root_; Current() must not wait for loading and handlers)
@@ -119,6 +133,9 @@ public:
     std::vector<std::string> &path,
     std::set<HandlerInfo> &out_handlers);
   void Update();
+
+  // Catches and logs all exceptions.
+  void CallHandler(UpdateHandler handler, Version version);
 };
 
 typedef std::shared_ptr<Config> ConfigPtr;

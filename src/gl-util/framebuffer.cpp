@@ -8,18 +8,20 @@ Framebuffer::Framebuffer(std::initializer_list<Texture2D*> textures) {
   glGenFramebuffers(1, &fbo_);CHECK_GL_ERROR();
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_);CHECK_GL_ERROR();
 
-  {
-    int i = 0;
-    for (Texture2D *texture: textures) {
-      glFramebufferTexture2D(
-        GL_DRAW_FRAMEBUFFER,
-        GL_COLOR_ATTACHMENT0 + i,
-        GL_TEXTURE_2D,
-        texture->name(),
-        0);CHECK_GL_ERROR();
-      ++i;
-    }
+  std::vector<GLenum> bufs;
+  int i = 0;
+  for (Texture2D *texture: textures) {
+    glFramebufferTexture2D(
+      GL_DRAW_FRAMEBUFFER,
+      GL_COLOR_ATTACHMENT0 + i,
+      GL_TEXTURE_2D,
+      texture->name(),
+      0);CHECK_GL_ERROR();
+    bufs.push_back(GL_COLOR_ATTACHMENT0 + i);
+    ++i;
   }
+
+  glDrawBuffers(bufs.size(), &bufs[0]);CHECK_GL_ERROR();
 
   GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);CHECK_GL_ERROR();
 

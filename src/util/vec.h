@@ -6,6 +6,14 @@
 namespace fract {
 
 template<typename ftype>
+struct tvec2 {
+  ftype x, y;
+
+  tvec2() {}
+  tvec2(ftype x, ftype y): x(x), y(y) {}
+};
+
+template<typename ftype>
 struct tvec3 {
   ftype x, y, z;
 
@@ -84,7 +92,19 @@ struct tvec3 {
   }
 };
 
+template<typename ftype>
+struct tvec4 {
+  ftype x, y, z, w;
+
+  tvec4() {}
+  tvec4(ftype x, ftype y, ftype z, ftype w): x(x), y(y), z(z), w(w) {}
+};
+
+typedef tvec2<float> fvec2;
+typedef tvec2<double> dvec2;
 typedef tvec3<float> fvec3;
 typedef tvec3<double> dvec3;
+typedef tvec4<float> fvec4;
+typedef tvec4<double> dvec4;
 
 }

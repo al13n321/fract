@@ -19,7 +19,7 @@ double initial_mousey;
 double prev_mousex;
 double prev_mousey;
 
-float movement_speed = 0.5; // units per pixel at scale 1
+float movement_speed = 0.5; // units per second at scale 1
 float looking_speed = 0.4; // degrees per pixel
 double scaling_speed = 1.1; // coefficient per scroll wheel unit
 
@@ -28,6 +28,8 @@ const int fps_update_period_frames = 10;
 const double fps_update_period_seconds = .5;
 int cur_frame_number;
 int last_fps_update_frame;
+
+ConfigPtr config;
 
 Camera camera;
 
@@ -46,8 +48,11 @@ static void KeyCallback(
   GLFWwindow* w, int key, int scancode, int action, int mods
 ) {
   if (action == GLFW_PRESS) {
-    if (key == GLFW_KEY_ESCAPE)
+    if (key == GLFW_KEY_ESCAPE) {
       window->SetShouldClose();
+    } else if (key == GLFW_KEY_C) {
+      camera.FromJson(config->Current().TryGet({"camera"}));
+    }
   }
 }
 
@@ -117,7 +122,6 @@ static void UpdateFPS() {
 int main(int argc, char **argv) {
   try {
     srand(time(nullptr));
-    freopen("log.txt", "w", stderr);
 
     std::string config_path;
     if (argc == 1)
@@ -128,18 +132,25 @@ int main(int argc, char **argv) {
       throw CommandLineArgumentsException(
         "0 or 1 command line arguments expected");
 
-    ConfigPtr config = std::make_shared<Config>(config_path);
+    config = std::make_shared<Config>(config_path);
 
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
     window.reset(new glfw::Window(winwid, winhei, "upchk"));
     window->MakeCurrent();
+    window->SwapInterval(1);
     window->GetFramebufferSize(&winwid, &winhei);
+    window->SetPosition(0, 0);
 
     GL::LogInfo();
 
     camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
     camera.set_position(fvec3(0, 0, 10));
+
+    auto camera_subscription =
+      config->Subscribe({{"camera"}}, [&](Config::Version conf) {
+        camera.FromJson(conf.TryGet({"camera"}));
+      }, Config::SYNC);
 
     raytracer.reset(new RaytracingEngine(imgwid, imghei, config));
     renderer.reset(new Renderer(config));
@@ -154,6 +165,8 @@ int main(int argc, char **argv) {
     while (!window->ShouldClose()) {
       double frame_time = frame_stopwatch.Restart();
       ++cur_frame_number;
+
+      config->PollUpdates();
 
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
