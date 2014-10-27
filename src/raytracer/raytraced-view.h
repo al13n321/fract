@@ -24,9 +24,9 @@ struct RaytracedView {
 
   RaytracedView(int width, int height):
     width(width), height(height),
-    main_texture(width, height, GL_RGBA32F, GL_LINEAR),
-    normal_texture(width, height, GL_RGBA32F, GL_LINEAR),
-    color_texture(width, height, GL_RGBA32F, GL_LINEAR),
+    main_texture(width, height, GL_RGBA32F),
+    normal_texture(width, height, GL_RGBA32F),
+    color_texture(width, height, GL_RGBA32F),
     framebuffer({&main_texture, &normal_texture, &color_texture}) {}
 };
 

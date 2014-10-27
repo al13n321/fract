@@ -10,8 +10,8 @@ using namespace fract;
 
 int winhei = 512;
 int winwid = 512;
-const int imgwid = 256;
-const int imghei = 256;
+const int imgwid = 512;
+const int imghei = 512;
 
 bool mouse_pressed;
 double initial_mousex;

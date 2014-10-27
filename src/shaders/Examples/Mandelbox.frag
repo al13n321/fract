@@ -12,6 +12,8 @@ vec4 scale = vec4(Scale, Scale, Scale, abs(Scale)) / MinRad2;
 float absScalem1 = abs(Scale - 1.0);
 float absScaleRaisedTo1mIters = pow(abs(Scale), float(1-Iterations));
 
+uniform float NormalDelta = 0.5;
+
 float DE(vec4 pos) {
   vec4 p = vec4(pos.xyz,1), p0 = p;  // p.w is the distance estimate
 
@@ -27,6 +29,10 @@ float DE(vec4 pos) {
 }
 
 void Surface(vec4 p, inout RaytracerOutput res) {
-  res.normal = normalize(p.xyz);
-  
+  vec2 d = vec2(0, max(NormalDelta * p.w, 1e-6));
+  res.normal = normalize(vec3(
+    DE(p + d.yxxx) - DE(p - d.yxxx),
+    DE(p + d.xyxx) - DE(p - d.xyxx),
+    DE(p + d.xxyx) - DE(p - d.xxyx)));
+  res.color = p;
 }

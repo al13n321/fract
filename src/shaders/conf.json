@@ -3,7 +3,7 @@
   // (btw if you're wondering, C-style comments is a non-standard JSON
   //  extension by libjsoncpp)
   "root_dir": "",
-  "raytracer": "Examples/Sphere.frag",
+  "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
   // The app should be able to save current view as a camera, so it can be pasted here later to restore view

@@ -5,8 +5,6 @@ uniform vec2 Resolution;
 uniform vec2 ViewportOrigin;
 uniform vec2 ViewportSize;
 
-uniform float EpsilonMultiplier = 1;
-
 in vec2 ScreenPosition;
 
 layout (location = 0) out vec4 OutMain;
@@ -28,7 +26,7 @@ void main() {
     pix + 1.0 / Resolution, 0.0f, 1.0f);
   a.xyz /= a.w;
   b.xyz /= b.w;
-  dir.w = distance(a.xyz, b.xyz) / length(dir.xyz) * EpsilonMultiplier;
+  dir.w = distance(a.xyz, b.xyz) / length(dir.xyz);
   dir.xyz = normalize(dir.xyz);
 
   RaytracerOutput res = TraceRay(vec4(CameraPos, 0.0), dir, CameraScale);

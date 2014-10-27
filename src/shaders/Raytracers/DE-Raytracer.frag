@@ -1,6 +1,9 @@
 #include <Common/Raytracer-Api.frag>
 
 uniform int RaySteps = 100;
+uniform float ExtrusionCoef = 0.2;
+uniform float SurfaceBackStep = 0.2;
+uniform float FudgeFactor = 1;
 float BoundingSphere = 100; // May override from other file.
 
 // These should be provided in other file.
@@ -38,9 +41,13 @@ RaytracerOutput TraceRay(vec4 origin, vec4 direction, float scale) {
       return res;
     }
 
-    float de = DE(position) - position.w;
-    if (abs(de) <= position.w * .5f) // .5f is arbitrary.
+    float de = DE(position) * FudgeFactor;
+    float modified_eps = position.w * ExtrusionCoef;
+    if (de <= modified_eps) {
+      res.dist += de;
+      position += direction * de;
       break;
+    }
 
     res.dist += de;
     position += direction * de;
@@ -51,7 +58,7 @@ RaytracerOutput TraceRay(vec4 origin, vec4 direction, float scale) {
   res.converged = i < RaySteps ? 1 : 0;
   res.iterations = i;
 
-  Surface(position, res);
+  Surface(position - direction * (position.w * SurfaceBackStep), res);
 
   return res;
 }
