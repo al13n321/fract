@@ -9,13 +9,11 @@ Important features:
 - Loading values for uniforms from separate file
 
 Plan:
-- Check that interfaces make sense
-- Loading shaders from configurable files at runtime
+- Check if double precision looks much better
 - Mandelbulb
 - Saving everything to file (shaders, camera)
 - Preprocessor
 - Normals, lighting, AO
-- Mandelbox
 - Lookup cube, precalcing synchronously, manually
 - Loading uniforms from file at runtime
 - Lookup cube rendering in background thread,
@@ -37,12 +35,9 @@ Wishlist, to keep in mind:
 	+ Saving precalc checkpoints for faster re-rendering?
 
 Notes:
-- Can't compile shaders in background thread because OpenGL is not thread-safe.
-- Make cubemap resolution independent of screen resolution
 - Limit quality degradation when using cubemap:
   use pixel size when tracing through cubemap;
   ignore cubemap texels that are too big on screen, including side hits
 - Can use multiple OpenGL contexts for background rendering.
-- Don't fuse raytracing with rendering! upscaling might work well.
 - Cubemap face resolution is not image resolution; it depends on image FOV.
   Also, better make it even more for better quality
