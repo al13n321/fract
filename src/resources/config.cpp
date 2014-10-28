@@ -50,6 +50,17 @@ std::string Config::Version::GetString(const std::vector<std::string> &path) {
       "value for key " + ToString(path) + " is not a string");
   return value.asString();
 }
+std::string Config::Version::GetString(
+    const std::vector<std::string> &path,
+    const std::string &default_value) {
+  const Json::Value &value = Get(path);
+  if (value.isNull())
+    return default_value;
+  if (!value.isString())
+    throw ConfigValueFormatException(
+      "value for key " + ToString(path) + " is not a string");
+  return value.asString();
+}
 
 Config::Version Config::Current() {
   return Version(std::atomic_load(&root_));

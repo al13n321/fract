@@ -1,1 +1,16 @@
-The app won't have a GUI. Instead it will monitor changes to shader and config files and apply them on the fly. Kind of like Sublime Text does with settings. It will preprocess shaders to allow using them in a modular manner, a lot like Fragmentarium but with less freedom (to support lookup cube and Oculus Rift transparently). A separate GUI is possible that will just work with these files.
+Directory with editable code and "configuration" files.
+Code structure is largely inspired by Fragmentarium.
+There's no GUI, but there's instant runtime reloading and recompilation of all
+relevant shader and config files as soon as they change.
+
+conf.json - The entry point for shader and parameter lookup.
+						The only required fields are "raytracer" and "renderer" - 
+						relative paths to shaders.
+Predefined - Not supposed to be modified.
+Common - Structures and entry points for raytracer and renderer.
+Raytracers - Generic raytracer/raymarcher implementations that can work with
+             arbitrary distance estimate functions.
+Renderers - Renderer implementations. Take raytracer output and produce
+            pixel color. Lighting, AO, coloring etc. belongs here.
+Examples - Some working DE's.
+<Your cool stuff> - Whatever awesomeness you can come up with!

@@ -34,7 +34,7 @@ void ShaderProvider::Update() {
   try {
     auto conf = config_->Current();
     std::string root_dir =
-      PathConcat(conf.GetString({"_dir"}), conf.GetString({"root_dir"}));
+      PathConcat(conf.GetString({"_dir"}), conf.GetString({"root_dir"}, ""));
     std::string frag_shader_path = conf.GetString(config_path_);
     std::cerr << "loading " << frag_shader_path << std::endl;
     std::string vert = ReadFile(PathConcat(root_dir, vert_shader_path_));

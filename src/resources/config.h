@@ -40,6 +40,11 @@ class Config {
 
     // Exception if doesn't exist or is not a string.
     std::string GetString(const std::vector<std::string> &path);
+
+    // Exception if exists but not a string.
+    std::string GetString(
+      const std::vector<std::string> &path,
+      const std::string &default_value);
    private:
     std::shared_ptr<const Json::Value> root_;
   };

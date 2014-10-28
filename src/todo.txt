@@ -9,11 +9,15 @@ Important features:
 - Loading values for uniforms from separate file
 
 Plan:
-- Check if double precision looks much better
 - Mandelbulb
+- Good lighting
 - Saving everything to file (shaders, camera)
+	Should be able to save current view as a camera, so it can be pasted here later to restore view.
+  Or save the entire state, with camera inlined.
+  Or get everything necessary to reproduce current view (code, configs) in a separate directory,
+    i.e. export current state as an isolated editable project.
+- Loading uniforms and additional preprocessor definitions from config
 - Preprocessor
-- Normals, lighting, AO
 - Lookup cube, precalcing synchronously, manually
 - Loading uniforms from file at runtime
 - Lookup cube rendering in background thread,
