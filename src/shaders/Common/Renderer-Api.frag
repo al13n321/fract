@@ -1,6 +1,6 @@
 // To create a renderer include this file and implement GetColor function.
 
-#include <Common/Structures.frag>
+#include <Common/Common.frag>
 
 vec4 GetColor(RaytracerOutput ray);
 
@@ -14,9 +14,9 @@ layout (location = 0) out vec4 OutColor;
 
 void main() {
 	RaytracerOutput ray;
-  
+
   vec4 tex_main = texture(MainTexture, ScreenPosition);
-	
+
 	ray.hit = mod(tex_main.x, 2.0);
   ray.converged = mod(floor(tex_main.x * 0.5), 2.0);
   ray.error = mod(floor(tex_main.x * 0.25), 2.0);

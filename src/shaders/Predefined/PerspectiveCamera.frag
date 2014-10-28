@@ -1,5 +1,7 @@
-uniform vec3 CameraPos;
-uniform float CameraScale;
+#include <Common/Common.frag>
+
+uniform tvec3 CameraPos;
+uniform ftype CameraScale;
 uniform mat4 CameraRotProjInv;
 uniform vec2 Resolution;
 uniform vec2 ViewportOrigin;
@@ -29,7 +31,7 @@ void main() {
   dir.w = distance(a.xyz, b.xyz) / length(dir.xyz);
   dir.xyz = normalize(dir.xyz);
 
-  RaytracerOutput res = TraceRay(vec4(CameraPos, 0.0), dir, CameraScale);
+  RaytracerOutput res = TraceRay(tvec4(CameraPos, 0.0), dir, CameraScale);
   
   OutMain = vec4(res.error * 4 + res.converged * 2 + res.hit,
     res.iterations, res.dist, 0.0);
