@@ -3,14 +3,14 @@
 
 // Modified code from Fragmentarium examples.
 
-uniform int Iterations = 20;
+uniform int Iterations = 10;
 uniform mat3 Rotation = mat3(1,0,0,0,1,0,0,0,1);
 uniform float MinRad2 = 0.25;
 uniform float Scale = 3.0;
 
 vec4 scale = vec4(Scale, Scale, Scale, abs(Scale)) / MinRad2;
 float absScalem1 = abs(Scale - 1.0);
-ftype absScaleRaisedTo1mIters = pow(ftype(abs(Scale)), ftype(1-Iterations));
+ftype absScaleRaisedTo1mIters = pow(abs(Scale), 1-Iterations);
 
 uniform float NormalDelta = 0.5;
 

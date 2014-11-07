@@ -166,7 +166,7 @@ void Shader::SetScalar(const std::string &name, double value) {
   auto *uni = GetUniformLocation(name, GL_FLOAT, GL_DOUBLE);
   if (uni) {
     if (uni->type == GL_FLOAT) {
-      glUniform1f(uni->location, value); CHECK_GL_ERROR();
+      glUniform1f(uni->location, static_cast<float>(value)); CHECK_GL_ERROR();
     } else {
       glUniform1d(uni->location, value); CHECK_GL_ERROR();
     }
@@ -177,7 +177,7 @@ void Shader::SetVec2(const std::string &name, dvec2 value) {
   auto *uni = GetUniformLocation(name, GL_FLOAT_VEC2, GL_DOUBLE_VEC2);
   if (uni) {
     if (uni->type == GL_FLOAT_VEC2) {
-      glUniform2f(uni->location, value.x, value.y); CHECK_GL_ERROR();
+      glUniform2f(uni->location, (float)value.x, (float)value.y); CHECK_GL_ERROR();
     } else {
       glUniform2d(uni->location, value.x, value.y); CHECK_GL_ERROR();
     }
@@ -188,7 +188,7 @@ void Shader::SetVec3(const std::string &name, dvec3 value) {
   auto *uni = GetUniformLocation(name, GL_FLOAT_VEC3, GL_DOUBLE_VEC3);
   if (uni) {
     if (uni->type == GL_FLOAT_VEC3) {
-      glUniform3f(uni->location, value.x, value.y, value.z); CHECK_GL_ERROR();
+      glUniform3f(uni->location, (float)value.x, (float)value.y, (float)value.z); CHECK_GL_ERROR();
     } else {
       glUniform3d(uni->location, value.x, value.y, value.z); CHECK_GL_ERROR();
     }
@@ -199,7 +199,7 @@ void Shader::SetVec4(const std::string &name, dvec4 value) {
   auto *uni = GetUniformLocation(name, GL_FLOAT_VEC4, GL_DOUBLE_VEC4);
   if (uni) {
     if (uni->type == GL_FLOAT_VEC4) {
-      glUniform4f(uni->location, value.x, value.y, value.z, value.w);
+      glUniform4f(uni->location, (float)value.x, (float)value.y, (float)value.z, (float)value.w);
         CHECK_GL_ERROR();
     } else {
       glUniform4d(uni->location, value.x, value.y, value.z, value.w);

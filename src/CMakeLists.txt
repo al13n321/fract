@@ -1,16 +1,39 @@
 cmake_minimum_required (VERSION 3.0.0)
 project (fract)
 
-SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -O3" )
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+	SET(MSVC 1)
+ENDIF ()
 
+SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}" )
 include_directories(
 	./
-	/opt/local/include/
 )
+	
+IF(MSVC)
+	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W3 /WX /O2 /MT" )
 
-link_directories(
-	/opt/local/lib/
-)
+	include_directories(
+		./lib/glfw-3.0.4.bin.WIN64/include/
+		./lib/
+		./lib/jsoncpp/include/
+	)
+
+	link_directories(
+		./lib/glfw-3.0.4.bin.WIN64/lib-msvc120/
+		./lib/jsoncpp/lib/
+	)
+ELSE ()
+	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -O3" )
+
+	include_directories(
+		/opt/local/include/
+	)
+
+	link_directories(
+		/opt/local/lib/
+	)
+ENDIF ()
 
 SET(EXTRA_LIBS)
 
@@ -58,9 +81,16 @@ add_executable(fract
 	util/string-util.cpp
 )
 
-target_link_libraries(fract
-	glfw
-	glew
-	jsoncpp.a
-	${EXTRA_LIBS}
-)
+if(MSVC)
+	target_link_libraries(fract
+		glfw3
+		lib_json
+		${EXTRA_LIBS}
+	)
+ELSE ()
+	target_link_libraries(fract
+		glfw
+		jsoncpp
+		${EXTRA_LIBS}
+	)
+ENDIF ()

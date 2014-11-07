@@ -2,6 +2,7 @@
 
 #include <string>
 #include <set>
+#include <mutex>
 #include <json/json.h>
 #include "util/file-watcher.h"
 

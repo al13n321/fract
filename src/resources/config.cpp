@@ -1,6 +1,7 @@
 #include "config.h"
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "util/exceptions.h"
 #include "util/string-util.h"
 

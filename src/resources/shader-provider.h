@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <atomic>
 #include "gl-util/shader.h"
 #include "shader-preprocessor.h"
 #include "config.h"

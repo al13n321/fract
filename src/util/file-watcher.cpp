@@ -4,8 +4,7 @@
 #include "util/exceptions.h"
 
 #ifdef WIN32
-#error FileWatcher is not implemented for windows.\
-       Go ahead and do it, it should be easy!
+// ...
 #else
 #include <sys/stat.h>
 #endif
@@ -17,7 +16,18 @@
 namespace fract {
 
 #ifdef WIN32
-#error add implementation here
+struct FileWatcher::Impl {
+  Impl(
+    const std::vector<std::string> &paths,
+    UpdateHandler handler)
+  {
+    // ...
+  }
+
+  ~Impl() {
+    // ...
+  }
+};
 
 #elif __APPLE__
 

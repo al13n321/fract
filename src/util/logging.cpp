@@ -3,7 +3,9 @@
 #include "exceptions.h"
 
 #ifdef WIN32
-#error please implement directory creation on windows in logging.cpp
+
+#include <Windows.h>
+
 #else
 
 #include <sys/types.h>
@@ -17,7 +19,8 @@ namespace fract {
 
 std::string DumpWithLineNumbers(const std::string &content) {
 #ifdef WIN32
-#error put it here
+  if (!CreateDirectory("temp", nullptr) && GetLastError() != ERROR_ALREADY_EXISTS)
+    throw IOException("can't create directory temp/");
 #else
   struct stat st {};
   if (stat("temp", &st) == -1)

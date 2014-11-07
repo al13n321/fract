@@ -3,6 +3,7 @@
 #endif
 
 #define GLFW_INCLUDE_GLCOREARB
+#define GL_GLEXT_PROTOTYPES
 #include <GLFW/glfw3.h>
 
 namespace fract { namespace GL {

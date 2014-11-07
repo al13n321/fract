@@ -41,7 +41,7 @@ class Window {
   }
 
   bool ShouldClose() {
-    return glfwWindowShouldClose(window);
+    return !!glfwWindowShouldClose(window);
   }
 
   void SetShouldClose() {

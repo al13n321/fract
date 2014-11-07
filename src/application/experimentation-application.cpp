@@ -19,8 +19,8 @@ double initial_mousey;
 double prev_mousex;
 double prev_mousey;
 
-float movement_speed = 0.5; // units per second at scale 1
-float looking_speed = 0.4; // degrees per pixel
+float movement_speed = 0.5f; // units per second at scale 1
+float looking_speed = 0.4f; // degrees per pixel
 double scaling_speed = 1.1; // coefficient per scroll wheel unit
 
 Stopwatch fps_stopwatch;
@@ -85,8 +85,8 @@ static void CursorPosCallback(GLFWwindow *w, double x, double y) {
     double dx = x - prev_mousex;
     double dy = y - prev_mousey;
     if (prev_mousex != -1 && (dx != 0 || dy != 0)) {
-      camera.set_yaw(camera.yaw() + dx * looking_speed);
-      camera.set_pitch(camera.pitch() - dy * looking_speed);
+      camera.set_yaw(camera.yaw() + static_cast<float>(dx * looking_speed));
+      camera.set_pitch(camera.pitch() - static_cast<float>(dy * looking_speed));
     }
     prev_mousex = x;
     prev_mousey = y;
@@ -105,7 +105,7 @@ static void ProcessKeyboardInput(double frame_time) {
     movement.z += 1;
 
   if (!movement.IsZero()) {
-    camera.MoveRelative(movement * frame_time * movement_speed);
+    camera.MoveRelative(movement * static_cast<float>(frame_time) * movement_speed);
   }
 }
 
@@ -121,7 +121,7 @@ static void UpdateFPS() {
 
 int main(int argc, char **argv) {
   try {
-    srand(time(nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
 
     std::string config_path;
     if (argc == 1)

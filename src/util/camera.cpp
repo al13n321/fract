@@ -7,7 +7,7 @@ Camera::~Camera() {}
 
 void Camera::MoveRelative(fvec3 delta) {
 	fmat4 rot = RotationMatrix();
-	position_ += rot.Transform(delta) / scale_;
+	position_ += dvec3(rot.Transform(delta)) / scale_;
 }
 
 fmat4 Camera::RotationMatrix() const {
@@ -36,10 +36,10 @@ void Camera::FromJson(const Json::Value &value) {
     double new_pitch = JsonUtil::doubleValue(value["pitch"]);
     double new_scale = JsonUtil::doubleValue(value["scale"]);
 
-    fov_ = new_fov;
+    fov_ = (float)new_fov;
     position_ = new_pos;
-    yaw_ = new_yaw;
-    pitch_ = new_pitch;
+    yaw_ = (float)new_yaw;
+    pitch_ = (float)new_pitch;
     scale_ = new_scale;
   } catch (...) {
     LogCurrentException();
