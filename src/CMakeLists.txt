@@ -8,20 +8,20 @@ ENDIF ()
 SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}" )
 include_directories(
 	./
+	./lib/gl3w/include/
+	./lib/jsoncpp/include/
 )
 	
 IF(MSVC)
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W3 /WX /O2 /MT" )
+	SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT" )
 
 	include_directories(
 		./lib/glfw-3.0.4.bin.WIN64/include/
-		./lib/
-		./lib/jsoncpp/include/
 	)
 
 	link_directories(
 		./lib/glfw-3.0.4.bin.WIN64/lib-msvc120/
-		./lib/jsoncpp/lib/
 	)
 ELSE ()
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -O3" )
@@ -79,18 +79,19 @@ add_executable(fract
 	util/mat.cpp
 	util/stopwatch.cpp
 	util/string-util.cpp
+	lib/jsoncpp/src/jsoncpp.cpp
+	lib/gl3w/src/gl3w.c
 )
 
 if(MSVC)
 	target_link_libraries(fract
 		glfw3
-		lib_json
+		OpenGL32
 		${EXTRA_LIBS}
 	)
 ELSE ()
 	target_link_libraries(fract
 		glfw
-		jsoncpp
 		${EXTRA_LIBS}
 	)
 ENDIF ()

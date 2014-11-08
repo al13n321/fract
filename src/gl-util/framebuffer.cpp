@@ -21,7 +21,7 @@ Framebuffer::Framebuffer(std::initializer_list<Texture2D*> textures) {
     ++i;
   }
 
-  glDrawBuffers(bufs.size(), &bufs[0]);CHECK_GL_ERROR();
+  glDrawBuffers(static_cast<int>(bufs.size()), &bufs[0]);CHECK_GL_ERROR();
 
   GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);CHECK_GL_ERROR();
 

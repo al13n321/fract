@@ -1,0 +1,1 @@
+This is an amalgamated version of jsoncpp (see README.md for what it means). Also slightly modified to avoid MSVC warnings.
