@@ -54,7 +54,7 @@ std::string Config::Version::GetString(const std::vector<std::string> &path) {
 std::string Config::Version::GetString(
     const std::vector<std::string> &path,
     const std::string &default_value) {
-  const Json::Value &value = Get(path);
+  const Json::Value &value = TryGet(path);
   if (value.isNull())
     return default_value;
   if (!value.isString())

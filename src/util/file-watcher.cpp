@@ -1,10 +1,13 @@
 #include "file-watcher.h"
 #include <thread>
 #include <iostream>
+#include <map>
+#include <mutex>
+#include <condition_variable>
 #include "util/exceptions.h"
 
 #ifdef WIN32
-// ...
+#include <windows.h>
 #else
 #include <sys/stat.h>
 #endif
@@ -15,21 +18,7 @@
 
 namespace fract {
 
-#ifdef WIN32
-struct FileWatcher::Impl {
-  Impl(
-    const std::vector<std::string> &paths,
-    UpdateHandler handler)
-  {
-    // ...
-  }
-
-  ~Impl() {
-    // ...
-  }
-};
-
-#elif __APPLE__
+#ifdef __APPLE__
 
 // Mac OS implementation with File System Events. Might send duplicate updates.
 // Shouldn't miss updates. Though I'm sure I observed it consistently missing
@@ -198,11 +187,45 @@ struct FileWatcher::Impl {
   }
 };
 
-#else // neither WIN32 nor __APPLE__
+#else
+// not __APPLE__
 
-// A fallback unix implementation that just checks timestamp each second.
-// It probably doesn't work - I didn't even try to compile it.
-// Note that it may miss updates if they hapen within timestamp resolution unit.
+// Just use polling. May miss updates if they hapen within timestamp resolution unit.
+
+#ifdef WIN32
+
+static uint64_t GetModificationTime(const std::string &path) {
+  HANDLE handle = CreateFile(
+    path.c_str(),
+    GENERIC_READ,
+    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+    NULL,
+    OPEN_EXISTING,
+    FILE_ATTRIBUTE_NORMAL,
+    NULL);
+  if (handle == INVALID_HANDLE_VALUE)
+    return 0;
+
+  FILETIME t{ 0, 0 };
+  GetFileTime(handle, NULL, NULL, &t);
+
+  CloseHandle(handle);
+
+  ULARGE_INTEGER u;
+  u.HighPart = t.dwHighDateTime;
+  u.LowPart = t.dwLowDateTime;
+  return u.QuadPart;
+}
+
+#else
+
+static uint64_t GetModificationTime(const std::string &path) {
+  struct stat s {};
+  stat(path.c_str(), &s);
+  return s.st_mtimespec.tv_sec * 1000_000_000ull + s.st_mtimespec.tv_nsec;
+}
+
+#endif
 
 struct FileWatcher::Impl {
   UpdateHandler handler_;
@@ -210,21 +233,15 @@ struct FileWatcher::Impl {
   std::map<std::string, uint64_t> modification_times_;
   std::thread thread_;
   
-  bool shutdown_flag_;
+  bool shutdown_flag_{false};
   std::mutex shutdown_mutex_;
   std::condition_variable shutdown_cv_;
-
-  static uint64_t GetModificationTime(const std::string &path) {
-    struct stat s {};
-    stat(path.c_str(), &s);
-    return s.st_mtimespec.tv_sec * 1000_000_000ull + s.st_mtimespec.tv_nsec;
-  }
 
   Impl(
     const std::vector<std::string> &paths,
     UpdateHandler handler): handler_(handler), paths_(paths)
   {
-    thread_ = std::thread(std::bind(FileWatcher::Impl::ThreadFunc, this));
+    thread_ = std::thread(std::bind(&FileWatcher::Impl::ThreadFunc, this));
   }
 
   ~Impl() {
@@ -236,6 +253,15 @@ struct FileWatcher::Impl {
     thread_.join();
   }
 
+  void CallHandlerNoThrow() {
+    try {
+      handler_();
+    }
+    catch (...) {
+      LogCurrentException();
+    }
+  }
+
   void UpdateAll() {
     bool notify = true;
     for (const std::string &path: paths_) {
@@ -245,7 +271,7 @@ struct FileWatcher::Impl {
         modification_times_[path] = t;
         if (notify) {
           notify = false;
-          hander_();
+          CallHandlerNoThrow();
         }
       }
     }
@@ -253,14 +279,14 @@ struct FileWatcher::Impl {
 
   void ThreadFunc() {
     while (true) {
+      UpdateAll();
+
       {
         std::unique_lock<std::mutex> lk(shutdown_mutex_);
-        shutdown_cv_.wait_for(lk, std::chrono::seconds(1));
+        shutdown_cv_.wait_for(lk, std::chrono::milliseconds(100));
         if (shutdown_flag_)
           break;
       }
-
-      UpdateAll();
     }
   }
 };

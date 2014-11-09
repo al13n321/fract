@@ -121,6 +121,7 @@ static void UpdateFPS() {
 
 int main(int argc, char **argv) {
   try {
+    freopen("log.txt", "w", stderr);
     srand(static_cast<unsigned int>(time(nullptr)));
 
     std::string config_path;
@@ -137,10 +138,14 @@ int main(int argc, char **argv) {
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
     window.reset(new glfw::Window(winwid, winhei, "upchk"));
+
     window->MakeCurrent();
     window->SwapInterval(1);
     window->GetFramebufferSize(&winwid, &winhei);
-    window->SetPosition(0, 0);
+    window->SetPosition(20, 40);
+
+    if (gl3wInit())
+      throw GLException("failed to initialize gl3w");
 
     GL::LogInfo();
 
@@ -149,7 +154,9 @@ int main(int argc, char **argv) {
 
     auto camera_subscription =
       config->Subscribe({{"camera"}}, [&](Config::Version conf) {
-        camera.FromJson(conf.TryGet({"camera"}));
+        auto json = conf.TryGet({ "camera" });
+        if (!json.isNull())
+          camera.FromJson(json);
       }, Config::SYNC);
 
     raytracer.reset(new RaytracingEngine(imgwid, imghei, config));

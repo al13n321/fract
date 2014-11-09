@@ -1,7 +1,3 @@
-#ifdef __APPLE__
-#include <OpenGL/OpenGL.h>
-#endif
-
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
