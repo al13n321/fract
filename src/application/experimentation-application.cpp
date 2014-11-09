@@ -29,14 +29,14 @@ const double fps_update_period_seconds = .5;
 int cur_frame_number;
 int last_fps_update_frame;
 
-ConfigPtr config;
-
 std::unique_ptr<glfw::Initializer> glfw_init;
 
 // Window must be destroyed after everything that can make OpenGL calls.
 std::unique_ptr<glfw::Window> window;
 
 Camera camera;
+
+ConfigPtr config;
 
 std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
@@ -197,6 +197,7 @@ int main(int argc, char **argv) {
   // Workaround for MSVC bug: https://connect.microsoft.com/VisualStudio/feedback/details/747145
   renderer.reset();
   raytracer.reset();
+  config.reset();
 
   return 0;
 }
