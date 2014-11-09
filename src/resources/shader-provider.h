@@ -33,11 +33,12 @@ class ShaderProvider {
 
   std::shared_ptr<GL::Shader> shader_;
 
-  Config::SubscriptionPtr config_subscription_;
-  std::unique_ptr<FileWatcher> file_watcher_;
   std::set<std::string> cur_deps_;
 
   std::atomic<bool> need_update_{};
+
+  Config::SubscriptionPtr config_subscription_;
+  std::unique_ptr<FileWatcher> file_watcher_;
 
   void Update();
 };

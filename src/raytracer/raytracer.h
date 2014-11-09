@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "gl-util/quad-renderer.h"
 #include "resources/shader-provider.h"
 #include "ray-grid.h"
 #include "raytraced-view.h"
@@ -19,6 +20,7 @@ class Raytracer {
  private:
   ConfigPtr config_;
   ShaderProvider shader_provider_;
+  GL::QuadRenderer quad_renderer_;
 };
 
 }

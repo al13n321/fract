@@ -31,14 +31,15 @@ int last_fps_update_frame;
 
 ConfigPtr config;
 
+std::unique_ptr<glfw::Initializer> glfw_init;
+
+// Window must be destroyed after everything that can make OpenGL calls.
+std::unique_ptr<glfw::Window> window;
+
 Camera camera;
 
 std::unique_ptr<RaytracingEngine> raytracer;
 std::unique_ptr<Renderer> renderer;
-
-// declaration order matters
-std::unique_ptr<glfw::Initializer> glfw_init;
-std::unique_ptr<glfw::Window> window;
 
 static void LogGLFWError(int code, const char *message) {
   std::cerr << "glfw error " << code << ": " << message << std::endl;
@@ -192,4 +193,10 @@ int main(int argc, char **argv) {
     std::cerr << "exception: " << e.what() << std::endl;
     return 2;
   }
+
+  // Workaround for MSVC bug: https://connect.microsoft.com/VisualStudio/feedback/details/747145
+  renderer.reset();
+  raytracer.reset();
+
+  return 0;
 }

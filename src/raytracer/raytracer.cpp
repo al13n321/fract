@@ -1,5 +1,4 @@
 #include "raytracer.h"
-#include "gl-util/quad-renderer.h"
 #include <cassert>
 
 namespace fract {
@@ -37,7 +36,7 @@ void Raytracer::TraceGrid(const RayGrid &grid, RaytracedView &target) {
     1. * grid.size_x / grid.resolution_width,
     1. * grid.size_y / grid.resolution_height));
 
-  GL::QuadRenderer::defaultInstance()->Render();
+  quad_renderer_.Render();
   GL::Framebuffer::Unbind();
 }
 

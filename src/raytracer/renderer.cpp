@@ -1,6 +1,5 @@
 #include "renderer.h"
 #include "util/exceptions.h"
-#include "gl-util/quad-renderer.h"
 
 namespace fract {
 
@@ -22,7 +21,7 @@ void Renderer::Render(
   shader->SetTexture("MainTexture", raytraced.main_texture, 0);
   shader->SetTexture("NormalTexture", raytraced.normal_texture, 1);
   shader->SetTexture("ColorTexture", raytraced.color_texture, 2);
-  GL::QuadRenderer::defaultInstance()->Render();
+  quad_renderer_.Render();
 }
 
 }
