@@ -1,20 +1,39 @@
 cmake_minimum_required (VERSION 3.0.0)
+cmake_policy(SET CMP0054 NEW)
 project (fract)
 
-IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-	SET(MSVC 1)
+# path to OculusVR SDK; comment to disable VR support
+SET (OVR_SDK "C:\\Program Files\\OculusSDK\\")
+
+SET (EXTRA_LIBS)
+
+IF (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	SET (MSVC 1)
 ENDIF ()
 
-SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS}" )
+IF (EXISTS OVR_SDK)
+	SET (OVR 1)
+	
+	add_definitions(-DOVR)
+
+	include_directories(
+		${OVR_SDK}/LibOVR/Src/
+	)
+
+	IF (MSVC)
+		SET (EXTRA_LIBS "${EXTRA_LIBS} libovr64")
+	ENDIF ()
+ENDIF ()
+
 include_directories(
 	./
 	./lib/gl3w/include/
 	./lib/jsoncpp/include/
 )
-	
-IF(MSVC)
-	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W3 /WX /O2 /MT /D _CRT_SECURE_NO_WARNINGS" )
-	SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}" )
+
+IF (MSVC)
+	SET (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W3 /WX /O2 /MT /D _CRT_SECURE_NO_WARNINGS")
+	SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 
 	include_directories(
 		./lib/glfw-3.0.4.bin.WIN64/include/
@@ -24,7 +43,7 @@ IF(MSVC)
 		./lib/glfw-3.0.4.bin.WIN64/lib-msvc120/
 	)
 ELSE ()
-	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -O3" )
+	SET (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -O3")
 
 	include_directories(
 		/opt/local/include/
@@ -35,9 +54,7 @@ ELSE ()
 	)
 ENDIF ()
 
-SET(EXTRA_LIBS)
-
-IF(APPLE)
+IF (APPLE)
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
   FIND_LIBRARY(OPENGL_LIBRARY OpenGL)
   FIND_LIBRARY(IOKIT_LIBRARY IOKit)
@@ -50,7 +67,7 @@ IF(APPLE)
                     COREVIDEO_LIBRARY
                     CORESERVICES_LIBRARY)
 
-  SET(EXTRA_LIBS ${EXTRA_LIBS}
+  SET (EXTRA_LIBS ${EXTRA_LIBS}
    	${COCOA_LIBRARY}
    	${OPENGL_LIBRARY}
    	${IOKIT_LIBRARY}
@@ -59,7 +76,8 @@ IF(APPLE)
 ENDIF (APPLE)
 
 add_executable(fract
-	application/experimentation-application.cpp
+	#application/experimentation-application.cpp
+	application/vrtest.cpp
 	gl-util/gl-common.cpp
 	gl-util/framebuffer.cpp
 	gl-util/quad-renderer.cpp
@@ -83,7 +101,7 @@ add_executable(fract
 	lib/gl3w/src/gl3w.c
 )
 
-if(MSVC)
+IF (MSVC)
 	target_link_libraries(fract
 		glfw3
 		OpenGL32

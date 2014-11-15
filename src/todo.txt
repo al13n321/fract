@@ -7,8 +7,18 @@ Critical features:
 
 Important features:
 - Loading values for uniforms from separate file
+- Dynamically changing resolution based on preformance
+- Fast switching between rendering to rift and to window
 
 Plan:
+- Rift
+  - Controller instead of useless RaytracingEngine.
+    Side note: no need to worry about compiling shaders twice since they are
+    only compiled synchronously in Get().
+  - Quaternion-based camera with modes:
+    yaw (rift), yaw+pitch (no rift), space (both)
+    "camera_mode" separate in config to not trigger reloading?
+  - OVRConrtoller.
 - Mandelbulb
 - Good lighting
 - Saving everything to file (shaders, camera)
@@ -22,13 +32,10 @@ Plan:
 - Loading uniforms from file at runtime
 - Lookup cube rendering in background thread,
   automatically triggered by timeouts
-- Windows
-- Riiiiift!
 
 Wishlist, to keep in mind:
 - Progressive enhancement
   + Progressively increasing cubemap resolution
-  + Automaticaly adapting screen resolution for goal FPS?
 - An space-style camera with no up and down
 - Resizable window
 - Changing image resolution on the fly

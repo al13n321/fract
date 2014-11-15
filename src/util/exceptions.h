@@ -29,6 +29,7 @@ EXCEPTION_TYPE(PreprocessorUndefinedTokenException, std::runtime_error);
 EXCEPTION_TYPE(CommandLineArgumentsException, std::runtime_error);
 EXCEPTION_TYPE(AppleException, std::runtime_error);
 EXCEPTION_TYPE(WinapiException, std::runtime_error);
+EXCEPTION_TYPE(OVRException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 
