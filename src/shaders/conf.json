@@ -3,6 +3,9 @@
   "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
+  "resolution": [512, 512], // Size of raytraced image.
+  "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
+
   // Optional.
   // These parameters are only applied when changed.
   // Or when 'C' key is pressed (to reset camera).

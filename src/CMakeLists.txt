@@ -85,15 +85,15 @@ IF (APPLE)
 ENDIF (APPLE)
 
 add_executable(fract
-	#application/experimentation-application.cpp
-	application/vrtest.cpp
-	gl-util/gl-common.cpp
+	application/experimentation-application.cpp
+	#application/vrtest.cpp
+	application/normal-controller.cpp
+  gl-util/gl-common.cpp
 	gl-util/framebuffer.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp
 	gl-util/texture2d.cpp
 	raytracer/raytracer.cpp
-	raytracer/raytracing-engine.cpp
 	raytracer/renderer.cpp
 	resources/config.cpp
 	resources/shader-preprocessor.cpp

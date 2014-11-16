@@ -37,8 +37,14 @@ class Window {
     glfwMakeContextCurrent(window);
   }
 
-  void GetFramebufferSize(int *width, int *height) {
-    glfwGetFramebufferSize(window, width, height);
+  ivec2 GetFramebufferSize() {
+    ivec2 res;
+    glfwGetFramebufferSize(window, &res.x, &res.y);
+    return res;
+  }
+
+  void SetSize(ivec2 size) {
+    glfwSetWindowSize(window, size.x, size.y);
   }
 
   bool ShouldClose() {

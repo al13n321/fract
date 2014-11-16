@@ -141,7 +141,7 @@ void Config::Update() {
   std::vector<std::string> temp_path;
   Diff(*old_root, *new_root, temp_path, handlers);
   for (auto &handler: handlers) {
-    if (handler.sync == SYNC)
+    if (handler.sync != ASYNC)
       pending_handlers_.insert(handler);
     else
       CallHandler(handler.handler, Version(new_root));
@@ -158,7 +158,8 @@ Config::SubscriptionPtr Config::Subscribe(
       subscriptions_.insert(std::make_pair(
         path, HandlerInfo(handler, sync, handler_id_increment_++))));
   }
-  CallHandler(handler, Version(root_));
+  if (sync != SYNC)
+    CallHandler(handler, Version(root_));
   return subscription;
 }
 

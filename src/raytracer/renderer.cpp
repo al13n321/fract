@@ -8,10 +8,9 @@ Renderer::Renderer(ConfigPtr config)
   , shader_provider_(config, "Predefined/pass.vert", {"renderer"}, {}) {}
 
 void Renderer::Render(
-  const RaytracedView &raytraced, int frame_width, int frame_height
-) {
+    const RaytracedView &raytraced, ivec2 frame_size) {
   std::shared_ptr<GL::Shader> shader = shader_provider_.Get();
-  glViewport(0, 0, frame_width, frame_height);
+  glViewport(0, 0, frame_size.x, frame_size.y);
   if (!shader) {
     glClearColor(0.2f,0.8f,0.2f,1.0f);
     glClear(GL_COLOR_BUFFER_BIT);

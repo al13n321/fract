@@ -14,7 +14,7 @@ class Renderer {
   Renderer(ConfigPtr config);
 
   void Render(
-    const RaytracedView &raytraced, int frame_width, int frame_height);
+    const RaytracedView &raytraced, ivec2 frame_size);
  private:
   ConfigPtr config_;
   ShaderProvider shader_provider_;

@@ -1,6 +1,7 @@
 #include "gl-common.h"
 #include <iostream>
 #include <map>
+#include <mutex>
 #include "util/exceptions.h"
 #include "util/string-util.h"
 
@@ -55,6 +56,14 @@ void LogInfo() {
   std::cerr << "GLSL: " << str << std::endl;
 
   std::cerr << std::endl;
+}
+
+void InitGl3wIfNeeded() {
+  static std::once_flag flag;
+  std::call_once(flag, [](){
+    if (gl3wInit())
+      throw GLException("failed to initialize gl3w");
+  });
 }
 
 }}

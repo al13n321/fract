@@ -5,6 +5,7 @@
 #include <mutex>
 #include <json/json.h>
 #include "util/file-watcher.h"
+#include "util/vec.h"
 
 namespace fract {
 
@@ -18,8 +19,17 @@ namespace fract {
 class Config {
  public:
   enum HandlerSyncMode {
-    SYNC,
-    ASYNC,
+    SYNC_NOW, // Called inside PollUpdates() and inside Subscribe().
+              // For cases when you need handler to be called on main thread,
+              // and when initialization is no different from update
+              // (e.g. compiling a shader).
+    SYNC,     // Called inside PollUpdates().
+              // For cases when initialization is different from update
+              // (e.g. creating and resizing window)
+              // Subscribe before initialization to not
+              // risk missing first update.
+    ASYNC,    // Called from background thread and inside Subscribe().
+              // (NOTE: ASYNC_NOT_NOW wouldn't make sense)
   };
 
   // Has the same thread safety as shared_ptr.
@@ -100,10 +110,8 @@ public:
   Version Current();
 
   // Subscribe to changes to listed paths and their subpaths.
-  // Also calls the handler during this call, even if there were no changes
-  // or config is not yet loaded.
-  // (If you don't need this behavior, you can add a parameter to disable it.)
-  // If sync, the handler will only be called in PollUpdates() call.
+  // Unless sync=SYNC, also calls the handler during this call, even if there
+  // were no changes or config is not yet loaded.
   // The subsription is active until the returned Subscription is destroyed.
   // The Subscription must be destroyed before the Config.
   SubscriptionPtr Subscribe(

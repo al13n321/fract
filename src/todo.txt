@@ -12,12 +12,10 @@ Important features:
 
 Plan:
 - Rift
-  - Controller instead of useless RaytracingEngine.
-    Side note: no need to worry about compiling shaders twice since they are
-    only compiled synchronously in Get().
   - Quaternion-based camera with modes:
     yaw (rift), yaw+pitch (no rift), space (both)
     "camera_mode" separate in config to not trigger reloading?
+    Config-aware Camera.
   - OVRConrtoller.
 - Mandelbulb
 - Good lighting

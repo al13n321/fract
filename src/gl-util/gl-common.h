@@ -16,4 +16,11 @@ bool LogIfError(const char *file, int line);
 // Log OpenGL vendor, version, extensions etc.
 void LogInfo();
 
+// The first time it's called, calls gl3wInit().
+// Call after creating the first OpenGL context.
+// As a hack we rely on function addresses to be the same for all OpenGL
+// contexts. On Windows it's true only for contexts with same pixel format.
+// If it becomes a problem, migrate to glbinding.
+void InitGl3wIfNeeded();
+
 }}

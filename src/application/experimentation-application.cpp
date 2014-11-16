@@ -1,6 +1,5 @@
 #include <iostream>
-#include "raytracer/raytracing-engine.h"
-#include "raytracer/renderer.h"
+#include "normal-controller.h"
 #include "gl-util/glfw-util.h"
 #include "util/camera.h"
 #include "util/stopwatch.h"
@@ -8,10 +7,8 @@
 
 using namespace fract;
 
-int winhei = 512;
-int winwid = 512;
-const int imgwid = 512;
-const int imghei = 512;
+ivec2 winsize(512, 512);
+const ivec2 imgsize(512, 512);
 
 bool mouse_pressed;
 double initial_mousex;
@@ -31,15 +28,14 @@ int last_fps_update_frame;
 
 std::unique_ptr<glfw::Initializer> glfw_init;
 
-// Window must be destroyed after everything that can make OpenGL calls.
-std::unique_ptr<glfw::Window> window;
+ConfigPtr config;
 
 Camera camera;
 
-ConfigPtr config;
+std::unique_ptr<NormalController> normal_controller;
 
-std::unique_ptr<RaytracingEngine> raytracer;
-std::unique_ptr<Renderer> renderer;
+// Current window. From NormalController or OVRController.
+glfw::Window *window;
 
 static void LogGLFWError(int code, const char *message) {
   std::cerr << "glfw error " << code << ": " << message << std::endl;
@@ -138,19 +134,8 @@ int main(int argc, char **argv) {
 
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
-    window.reset(new glfw::Window(winwid, winhei, "upchk"));
 
-    window->MakeCurrent();
-    window->SwapInterval(1);
-    window->GetFramebufferSize(&winwid, &winhei);
-    window->SetPosition(20, 40);
-
-    if (gl3wInit())
-      throw GLException("failed to initialize gl3w");
-
-    GL::LogInfo();
-
-    camera.set_aspect_ratio(static_cast<float>(winwid) / winhei);
+    camera.set_aspect_ratio(static_cast<float>(winsize.x) / winsize.y);
     camera.set_position(fvec3(0, 0, 10));
 
     auto camera_subscription =
@@ -158,14 +143,17 @@ int main(int argc, char **argv) {
         auto json = conf.TryGet({ "camera" });
         if (!json.isNull())
           camera.FromJson(json);
-      }, Config::SYNC);
+      }, Config::SYNC_NOW);
 
-    raytracer.reset(new RaytracingEngine(imgwid, imghei, config));
-    renderer.reset(new Renderer(config));
+    normal_controller.reset(new NormalController(config, &camera));
+    window = normal_controller->GetWindow();
+
+    GL::LogInfo();
 
     window->SetKeyCallback(&KeyCallback);
     window->SetScrollCallback(&ScrollCallback);
-    window->SetMouseButtonCallback(&MouseButtonCallback);
+    window->SetMouseButtonCallback(
+      &MouseButtonCallback);
     window->SetCursorPosCallback(&CursorPosCallback);
 
     Stopwatch frame_stopwatch;
@@ -179,25 +167,22 @@ int main(int argc, char **argv) {
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
 
-      const RaytracedView &raytraced =
-        raytracer->Raytrace(
-          camera.position(), camera.scale(), camera.RotationProjectionMatrix());
-      
-      glViewport(0, 0, winwid, winhei);CHECK_GL_ERROR();
-      renderer->Render(raytraced, winwid, winhei);
+      normal_controller->Render();
 
-      window->SwapBuffers();
       glfwPollEvents();
     }
   } catch (std::exception &e) {
     std::cerr << "exception: " << e.what() << std::endl;
+
+    // Workaround for MSVC bug:
+    // https://connect.microsoft.com/VisualStudio/feedback/details/747145
+    normal_controller.reset();
+
     return 2;
   }
 
-  // Workaround for MSVC bug: https://connect.microsoft.com/VisualStudio/feedback/details/747145
-  renderer.reset();
-  raytracer.reset();
-  config.reset();
+  // Same as above.
+  normal_controller.reset();
 
   return 0;
 }
