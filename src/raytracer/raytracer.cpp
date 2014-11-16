@@ -9,18 +9,18 @@ Raytracer::Raytracer(ConfigPtr config)
     {{"Camera-shader", "Predefined/PerspectiveCamera.frag"}}) {}
 
 void Raytracer::TraceGrid(const RayGrid &grid, RaytracedView &target) {
-  assert(grid.resolution_width == target.width);
-  assert(grid.resolution_height == target.height);
+  assert(grid.resolution_width == target.size.x);
+  assert(grid.resolution_height == target.size.y);
 
   std::shared_ptr<GL::Shader> shader = shader_provider_.Get();
   target.framebuffer.BindForWriting();
-  glViewport(0, 0, target.width, target.height);
+  glViewport(0, 0, target.size.x, target.size.y);
   if (!shader) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); CHECK_GL_ERROR();
     glClear(GL_COLOR_BUFFER_BIT); CHECK_GL_ERROR();
     return;
   }
-  
+
   shader->Use();
 
   shader->SetVec3("CameraPos", grid.position);

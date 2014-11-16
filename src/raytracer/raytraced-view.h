@@ -7,8 +7,7 @@ namespace fract {
 // Raytracing result.
 // Used for both screen-space images and lookup cube faces.
 struct RaytracedView {
-  int width;
-  int height;
+  ivec2 size;
 
   // 4-channel 32-bit float:
   // bitmask(hit, converged, error), iterations, scaled distance, unused.
@@ -22,11 +21,11 @@ struct RaytracedView {
   // To render to all these textures. Order of declarations matters.
   GL::Framebuffer framebuffer;
 
-  RaytracedView(int width, int height):
-    width(width), height(height),
-    main_texture(width, height, GL_RGBA32F),
-    normal_texture(width, height, GL_RGBA32F),
-    color_texture(width, height, GL_RGBA32F),
+  RaytracedView(ivec2 size):
+    size(size),
+    main_texture(size, GL_RGBA32F),
+    normal_texture(size, GL_RGBA32F),
+    color_texture(size, GL_RGBA32F),
     framebuffer({&main_texture, &normal_texture, &color_texture}) {}
 };
 

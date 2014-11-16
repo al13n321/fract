@@ -102,6 +102,7 @@ struct tvec4 {
 
 typedef tvec2<float> fvec2;
 typedef tvec2<double> dvec2;
+typedef tvec2<int> ivec2;
 typedef tvec3<float> fvec3;
 typedef tvec3<double> dvec3;
 typedef tvec4<float> fvec4;

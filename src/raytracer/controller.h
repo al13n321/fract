@@ -12,6 +12,8 @@ class Controller {
  public:
   virtual ~Controller() = 0;
 
+  // Makes OpenGL context current for this thread.
+  virtual void MakeCurrent();
 
 };
 

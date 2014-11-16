@@ -3,7 +3,8 @@ cmake_policy(SET CMP0054 NEW)
 project (fract)
 
 # path to OculusVR SDK; comment to disable VR support
-SET (OVR_SDK "C:\\Program Files\\OculusSDK\\")
+# currently not supported on Mac OS.
+SET (OVR_SDK "C:/Program Files/OculusSDK/")
 
 SET (EXTRA_LIBS)
 
@@ -11,18 +12,26 @@ IF (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	SET (MSVC 1)
 ENDIF ()
 
-IF (EXISTS OVR_SDK)
-	SET (OVR 1)
+IF (EXISTS "${OVR_SDK}")
+	SET (USE_OVR 1)
+  message("Have OVR support")
 	
-	add_definitions(-DOVR)
+	add_definitions(-DUSE_OVR)
 
 	include_directories(
-		${OVR_SDK}/LibOVR/Src/
+		"${OVR_SDK}/LibOVR/Src/"
+    "${OVR_SDK}/LibOVR/Include/"
 	)
 
+  link_directories(
+    "${OVR_SDK}/LibOVR/Lib/x64/VS2013"
+  )
+
 	IF (MSVC)
-		SET (EXTRA_LIBS "${EXTRA_LIBS} libovr64")
+		SET (EXTRA_LIBS ${EXTRA_LIBS} libovr64 winmm ws2_32)
 	ENDIF ()
+ELSE ()
+  message("No OVR support")
 ENDIF ()
 
 include_directories(

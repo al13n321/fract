@@ -2,6 +2,7 @@
 
 #include "gl-common.h"
 #include "util/exceptions.h"
+#include "util/vec.h"
 
 namespace fract { namespace glfw {
 
@@ -19,7 +20,7 @@ class Initializer {
 
 class Window {
  public:
-  Window(int width, int height, const std::string &title,
+  Window(ivec2 size, const std::string &title,
     bool resizable = false
   ) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -27,7 +28,7 @@ class Window {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
-    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    window = glfwCreateWindow(size.x, size.y, title.c_str(), NULL, NULL);
     if (!window)
       throw GLException("couldn't create window");
   }
@@ -92,8 +93,8 @@ class Window {
     glfwSetWindowTitle(window, title.c_str());
   }
 
-  void SetPosition(int x, int y) {
-    glfwSetWindowPos(window, x, y);
+  void SetPosition(ivec2 pos) {
+    glfwSetWindowPos(window, pos.x, pos.y);
   }
 
   ~Window() {

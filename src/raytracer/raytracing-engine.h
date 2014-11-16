@@ -9,7 +9,7 @@ namespace fract {
 
 class RaytracingEngine {
  public:
-  RaytracingEngine(int width, int height, ConfigPtr config);
+  RaytracingEngine(ivec2 size, ConfigPtr config);
 
   // TODO:
   //void SetCubeEnabled(bool enabled);
@@ -20,8 +20,7 @@ class RaytracingEngine {
     double camera_scale,
     fmat4 camera_rotation_projection_);
  private:
-  int width_;
-  int height_;
+  ivec2 size_;
   ConfigPtr config_;
 
   Raytracer tracer_;
