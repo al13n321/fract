@@ -95,10 +95,10 @@ add_executable(fract
 	gl-util/texture2d.cpp
 	raytracer/raytracer.cpp
 	raytracer/renderer.cpp
-	resources/config.cpp
+	resources/camera.cpp
+  resources/config.cpp
 	resources/shader-preprocessor.cpp
 	resources/shader-provider.cpp
-	util/camera.cpp
 	util/exceptions.cpp
 	util/file-watcher.cpp
 	util/json.cpp

@@ -76,4 +76,17 @@ ivec2 JsonUtil::sizeValue(const Json::Value &value) {
   return res;
 }
 
+fquat JsonUtil::quatValue(const Json::Value &value) {
+  if (value.isArray()) {
+    return fquat(
+      (float)doubleValue(value[0]),
+      (float)doubleValue(value[1]),
+      (float)doubleValue(value[2]),
+      (float)doubleValue(value[3]));
+  } else {
+    throw ConfigValueFormatException(
+      "expected quaternion value, got " + value.toStyledString());
+  }
+}
+
 }

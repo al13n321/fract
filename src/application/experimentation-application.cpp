@@ -1,7 +1,7 @@
 #include <iostream>
 #include "normal-controller.h"
 #include "gl-util/glfw-util.h"
-#include "util/camera.h"
+#include "resources/camera.h"
 #include "util/stopwatch.h"
 #include "util/string-util.h"
 
@@ -16,10 +16,6 @@ double initial_mousey;
 double prev_mousex;
 double prev_mousey;
 
-float movement_speed = 0.5f; // units per second at scale 1
-float looking_speed = 0.4f; // degrees per pixel
-double scaling_speed = 1.1; // coefficient per scroll wheel unit
-
 Stopwatch fps_stopwatch;
 const int fps_update_period_frames = 10;
 const double fps_update_period_seconds = .5;
@@ -30,7 +26,7 @@ std::unique_ptr<glfw::Initializer> glfw_init;
 
 ConfigPtr config;
 
-Camera camera;
+std::unique_ptr<Camera> camera;
 
 std::unique_ptr<NormalController> normal_controller;
 
@@ -48,14 +44,14 @@ static void KeyCallback(
     if (key == GLFW_KEY_ESCAPE) {
       window->SetShouldClose();
     } else if (key == GLFW_KEY_C) {
-      camera.FromJson(config->Current().TryGet({"camera"}));
+      camera->Reset();
     }
   }
 }
 
 static void ScrollCallback(GLFWwindow *w, double dx, double dy) {
   if (dy != 0) {
-    camera.set_scale(camera.scale() * pow(scaling_speed, dy));
+    camera->ScaleRelative(dy);
   }
 }
 
@@ -81,9 +77,11 @@ static void CursorPosCallback(GLFWwindow *w, double x, double y) {
   if (mouse_pressed) {
     double dx = x - prev_mousex;
     double dy = y - prev_mousey;
-    if (prev_mousex != -1 && (dx != 0 || dy != 0)) {
-      camera.set_yaw(camera.yaw() + static_cast<float>(dx * looking_speed));
-      camera.set_pitch(camera.pitch() - static_cast<float>(dy * looking_speed));
+    if (prev_mousex != -1) {
+      camera->TurnRelative(fvec2((float)dx, (float)-dy));
+      //                                           ^
+      //                                           |
+      // Convert down-facing window-space Y to up-facing OpenGL screen-space Y.
     }
     prev_mousex = x;
     prev_mousey = y;
@@ -102,7 +100,7 @@ static void ProcessKeyboardInput(double frame_time) {
     movement.z += 1;
 
   if (!movement.IsZero()) {
-    camera.MoveRelative(movement * static_cast<float>(frame_time) * movement_speed);
+    camera->MoveRelative(movement * static_cast<float>(frame_time));
   }
 }
 
@@ -135,17 +133,9 @@ int main(int argc, char **argv) {
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
 
-    camera.set_aspect_ratio(static_cast<float>(winsize.x) / winsize.y);
-    camera.set_position(fvec3(0, 0, 10));
+    camera.reset(new Camera(config));
 
-    auto camera_subscription =
-      config->Subscribe({{"camera"}}, [&](Config::Version conf) {
-        auto json = conf.TryGet({ "camera" });
-        if (!json.isNull())
-          camera.FromJson(json);
-      }, Config::SYNC_NOW);
-
-    normal_controller.reset(new NormalController(config, &camera));
+    normal_controller.reset(new NormalController(config, camera.get()));
     window = normal_controller->GetWindow();
 
     GL::LogInfo();
@@ -177,12 +167,14 @@ int main(int argc, char **argv) {
     // Workaround for MSVC bug:
     // https://connect.microsoft.com/VisualStudio/feedback/details/747145
     normal_controller.reset();
+    camera.reset();
 
     return 2;
   }
 
   // Same as above.
   normal_controller.reset();
+  camera.reset();
 
   return 0;
 }

@@ -12,10 +12,7 @@ Important features:
 
 Plan:
 - Rift
-  - Quaternion-based camera with modes:
-    yaw (rift), yaw+pitch (no rift), space (both)
-    "camera_mode" separate in config to not trigger reloading?
-    Config-aware Camera.
+  - test and fix Camera; get quaternions right
   - OVRConrtoller.
 - Mandelbulb
 - Good lighting

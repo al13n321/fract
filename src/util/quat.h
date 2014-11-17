@@ -1,19 +1,20 @@
 #pragma once
 
 #include "vec.h"
+#include "mat.h"
 
 namespace fract {
 
 // Quaternion.
-struct quatf {
+struct fquat {
   float a{0}, b{0}, c{0}, d{0};
 
-  quat() {}
-  quat(float a, float b, float c, float d): a(a), b(b), c(c), d(d) {}
+  fquat() {}
+  fquat(float a, float b, float c, float d): a(a), b(b), c(c), d(d) {}
 
   // Angle in radians. Angle is measured clockwise
   // when viewed with view direction equal to axis.
-  quat(float angle, fvec3 axis) {
+  fquat(float angle, fvec3 axis) {
     float sn = sinf(angle * .5f);
     float cs = cosf(angle * .5f);
     a = cs;
@@ -24,12 +25,18 @@ struct quatf {
     d = axis.z;
   }
 
-  quat operator*(const quat &q) const {
-    return quat(
+  fquat operator*(const fquat &q) const {
+    return fquat(
       a*q.a - b*q.b - c*q.c - d*q.d,
       a*q.b + b*q.a + c*q.d - d*q.c,
       a*q.c + c*q.a + d*q.b - b*q.d,
       a*q.d + d*q.a + b*q.c - c*q.b);
+  }
+  fquat operator*(float s) const {
+    return fquat(a*s, b*s, c*s, d*s);
+  }
+  fquat operator/(float s) const {
+    return fquat(a/s, b/s, c/s, d/s);
   }
 
   void NormalizeMe() {
@@ -38,6 +45,34 @@ struct quatf {
     b /= z;
     c /= z;
     d /= z;
+  }
+
+  fmat4 ToMatrix() const {
+    // Source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
+    return fmat4(
+       a,  d, -c,  b,
+      -d,  a,  b,  c,
+       c, -b,  a,  d,
+      -b, -c, -d,  a
+    ) * fmat4(
+       a,  d, -c, -b,
+      -d,  a,  b, -c,
+       c, -b,  a, -d,
+       b,  c,  d,  a
+    );
+  }
+
+  fquat Conjugate() const {
+    return fquat(a, -b, -c, -d);
+  }
+
+  fquat Inverse() const {
+    return Conjugate() / (a*a + b*b + c*c + d*d);
+  }
+
+  fvec3 Transform(fvec3 v) const {
+    fquat q = *this * fquat(0, v.x, v.y, v.z) * this->Inverse();
+    return fvec3(q.b, q.c, q.d);
   }
 };
 

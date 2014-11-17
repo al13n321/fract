@@ -5,12 +5,18 @@
 
 namespace fract {
 
-template<typename ftype>
+template<typename T>
 struct tvec2 {
-  ftype x, y;
+  T x, y;
 
   tvec2() {}
-  tvec2(ftype x, ftype y): x(x), y(y) {}
+  tvec2(T x, T y): x(x), y(y) {}
+
+  T LengthSquare() const { return x*x + y*y; }
+
+  float Length() {
+    return sqrtf(LengthSquare());
+  }
 };
 
 template<typename ftype>

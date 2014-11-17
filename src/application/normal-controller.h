@@ -1,8 +1,8 @@
 #pragma once
 
 #include "controller.h"
+#include "resources/camera.h"
 #include "resources/config.h"
-#include "util/camera.h"
 #include "raytracer/raytracer.h"
 #include "raytracer/renderer.h"
 #include "gl-util/glfw-util.h"

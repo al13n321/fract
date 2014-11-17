@@ -12,6 +12,7 @@ NormalController::NormalController(ConfigPtr config, Camera *camera)
           view_->size.y < resolution_.y)
         view_.reset(new RaytracedView(resolution_));
       window_->SetSize(resolution_);
+      camera_->set_aspect_ratio((float)resolution_.x / resolution_.y);
     }, Config::SYNC);
 
   resolution_  = JsonUtil::sizeValue(config->Current().Get({"resolution"}));
@@ -20,6 +21,8 @@ NormalController::NormalController(ConfigPtr config, Camera *camera)
   window_->SetPosition(ivec2(20, 40));
 
   GL::InitGl3wIfNeeded();
+  
+  camera->set_aspect_ratio((float)resolution_.x / resolution_.y);
 
   view_.reset(new RaytracedView(resolution_));
 

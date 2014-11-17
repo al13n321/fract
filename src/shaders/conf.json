@@ -3,19 +3,24 @@
   "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
-  "resolution": [512, 512], // Size of raytraced image.
+  "resolution": [700, 700], // Size of raytraced image.
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
 
   // Optional.
   // These parameters are only applied when changed.
   // Or when 'C' key is pressed (to reset camera).
   "camera": {
-    "type": "fps", // Can add "space" camera: no up and down.
+    "mode": "fps", // Can add "space" camera: no up and down.
     "fov": 90,
     "pos": { "x": 0, "y": 0, "z": 10 },
     "yaw": 0,
     "pitch": 0,
-    "scale": 1
+    "quat": [1, 0, 0, 0],
+    "scale": 1,
+
+    "move_speed": 0.5, // units per second at scale 1
+    "turn_speed": 0.4, // degrees per pixel
+    "scale_speed": 10 // scroll click multiplies scale by exp(scale_speed)
   },
 
   // Optional.

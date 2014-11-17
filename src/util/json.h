@@ -2,6 +2,7 @@
 
 #include <json/json.h>
 #include "vec.h"
+#include "quat.h"
 
 namespace fract {
 
@@ -18,6 +19,9 @@ class JsonUtil {
   //  - {"width": 1024, "height": 768}
   //  - {"x": 1024, "y": 768}
   static ivec2 sizeValue(const Json::Value &value);
+
+  // [a, b, c, d]
+  static fquat quatValue(const Json::Value &value);
 };
 
 }
