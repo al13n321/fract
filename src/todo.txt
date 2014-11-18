@@ -12,9 +12,6 @@ Important features:
 
 Plan:
 - Rift
-  - Fix Conrtoller switching. Need some deep changes.
-    - Oops, Config::SYNC* is not very useful with multiple contexts.
-      - ConfigView, separate subscriptions.
   - Use pose.
   - Camera supporting pose (for pitch lock and movement relative to head pose).
 - Mandelbulb

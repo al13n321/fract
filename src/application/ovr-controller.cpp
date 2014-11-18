@@ -17,7 +17,7 @@ OVRController::OVRController(ConfigPtr config, Camera *camera)
   raytracer_.reset(new Raytracer(config));
   renderer_.reset(new Renderer(config));
 
-  pixel_density_subscription_ = config_->Subscribe({{"pixel_density_"}},
+  pixel_density_subscription_ = config_->Subscribe({{"pixel_density"}},
     [this](Config::Version v) {
       double x = JsonUtil::doubleValue(v.Get({"pixel_density"}));
       if (x <= 0 || x > 10)
