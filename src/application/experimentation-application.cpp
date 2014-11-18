@@ -45,6 +45,48 @@ static void LogGLFWError(int code, const char *message) {
 }
 
 static void KeyCallback(
+  GLFWwindow* w, int key, int scancode, int action, int mods);
+static void ScrollCallback(GLFWwindow *w, double dx, double dy);
+static void MouseButtonCallback(
+  GLFWwindow *w, int button, int action, int mods);
+static void CursorPosCallback(GLFWwindow *w, double x, double y);
+
+static void DeactivateController() {
+  window->SetScrollCallback(nullptr);
+  window->SetMouseButtonCallback(nullptr);
+  window->SetCursorPosCallback(nullptr);
+  // (leaving KeyCallback)
+
+  window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  prev_mousex = -1;
+  if (mouse_pressed) {
+    mouse_pressed = false;
+    window->SetCursorPos(initial_mousex, initial_mousey);
+  }
+
+  window->SetTitle("(inactive)");
+
+  controller->Deactivate();
+}
+
+static void ActivateController() {
+  controller = controllers[controller_idx].get();
+  controller->Activate();
+  window = controller->GetWindow();
+
+  window->SetKeyCallback(&KeyCallback);
+  window->SetScrollCallback(&ScrollCallback);
+  window->SetMouseButtonCallback(
+    &MouseButtonCallback);
+  window->SetCursorPosCallback(&CursorPosCallback);
+
+  if (controller->CaptureMouse())
+    window->SetInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+  window->Focus();
+}
+
+static void KeyCallback(
   GLFWwindow* w, int key, int scancode, int action, int mods
 ) {
   if (action == GLFW_PRESS) {
@@ -54,11 +96,9 @@ static void KeyCallback(
       camera->Reset();
     } else if (key == GLFW_KEY_ENTER) {
       if (controllers.size() > 1) {
-        controller->WillBecomeNonCurrent();
+        DeactivateController();
         controller_idx = (controller_idx + 1) % controllers.size();
-        controller = controllers[controller_idx].get();
-        window = controller->GetWindow();
-        controller->MakeCurrent();
+        ActivateController();
       }
     }
   }
@@ -73,7 +113,7 @@ static void ScrollCallback(GLFWwindow *w, double dx, double dy) {
 static void MouseButtonCallback(
   GLFWwindow *w, int button, int action, int mods
 ) {
-  if (button == GLFW_MOUSE_BUTTON_1) {
+  if (button == GLFW_MOUSE_BUTTON_1 && !controller->CaptureMouse()) {
     if (action == GLFW_PRESS) {
       mouse_pressed = true;
       window->GetCursorPos(&initial_mousex, &initial_mousey);
@@ -89,7 +129,7 @@ static void MouseButtonCallback(
 }
 
 static void CursorPosCallback(GLFWwindow *w, double x, double y) {
-  if (mouse_pressed) {
+  if (mouse_pressed || controller->CaptureMouse()) {
     double dx = x - prev_mousex;
     double dy = y - prev_mousey;
     if (prev_mousex != -1) {
@@ -131,7 +171,7 @@ static void UpdateFPS() {
 
 int main(int argc, char **argv) {
 #ifdef USE_OVR
-  ovr::Initializer ovr_init;
+  std::unique_ptr<ovr::Initializer> ovr_init;
 #endif
 
   try {
@@ -149,37 +189,42 @@ int main(int argc, char **argv) {
 
     config = std::make_shared<Config>(config_path);
 
+    bool no_vr = config->Current().TryGet({"no_vr"}) == Json::Value(true);
+
+#ifdef USE_OVR
+    if (!no_vr)
+      ovr_init.reset(new ovr::Initializer());
+#endif
+
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
 
     camera.reset(new Camera(config));
 
 #ifdef USE_OVR
-    if (config->Current().TryGet({"no_vr"}) != Json::Value(true)) {
+    if (!no_vr)
       controllers.emplace_back(new OVRController(config, camera.get()));
-      controllers.back()->WillBecomeNonCurrent();
-    }
 #endif
 
     controllers.emplace_back(new NormalController(config, camera.get()));
     controller_idx = controllers.size() - 1;
-    controller = controllers[controller_idx].get();
-    window = controller->GetWindow();
+    ActivateController();
 
     GL::LogInfo();
 
-    window->SetKeyCallback(&KeyCallback);
-    window->SetScrollCallback(&ScrollCallback);
-    window->SetMouseButtonCallback(
-      &MouseButtonCallback);
-    window->SetCursorPosCallback(&CursorPosCallback);
-
     Stopwatch frame_stopwatch;
 
-    while (!window->ShouldClose()) {
+    while (true) {
+      bool should_close = false;
+      for (auto &c: controllers)
+        should_close |= c->GetWindow()->ShouldClose();
+      if (should_close)
+        break;
+
       double frame_time = frame_stopwatch.Restart();
       ++cur_frame_number;
 
+      // TODO: remove.
       config->PollUpdates();
 
       ProcessKeyboardInput(frame_time);

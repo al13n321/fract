@@ -14,11 +14,15 @@ class Controller {
  public:
   virtual ~Controller() {};
 
+  // If true, mouse will be captured for camera rotation while the Controller
+  // is active, not just while mouse button is pressed.
+  virtual bool CaptureMouse() { return false; }
+
   // Makes OpenGL context current for this thread.
-  virtual void MakeCurrent() = 0;
+  virtual void Activate() = 0;
 
   // Give it a chance to save some state. E.g. update camera with last HMD pose.
-  virtual void WillBecomeNonCurrent() {}
+  virtual void Deactivate() {}
 
   virtual void Render() = 0;
 

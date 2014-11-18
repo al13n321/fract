@@ -16,7 +16,9 @@ class OVRController : public Controller {
   OVRController(ConfigPtr config, Camera *camera);
   ~OVRController();
 
-  void MakeCurrent() override;
+  bool CaptureMouse() override { return true; }
+  void Activate() override;
+  void Deactivate() override;
   void Render() override;
   glfw::Window* GetWindow() override;
 

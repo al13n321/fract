@@ -16,7 +16,7 @@ NormalController::NormalController(ConfigPtr config, Camera *camera)
     }, Config::SYNC);
 
   resolution_  = JsonUtil::sizeValue(config->Current().Get({"resolution"}));
-  window_.reset(new glfw::Window(resolution_, "upchk"));
+  window_.reset(new glfw::Window(resolution_, "window"));
   window_->MakeCurrent();
   window_->SetPosition(ivec2(20, 40));
 
@@ -34,8 +34,16 @@ NormalController::~NormalController() {
   window_->MakeCurrent();
 }
 
-void NormalController::MakeCurrent() {
+void NormalController::Activate() {
   window_->MakeCurrent();
+}
+
+void NormalController::Deactivate() {
+  glViewport(0, 0, resolution_.x, resolution_.y);CHECK_GL_ERROR();
+  glClearColor(0.0, 0.0, 0.0, 1.0);CHECK_GL_ERROR();
+  glClear(GL_COLOR_BUFFER_BIT);CHECK_GL_ERROR();
+
+  window_->SwapBuffers();
 }
 
 void NormalController::Render() {

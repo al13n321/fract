@@ -103,6 +103,8 @@ class Window {
     glfwSetWindowPos(window, pos.x, pos.y);
   }
 
+  void Focus();
+
   ~Window() {
     glfwDestroyWindow(window);
   }

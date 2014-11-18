@@ -91,8 +91,9 @@ add_executable(fract
 	application/experimentation-application.cpp
 	#application/vrtest.cpp
   application/normal-controller.cpp
-  gl-util/gl-common.cpp
 	gl-util/framebuffer.cpp
+  gl-util/gl-common.cpp
+  gl-util/glfw-util.cpp
 	gl-util/quad-renderer.cpp
 	gl-util/shader.cpp
 	gl-util/texture2d.cpp
@@ -102,6 +103,7 @@ add_executable(fract
   resources/config.cpp
 	resources/shader-preprocessor.cpp
 	resources/shader-provider.cpp
+  util/debug.cpp
 	util/exceptions.cpp
 	util/file-watcher.cpp
 	util/json.cpp

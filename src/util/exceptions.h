@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <string>
+#include "debug.h"
 
 namespace fract {
 
@@ -17,8 +18,18 @@ class ExceptionBase {
     name(const std::string &msg = #name): base(msg) {} \
   };
 
+// Exception for which occurence deserves an investigation.
+// Triggers debugger break in constructor.
+#define ABNORMAL_EXCEPTION(name, base) \
+  class name: public base, public ExceptionBase { \
+   public: \
+    name(const std::string &msg = #name): base(msg) { \
+      MaybeDebugBreak(); \
+    } \
+  };
+
 EXCEPTION_TYPE(NotImplementedException, std::logic_error);
-EXCEPTION_TYPE(GLException, std::runtime_error);
+ABNORMAL_EXCEPTION(GLException, std::runtime_error);
 EXCEPTION_TYPE(IOException, std::runtime_error);
 EXCEPTION_TYPE(ShaderCompilationException, std::runtime_error);
 EXCEPTION_TYPE(NoConfigKeyException, std::runtime_error);
@@ -27,9 +38,9 @@ EXCEPTION_TYPE(JSONException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorSyntaxException, std::runtime_error);
 EXCEPTION_TYPE(PreprocessorUndefinedTokenException, std::runtime_error);
 EXCEPTION_TYPE(CommandLineArgumentsException, std::runtime_error);
-EXCEPTION_TYPE(AppleException, std::runtime_error);
-EXCEPTION_TYPE(WinapiException, std::runtime_error);
-EXCEPTION_TYPE(OVRException, std::runtime_error);
+ABNORMAL_EXCEPTION(AppleException, std::runtime_error);
+ABNORMAL_EXCEPTION(WinapiException, std::runtime_error);
+ABNORMAL_EXCEPTION(OVRException, std::runtime_error);
 
 #undef EXCEPTION_TYPE
 

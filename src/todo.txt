@@ -15,9 +15,6 @@ Plan:
   - Fix Conrtoller switching. Need some deep changes.
     - Oops, Config::SYNC* is not very useful with multiple contexts.
       - ConfigView, separate subscriptions.
-    - And input handling is quite broken.
-      - Poll all windows and ignore all but current.
-      - Also capture mouse in HMD window properly.
   - Use pose.
   - Camera supporting pose (for pitch lock and movement relative to head pose).
 - Mandelbulb

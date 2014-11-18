@@ -15,7 +15,8 @@ class NormalController : public Controller {
   NormalController(ConfigPtr config, Camera *camera);
   ~NormalController();
 
-  void MakeCurrent() override;
+  void Activate() override;
+  void Deactivate() override;
   void Render() override;
   glfw::Window* GetWindow() override;
 

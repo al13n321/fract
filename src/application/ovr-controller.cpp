@@ -8,7 +8,7 @@ namespace fract {
 OVRController::OVRController(ConfigPtr config, Camera *camera)
     : config_(config), camera_(camera) {
   window_.reset(new glfw::Window(hmd_.GetResolution(),
-    "if you see this, your VR experience is going wrong :P"));
+    "vr"));
   window_->SetPosition(hmd_.GetWindowPos());
   window_->MakeCurrent();
 
@@ -29,16 +29,28 @@ OVRController::OVRController(ConfigPtr config, Camera *camera)
     }, Config::SYNC_NOW);
 
   hmd_.ConfigureRendering();
-  hmd_.StartTracking();
+  
+  Deactivate();
 }
 
 OVRController::~OVRController() {
   window_->MakeCurrent();
 }
 
-void OVRController::MakeCurrent() {
+void OVRController::Activate() {
   window_->MakeCurrent();
   hmd_.StartTracking();
+}
+
+void OVRController::Deactivate() {
+  glViewport(0, 0, hmd_.GetResolution().x, hmd_.GetResolution().y);
+    CHECK_GL_ERROR();
+  glClearColor(0.0, 0.0, 0.0, 1.0);CHECK_GL_ERROR();
+  glClear(GL_COLOR_BUFFER_BIT);CHECK_GL_ERROR();
+
+  window_->SwapBuffers();
+
+  hmd_.StopTracking();
 }
 
 void OVRController::Render() {
