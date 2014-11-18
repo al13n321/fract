@@ -4,8 +4,6 @@ uniform tvec3 CameraPos;
 uniform ftype CameraScale;
 uniform mat4 CameraRotProjInv;
 uniform vec2 Resolution;
-uniform vec2 ViewportOrigin;
-uniform vec2 ViewportSize;
 
 in vec2 ScreenPosition;
 
@@ -14,7 +12,7 @@ layout (location = 1) out vec4 OutNormal;
 layout (location = 2) out vec4 OutColor;
 
 void main() {
-  vec2 pix = (ViewportOrigin + ViewportSize * ScreenPosition) * 2.0 - 1.0;
+  vec2 pix = ScreenPosition * 2.0 - 1.0;
 
   vec4 dir;
   dir = CameraRotProjInv * vec4(

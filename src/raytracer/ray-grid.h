@@ -18,21 +18,14 @@ struct RayGrid {
   double scale;
 
   // Resolution of the grid.
-  int resolution_width;
-  int resolution_height;
-
-  // Rectangle of the grid.
-  int min_x;
-  int min_y;
-  int size_x;
-  int size_y;
+  ivec2 resolution;
 
   inline fvec3 GetRayDirection(int x, int y) const {
     return rotation_projection_inv.Transform(fvec3(
       (static_cast<float>(x) + .5f)
-        / static_cast<float>(resolution_width) * 2 - 1,
+        / static_cast<float>(resolution.x) * 2 - 1,
       (static_cast<float>(y) + .5f)
-        / static_cast<float>(resolution_height) * 2 - 1,
+        / static_cast<float>(resolution.y) * 2 - 1,
       .0f)).Normalized();
   }
 
@@ -40,15 +33,15 @@ struct RayGrid {
   inline float GetPixelSizeCoefficient(int x, int y) const {
     fvec3 a = rotation_projection_inv.Transform(fvec3(
       static_cast<float>(x)
-        / static_cast<float>(resolution_width) * 2 - 1,
+        / static_cast<float>(resolution.x) * 2 - 1,
       static_cast<float>(y)
-        / static_cast<float>(resolution_height) * 2 - 1,
+        / static_cast<float>(resolution.y) * 2 - 1,
       .0f));
     fvec3 b = rotation_projection_inv.Transform(fvec3(
       (static_cast<float>(x) + .1f)
-        / static_cast<float>(resolution_width) * 2 - 1,
+        / static_cast<float>(resolution.x) * 2 - 1,
       (static_cast<float>(y) + .1f)
-        / static_cast<float>(resolution_height) * 2 - 1,
+        / static_cast<float>(resolution.y) * 2 - 1,
       .0f));
     return sqrtf(a.DistanceSquare(b) / a.LengthSquare());
   }

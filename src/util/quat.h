@@ -49,16 +49,17 @@ struct fquat {
 
   fmat4 ToMatrix() const {
     // Source: http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/
+    // (a bit modified)
     return fmat4(
-       a,  d, -c,  b,
-      -d,  a,  b,  c,
-       c, -b,  a,  d,
-      -b, -c, -d,  a
-    ) * fmat4(
-       a,  d, -c, -b,
-      -d,  a,  b, -c,
-       c, -b,  a, -d,
+       a, -d,  c, -b,
+       d,  a, -b, -c,
+      -c,  b,  a, -d,
        b,  c,  d,  a
+    ) * fmat4(
+       a, -d,  c,  b,
+       d,  a, -b,  c,
+      -c,  b,  a,  d,
+      -b, -c, -d,  a
     );
   }
 

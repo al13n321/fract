@@ -7,15 +7,26 @@ namespace fract {
 
 template<typename T>
 struct tvec2 {
+  // Closest floating-point type.
+  typedef typename
+    std::conditional<std::is_floating_point<T>::value, T, double>::type F;
+
   T x, y;
 
   tvec2() {}
   tvec2(T x, T y): x(x), y(y) {}
 
+  template<typename X>
+  inline tvec2<T>(const tvec2<X> &v) : x(v.x), y(v.y) {}
+
   T LengthSquare() const { return x*x + y*y; }
 
-  float Length() {
-    return sqrtf(LengthSquare());
+  F Length() {
+    return sqrt((F)LengthSquare());
+  }
+
+  bool operator==(const tvec2<T> &rhs) const {
+    return x == rhs.x && y == rhs.y;
   }
 };
 

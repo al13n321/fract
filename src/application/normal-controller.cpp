@@ -8,9 +8,9 @@ NormalController::NormalController(ConfigPtr config, Camera *camera)
   resolution_subscription_ = config_->Subscribe({{"resolution"}},
     [this](Config::Version v) {
       resolution_ = JsonUtil::sizeValue(v.Get({"resolution"}));
-      if (view_->size.x < resolution_.x ||
-          view_->size.y < resolution_.y)
-        view_.reset(new RaytracedView(resolution_));
+      if (view_->size == resolution_)
+        return;
+      view_.reset(new RaytracedView(resolution_));
       window_->SetSize(resolution_);
       camera_->set_aspect_ratio((float)resolution_.x / resolution_.y);
     }, Config::SYNC);
@@ -21,13 +21,17 @@ NormalController::NormalController(ConfigPtr config, Camera *camera)
   window_->SetPosition(ivec2(20, 40));
 
   GL::InitGl3wIfNeeded();
-  
+
   camera->set_aspect_ratio((float)resolution_.x / resolution_.y);
 
   view_.reset(new RaytracedView(resolution_));
 
   raytracer_.reset(new Raytracer(config));
   renderer_.reset(new Renderer(config));
+}
+
+NormalController::~NormalController() {
+  window_->MakeCurrent();
 }
 
 void NormalController::MakeCurrent() {
@@ -39,12 +43,7 @@ void NormalController::Render() {
   grid.position = camera_->position();
   grid.rotation_projection_inv = camera_->RotationProjectionMatrix().Inverse();
   grid.scale = camera_->scale();
-  grid.resolution_width = resolution_.x;
-  grid.resolution_height = resolution_.y;
-  grid.min_x = 0;
-  grid.min_y = 0;
-  grid.size_x = resolution_.x;
-  grid.size_y = resolution_.y;
+  grid.resolution = resolution_;
 
   raytracer_->TraceGrid(grid, *view_);
 

@@ -12,8 +12,13 @@ Important features:
 
 Plan:
 - Rift
-  - test and fix Camera; get quaternions right
-  - OVRConrtoller.
+  - Fix Conrtoller switching. Need some deep changes.
+    - Oops, Config::SYNC* is not very useful with multiple contexts.
+    - And input handling is quite broken.
+      - Capture mouse in HMD window.
+      - Window won't like not being polled for a long time.
+  - Use pose.
+  - Camera supporting pose (for pitch lock and movement relative to head pose).
 - Mandelbulb
 - Good lighting
 - Saving everything to file (shaders, camera)
@@ -29,6 +34,7 @@ Plan:
   automatically triggered by timeouts
 
 Wishlist, to keep in mind:
+- Accurate world scaling with HMD pose: have to change camera position.
 - Progressive enhancement
   + Progressively increasing cubemap resolution
 - An space-style camera with no up and down

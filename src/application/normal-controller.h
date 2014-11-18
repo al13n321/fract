@@ -13,6 +13,7 @@ namespace fract {
 class NormalController : public Controller {
  public:
   NormalController(ConfigPtr config, Camera *camera);
+  ~NormalController();
 
   void MakeCurrent() override;
   void Render() override;

@@ -50,13 +50,13 @@ class HMD {
     return ivec2(hmd_->Resolution.w, hmd_->Resolution.h);
   }
 
-  // Array of ovrEye_Count (=2) elements.
-  const ovrEyeType* GetEyeRenderOrder() {
-    return hmd_->EyeRenderOrder;
+  void StartTracking() {
+    if (!ovrHmd_ConfigureTracking(hmd_, ovrTrackingCap_Idle, 0))
+      throw OVRException("failed to configure tracking");
   }
 
-  void ConfigureTracking() {
-    if (!ovrHmd_ConfigureTracking(hmd_, ovrTrackingCap_Idle, 0))
+  void StopTracking() {
+    if (!ovrHmd_ConfigureTracking(hmd_, 0, 0))
       throw OVRException("failed to configure tracking");
   }
 
@@ -82,7 +82,8 @@ class HMD {
       throw OVRException("failed to configure rendering");
   }
 
-  // Array of ovrEye_Count (=2) .
+  // Array of length ovrEye_Count. Which means two, unless you're an octopus
+  // ... oh, wait ... *opens wikipedia* ... no, two even if you are.
   const ovrEyeRenderDesc* GetEyeRenderDesc() {
     return eye_render_desc_;
   }
@@ -95,7 +96,10 @@ class HMD {
     return frame_timing_;
   }
 
-  void GetEyePoses(ovrPosef out_eye_poses[2], bool monoscopic = false) {
+  void GetEyePoses(
+      std::initializer_list<ovrPosef*> out_eye_poses,
+      bool monoscopic = false) {
+    assert(out_eye_poses.size() == 2);
     ovrVector3f offsets[2];
     auto a = eye_render_desc_[0].HmdToEyeViewOffset;
     auto b = eye_render_desc_[0].HmdToEyeViewOffset;
@@ -105,27 +109,37 @@ class HMD {
       offsets[0] = a;
       offsets[1] = b;
     }
-    ovrHmd_GetEyePoses(hmd_, 0, offsets, out_eye_poses, nullptr);
+    ovrHmd_GetEyePoses(hmd_, 0, offsets, last_poses_, nullptr);
+
+    int i = 0;
+    for (auto out: out_eye_poses) {
+      *out = last_poses_[i++];
+    }
   }
 
-  void EndFrame(ovrPosef render_pose[2], GL::Texture2D eye_texture[2]) {
+  // Assumes you rendered eye textures using pose from
+  // the last call to GetEyePoses().
+  void EndFrame(std::initializer_list<GL::Texture2D*> eye_textures) {
     ovrTexture tex[2];
-    for (int i = 0; i < 2; ++i) {
+    int i = 0;
+    for (auto texture: eye_textures) {
       ovrGLTexture t;
       t.OGL.Header.API = ovrRenderAPI_OpenGL;
       t.OGL.Header.TextureSize = t.OGL.Header.RenderViewport.Size =
-        {eye_texture[i].size().x, eye_texture[i].size().y};
+        {texture->size().x, texture->size().y};
       t.OGL.Header.RenderViewport.Pos = {0, 0};
-      t.OGL.TexId = eye_texture[i].name();
+      t.OGL.TexId = texture->name();
       tex[i] = t.Texture;
+      ++i;
     }
-    ovrHmd_EndFrame(hmd_, render_pose, tex);
+    ovrHmd_EndFrame(hmd_, last_poses_, tex);
   }
 
  private:
   ovrHmd hmd_;
   ovrEyeRenderDesc eye_render_desc_[2];
   ovrFrameTiming frame_timing_;
+  ovrPosef last_poses_[2];
 };
 
 

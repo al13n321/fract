@@ -5,6 +5,11 @@
 #include "util/stopwatch.h"
 #include "util/string-util.h"
 
+#ifdef USE_OVR
+#include "vr/ovr-util.h"
+#include "ovr-controller.h"
+#endif
+
 using namespace fract;
 
 ivec2 winsize(512, 512);
@@ -28,10 +33,12 @@ ConfigPtr config;
 
 std::unique_ptr<Camera> camera;
 
-std::unique_ptr<NormalController> normal_controller;
+std::vector<std::unique_ptr<Controller>> controllers;
 
-// Current window. From NormalController or OVRController.
+// Current controller and its window.
+Controller *controller;
 glfw::Window *window;
+size_t controller_idx;
 
 static void LogGLFWError(int code, const char *message) {
   std::cerr << "glfw error " << code << ": " << message << std::endl;
@@ -45,6 +52,14 @@ static void KeyCallback(
       window->SetShouldClose();
     } else if (key == GLFW_KEY_C) {
       camera->Reset();
+    } else if (key == GLFW_KEY_ENTER) {
+      if (controllers.size() > 1) {
+        controller->WillBecomeNonCurrent();
+        controller_idx = (controller_idx + 1) % controllers.size();
+        controller = controllers[controller_idx].get();
+        window = controller->GetWindow();
+        controller->MakeCurrent();
+      }
     }
   }
 }
@@ -115,6 +130,10 @@ static void UpdateFPS() {
 }
 
 int main(int argc, char **argv) {
+#ifdef USE_OVR
+  ovr::Initializer ovr_init;
+#endif
+
   try {
     freopen("log.txt", "w", stderr);
     srand(static_cast<unsigned int>(time(nullptr)));
@@ -135,8 +154,17 @@ int main(int argc, char **argv) {
 
     camera.reset(new Camera(config));
 
-    normal_controller.reset(new NormalController(config, camera.get()));
-    window = normal_controller->GetWindow();
+#ifdef USE_OVR
+    if (config->Current().TryGet({"no_vr"}) != Json::Value(true)) {
+      controllers.emplace_back(new OVRController(config, camera.get()));
+      controllers.back()->WillBecomeNonCurrent();
+    }
+#endif
+
+    controllers.emplace_back(new NormalController(config, camera.get()));
+    controller_idx = controllers.size() - 1;
+    controller = controllers[controller_idx].get();
+    window = controller->GetWindow();
 
     GL::LogInfo();
 
@@ -157,7 +185,7 @@ int main(int argc, char **argv) {
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
 
-      normal_controller->Render();
+      controller->Render();
 
       glfwPollEvents();
     }
@@ -166,15 +194,17 @@ int main(int argc, char **argv) {
 
     // Workaround for MSVC bug:
     // https://connect.microsoft.com/VisualStudio/feedback/details/747145
-    normal_controller.reset();
+    controllers.clear();
     camera.reset();
+    config.reset();
 
     return 2;
   }
 
   // Same as above.
-  normal_controller.reset();
+  controllers.clear();
   camera.reset();
+  config.reset();
 
   return 0;
 }

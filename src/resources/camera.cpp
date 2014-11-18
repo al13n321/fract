@@ -98,18 +98,17 @@ void Camera::TurnRelative(fvec2 delta) {
     return;
 
   if (mode_ == YAW_PITCH) {
-    yaw_   -= delta.x * turn_speed_;
-    pitch_ -= delta.y * turn_speed_;
+    yaw_   += delta.x * turn_speed_;
+    pitch_ += delta.y * turn_speed_;
   } else {
-    quat_ = quat_ * fquat(delta.Length() * turn_speed_,
-                          fvec3(-delta.y, delta.x, 0));
+    quat_ = quat_ * fquat((float)delta.Length() * turn_speed_,
+                          fvec3(delta.y, -delta.x, 0));
     quat_.NormalizeMe();
   }
 }
 
 void Camera::MoveRelative(fvec3 delta) {
-  fquat rot = Rotation();
-  position_ += dvec3(rot.Inverse().Transform(delta)) / scale_;
+  position_ += dvec3(Rotation().Transform(delta)) / scale_;
 }
 
 void Camera::ScaleRelative(double factor) {

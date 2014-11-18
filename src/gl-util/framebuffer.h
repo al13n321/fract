@@ -12,10 +12,12 @@ class Framebuffer {
   Framebuffer(std::initializer_list<Texture2D*> textures);
   ~Framebuffer();
 
-  void BindForWriting();
+  // 
+  void BindForWriting(bool set_glviewport = true);
   static void Unbind();
  private:
   GLuint fbo_ = 0;
+  ivec2 size_;
 };
 
 }}

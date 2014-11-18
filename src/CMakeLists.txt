@@ -7,6 +7,7 @@ project (fract)
 SET (OVR_SDK "C:/Program Files/OculusSDK/")
 
 SET (EXTRA_LIBS)
+SET (EXTRA_SRCS)
 
 IF (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	SET (MSVC 1)
@@ -30,6 +31,8 @@ IF (EXISTS "${OVR_SDK}")
 	IF (MSVC)
 		SET (EXTRA_LIBS ${EXTRA_LIBS} libovr64 winmm ws2_32)
 	ENDIF ()
+
+  SET (EXTRA_SRCS ${EXTRA_SRCS} application/ovr-controller.cpp)
 ELSE ()
   message("No OVR support")
 ENDIF ()
@@ -87,7 +90,7 @@ ENDIF (APPLE)
 add_executable(fract
 	application/experimentation-application.cpp
 	#application/vrtest.cpp
-	application/normal-controller.cpp
+  application/normal-controller.cpp
   gl-util/gl-common.cpp
 	gl-util/framebuffer.cpp
 	gl-util/quad-renderer.cpp
@@ -108,6 +111,7 @@ add_executable(fract
 	util/string-util.cpp
 	lib/jsoncpp/src/jsoncpp.cpp
 	lib/gl3w/src/gl3w.c
+  ${EXTRA_SRCS}
 )
 
 IF (MSVC)

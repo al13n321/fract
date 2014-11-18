@@ -22,7 +22,7 @@ int main() {
   if (gl3wInit())
     throw GLException("failed to initialize gl3w");
 
-  hmd.ConfigureTracking();
+  hmd.StartTracking();
   hmd.ConfigureRendering();
 
   GL::Texture2D tex[2] = {
@@ -37,22 +37,20 @@ int main() {
     hmd.BeginFrame();
 
     ovrPosef pose[2];
-    hmd.GetEyePoses(pose);
+    hmd.GetEyePoses({&pose[0], &pose[1]});
 
     fb[0].BindForWriting();
-    glViewport(0, 0, tex[0].size().x, tex[0].size().y);CHECK_GL_ERROR();
     glClearColor(1,0,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     fb[1].BindForWriting();
-    glViewport(0, 0, tex[1].size().x, tex[1].size().y);CHECK_GL_ERROR();
     glClearColor(0,1,0,1);
     glClear(GL_COLOR_BUFFER_BIT);
 
     GL::Framebuffer::Unbind();
     glViewport(0, 0, hmd.GetResolution().x, hmd.GetResolution().y);CHECK_GL_ERROR();
 
-    hmd.EndFrame(pose, tex);
+    hmd.EndFrame({&tex[0], &tex[1]});
 
     glfwPollEvents();
   }

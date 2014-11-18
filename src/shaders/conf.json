@@ -3,24 +3,26 @@
   "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
-  "resolution": [700, 700], // Size of raytraced image.
+  "resolution": [700, 700], // Size of raytraced image. Ignored for VR.
+  "pixel_density": 0.5, // For VR. Resolution coefficient.
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
+  "no_vr": false,
 
   // Optional.
   // These parameters are only applied when changed.
   // Or when 'C' key is pressed (to reset camera).
   "camera": {
-    "mode": "fps", // Can add "space" camera: no up and down.
+    "mode": "fps", // Other option is "space".
     "fov": 90,
     "pos": { "x": 0, "y": 0, "z": 10 },
     "yaw": 0,
     "pitch": 0,
     "quat": [1, 0, 0, 0],
-    "scale": 1,
+    "scale": 3,
 
-    "move_speed": 0.5, // units per second at scale 1
+    "move_speed": 3, // meters per second at scale 1
     "turn_speed": 0.4, // degrees per pixel
-    "scale_speed": 10 // scroll click multiplies scale by exp(scale_speed)
+    "scale_speed": 10 // scale logarithm increment per unit of scrolling
   },
 
   // Optional.

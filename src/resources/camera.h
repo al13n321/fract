@@ -50,6 +50,7 @@ class Camera {
   // Revert to values from config.
   void Reset();
 
+  // From camera space to world.
   fquat Rotation() const;
 
   // Near clip plane is set arbitrarily and should be ignored.

@@ -1,10 +1,15 @@
 #include "framebuffer.h"
+#include <cassert>
 #include "util/exceptions.h"
 #include "util/string-util.h"
 
 namespace fract { namespace GL {
 
 Framebuffer::Framebuffer(std::initializer_list<Texture2D*> textures) {
+  assert(textures.size() > 0);
+
+  size_ = (*textures.begin())->size();
+
   glGenFramebuffers(1, &fbo_);CHECK_GL_ERROR();
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_);CHECK_GL_ERROR();
 
@@ -36,8 +41,10 @@ Framebuffer::~Framebuffer() {
     glDeleteFramebuffers(1, &fbo_);
 }
 
-void Framebuffer::BindForWriting() {
+void Framebuffer::BindForWriting(bool set_glviewport) {
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_);CHECK_GL_ERROR();
+  if (set_glviewport)
+    glViewport(0, 0, size_.x, size_.y);
 }
 
 void Framebuffer::Unbind() {
