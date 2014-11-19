@@ -28,27 +28,15 @@ class OVRController : public Controller {
     std::unique_ptr<RaytracedView> view;
     std::unique_ptr<GL::Texture2D> texture;
     std::unique_ptr<GL::Framebuffer> framebuffer;
+    ovrEyeRenderDesc render_desc;
     ovrPosef pose;
 
-    EyeData() {}
-    EyeData(const EyeData &rhs) = delete;
-    EyeData& operator=(const EyeData &rhs) = delete;
-    EyeData& operator=(EyeData &&rhs) {
-      resolution = rhs.resolution;
-      view = std::move(rhs.view);
-      texture = std::move(rhs.texture);
-      framebuffer = std::move(rhs.framebuffer);
-      pose = rhs.pose;
-      return *this;
+    void SetResolution(ivec2 res) {
+      resolution = res;
+      view.reset(new RaytracedView(resolution));
+      texture.reset(new GL::Texture2D(resolution, GL_RGB8, GL_LINEAR));
+      framebuffer.reset(new GL::Framebuffer({texture.get()}));
     }
-    EyeData(EyeData &&rhs) {
-      *this = std::move(rhs);
-    }
-    explicit EyeData(ivec2 resolution)
-      : resolution(resolution),
-        view(new RaytracedView(resolution)),
-        texture(new GL::Texture2D(resolution, GL_RGB8, GL_LINEAR)),
-        framebuffer(new GL::Framebuffer({texture.get()})) {}
   };
 
   ConfigPtr config_;

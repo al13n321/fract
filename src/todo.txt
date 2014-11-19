@@ -1,19 +1,18 @@
 Critical features:
+- Asynchronous timewarp.
 - Saving everything to a file
 - Runtime reloading and rebuilding of everything
 - Cubemap
-- Rift
-- Windows
 
 Important features:
-- Loading values for uniforms from separate file
 - Dynamically changing resolution based on preformance
-- Fast switching between rendering to rift and to window
+- Collision detection (how?)
 
 Plan:
 - Rift
-  - Use pose.
   - Camera supporting pose (for pitch lock and movement relative to head pose).
+    - Accurate scaling.
+  - Monoscopic rendering.
 - Mandelbulb
 - Good lighting
 - Saving everything to file (shaders, camera)
@@ -29,12 +28,9 @@ Plan:
   automatically triggered by timeouts
 
 Wishlist, to keep in mind:
-- Accurate world scaling with HMD pose: have to change camera position.
-- Progressive enhancement
-  + Progressively increasing cubemap resolution
+- Loading values for uniforms from separate file
+- Progressive enhancement for cubemap
 - An space-style camera with no up and down
-- Resizable window
-- Changing image resolution on the fly
 - Environment maps
 - Fix mouse movement initialization with low FPS
 - Background precalc progress indication

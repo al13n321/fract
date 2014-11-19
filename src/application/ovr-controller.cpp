@@ -24,10 +24,11 @@ OVRController::OVRController(ConfigPtr config, Camera *camera)
         throw ConfigValueFormatException(
           "invalid pixel_density: " + ToString(x));
       pixel_density_ = (float)x;
-      eyes_[0] = EyeData(hmd_.GetTextureSize(ovrEye_Left, pixel_density_));
-      eyes_[1] = EyeData(hmd_.GetTextureSize(ovrEye_Right, pixel_density_));
+      eyes_[0].SetResolution(hmd_.GetTextureSize(ovrEye_Left, pixel_density_));
+      eyes_[1].SetResolution(hmd_.GetTextureSize(ovrEye_Right, pixel_density_));
     }, Config::SYNC_NOW);
 
+  // TODO: monoscopic (replace this line with subscription).
   hmd_.ConfigureRendering();
   
   Deactivate();
@@ -55,13 +56,18 @@ void OVRController::Deactivate() {
 
 void OVRController::Render() {
   hmd_.BeginFrame();
+  hmd_.GetEyeRenderDescs({&eyes_[0].render_desc, &eyes_[1].render_desc});
   hmd_.GetEyePoses({&eyes_[0].pose, &eyes_[1].pose});
 
   for (EyeData &eye: eyes_) {
     RayGrid grid;
-    grid.position = camera_->position();
+    grid.position =
+      camera_->position()
+      + dvec3(camera_->Rotation().Transform(ovr::conv(eye.pose.Position)))
+        / camera_->scale();
     grid.rotation_projection_inv =
-      camera_->RotationProjectionMatrix().Inverse();
+      (camera_->Rotation() * ovr::conv(eye.pose.Orientation)).ToMatrix()
+      * ovr::ProjectionMatrix(eye.render_desc.Fov).Inverse();
     grid.scale = camera_->scale();
     grid.resolution = eye.resolution;
 
