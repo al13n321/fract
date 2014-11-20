@@ -25,12 +25,18 @@ struct fquat {
     d = axis.z;
   }
 
+  fquat operator+(const fquat &q) const {
+    return fquat(a+q.a, b+q.b, c+q.c, d+q.d);
+  }
   fquat operator*(const fquat &q) const {
     return fquat(
       a*q.a - b*q.b - c*q.c - d*q.d,
       a*q.b + b*q.a + c*q.d - d*q.c,
       a*q.c + c*q.a + d*q.b - b*q.d,
       a*q.d + d*q.a + b*q.c - c*q.b);
+  }
+  fquat& operator*=(const fquat &q) {
+    return *this = *this * q;
   }
   fquat operator*(float s) const {
     return fquat(a*s, b*s, c*s, d*s);
@@ -45,6 +51,11 @@ struct fquat {
     b /= z;
     c /= z;
     d /= z;
+  }
+  fquat Normalized() const {
+    fquat res = *this;
+    res.NormalizeMe();
+    return res;
   }
 
   fmat4 ToMatrix() const {

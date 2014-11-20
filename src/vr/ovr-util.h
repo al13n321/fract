@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "gl-util/glfw-util.h"
 #include "OVR.h"
 #include "OVR_CAPI_GL.h"
@@ -67,9 +68,11 @@ class HMD {
     return hmd_;
   }
 
+  // Unlike ovrHmd_GetFovTextureSize, this method can't be called before
+  // ConfigureRendering(), since it depends on monoscopic flag.
   ivec2 GetTextureSize(ovrEyeType eye, float pixelsPerDisplayPixel) {
     return conv(ovrHmd_GetFovTextureSize(
-      hmd_, eye, hmd_->DefaultEyeFov[eye], pixelsPerDisplayPixel));
+      hmd_, eye, fov_[eye], pixelsPerDisplayPixel));
   }
 
   ivec2 GetWindowPos() {
@@ -100,13 +103,13 @@ class HMD {
 
   // Uses current window.
   // TODO: monoscopic
-  void ConfigureRendering() {
+  void ConfigureRendering(bool monoscopic) {
     ovrGLConfig config;
     memset(&config, 0, sizeof(config));
     config.OGL.Header = {
       ovrRenderAPI_OpenGL, // API
       hmd_->Resolution,    // RTSize
-      0                    // Multisample 
+      8                    // Multisample 
     };
     
     int caps =
@@ -115,9 +118,20 @@ class HMD {
       ovrDistortionCap_Vignette |
       //ovrDistortionCap_Overdrive |
       ovrDistortionCap_HqDistortion;
+    fov_[0] = hmd_->DefaultEyeFov[0];
+    fov_[1] = hmd_->DefaultEyeFov[1];
+    monoscopic_ = monoscopic;
+    if (monoscopic) {
+      float hfov = std::max(std::max(std::max(
+        fov_[0].LeftTan, fov_[0].RightTan), fov_[1].LeftTan), fov_[1].RightTan);
+      float upfov = std::max(fov_[0].UpTan, fov_[1].UpTan);
+      float downfov = std::max(fov_[0].DownTan, fov_[1].DownTan);
+      fov_[0] = fov_[1] = {upfov, downfov, hfov, hfov};
+    }
     if (!ovrHmd_ConfigureRendering(
-        hmd_, &config.Config, caps, hmd_->DefaultEyeFov, eye_render_desc_))
+        hmd_, &config.Config, caps, fov_, eye_render_desc_))
       throw OVRException("failed to configure rendering");
+    glGetError(); // ovrHmd_ConfigureRendering leaves a GL error behind sometimes
   }
 
   void GetEyeRenderDescs(std::initializer_list<ovrEyeRenderDesc*> out_descs) {
@@ -151,6 +165,8 @@ class HMD {
 
     int i = 0;
     for (auto out: out_eye_poses) {
+      if (monoscopic_)
+        last_poses_[i].Position = {0, 0, 0};
       *out = last_poses_[i++];
     }
   }
@@ -178,6 +194,7 @@ class HMD {
   ovrEyeRenderDesc eye_render_desc_[2];
   ovrFrameTiming frame_timing_;
   ovrPosef last_poses_[2];
+  ovrFovPort fov_[2];
   bool monoscopic_{false};
 };
 

@@ -10,9 +10,10 @@ Important features:
 
 Plan:
 - Rift
-  - Camera supporting pose (for pitch lock and movement relative to head pose).
-    - Accurate scaling.
-  - Monoscopic rendering.
+  - Investigate INVALID_OPERATION when reinitializing rendering.
+    Try it in vrtest to confirm it's an SDK issue.
+  - Fullscreen window.
+  - Fix config handlers called with wrong context active; ConfigView.
 - Mandelbulb
 - Good lighting
 - Saving everything to file (shaders, camera)

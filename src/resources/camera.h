@@ -21,7 +21,6 @@ class Camera {
 
   Camera(ConfigPtr config);
 
-  inline dvec3 position() const { return position_; }
   // world magnification factor
   inline double scale() const { return scale_; }
 
@@ -47,11 +46,22 @@ class Camera {
   // Usually bound to mouse wheel.
   void ScaleRelative(double factor);
 
+  // Set head pose (average of two eyes).
+  // Used for relative movement and scaling.
+  // Not included in Rotation() and position().
+  // If pose is set, pitch is locked to zero.
+  void SetPose(fvec3 position, fquat orientation);
+
+  // Updates camera pose with head pose, clears head pose and unlocks pitch.
+  // Use when switching from VR mode to a normal window.
+  void ClearPose();
+
   // Revert to values from config.
   void Reset();
 
+  dvec3 Position(fvec3 eye_position = fvec3(0, 0, 0));
   // From camera space to world.
-  fquat Rotation() const;
+  fquat Rotation(fquat eye_orientation = fquat(1, 0, 0, 0)) const;
 
   // Near clip plane is set arbitrarily and should be ignored.
   // To transform from world to camera coordinates:
@@ -78,6 +88,10 @@ class Camera {
   float move_speed_ = 1;
   float turn_speed_ = 1;
   float scale_speed_ = 1;
+
+  bool have_head_pose_ {false};
+  fvec3 head_position_ {0, 0, 0};
+  fquat head_orientation_ {1, 0, 0, 0};
 
   ConfigPtr config_;
 

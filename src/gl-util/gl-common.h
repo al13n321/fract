@@ -1,3 +1,4 @@
+#define NOMINMAX // Prevent windows.h from defining min and max macros
 #include <GL/gl3w.h>
 
 #include <GLFW/glfw3.h>

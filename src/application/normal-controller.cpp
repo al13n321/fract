@@ -48,7 +48,7 @@ void NormalController::Deactivate() {
 
 void NormalController::Render() {
   RayGrid grid;
-  grid.position = camera_->position();
+  grid.position = camera_->Position();
   grid.rotation_projection_inv = camera_->RotationProjectionMatrix().Inverse();
   grid.scale = camera_->scale();
   grid.resolution = resolution_;

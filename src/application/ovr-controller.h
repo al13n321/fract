@@ -51,8 +51,11 @@ class OVRController : public Controller {
   EyeData eyes_[2];
 
   float pixel_density_;
+  // If monoscopic rendering is enabled, only render left eye
+  // (using average pose).
+  bool is_monoscopic_;
 
-  Config::SubscriptionPtr pixel_density_subscription_;
+  Config::SubscriptionPtr subscription_;
 };
 
 }

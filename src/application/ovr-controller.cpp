@@ -17,20 +17,21 @@ OVRController::OVRController(ConfigPtr config, Camera *camera)
   raytracer_.reset(new Raytracer(config));
   renderer_.reset(new Renderer(config));
 
-  pixel_density_subscription_ = config_->Subscribe({{"pixel_density"}},
+  subscription_ = config_->Subscribe({{"pixel_density"}, {"monoscopic"}},
     [this](Config::Version v) {
       double x = JsonUtil::doubleValue(v.Get({"pixel_density"}));
       if (x <= 0 || x > 10)
         throw ConfigValueFormatException(
           "invalid pixel_density: " + ToString(x));
+      is_monoscopic_ = v.TryGet({"monoscopic"}).asBool();
       pixel_density_ = (float)x;
+      hmd_.ConfigureRendering(is_monoscopic_);
       eyes_[0].SetResolution(hmd_.GetTextureSize(ovrEye_Left, pixel_density_));
-      eyes_[1].SetResolution(hmd_.GetTextureSize(ovrEye_Right, pixel_density_));
+      if (!is_monoscopic_)
+        eyes_[1].SetResolution(
+          hmd_.GetTextureSize(ovrEye_Right, pixel_density_));
     }, Config::SYNC_NOW);
 
-  // TODO: monoscopic (replace this line with subscription).
-  hmd_.ConfigureRendering();
-  
   Deactivate();
 }
 
@@ -48,10 +49,10 @@ void OVRController::Deactivate() {
     CHECK_GL_ERROR();
   glClearColor(0.0, 0.0, 0.0, 1.0);CHECK_GL_ERROR();
   glClear(GL_COLOR_BUFFER_BIT);CHECK_GL_ERROR();
-
   window_->SwapBuffers();
 
   hmd_.StopTracking();
+  camera_->ClearPose();
 }
 
 void OVRController::Render() {
@@ -59,14 +60,16 @@ void OVRController::Render() {
   hmd_.GetEyeRenderDescs({&eyes_[0].render_desc, &eyes_[1].render_desc});
   hmd_.GetEyePoses({&eyes_[0].pose, &eyes_[1].pose});
 
+  camera_->SetPose((ovr::conv(eyes_[0].pose.Position)
+                  + ovr::conv(eyes_[1].pose.Position)) / 2,
+                  ((ovr::conv(eyes_[0].pose.Orientation)
+                  + ovr::conv(eyes_[1].pose.Orientation)) / 2).Normalized());
+
   for (EyeData &eye: eyes_) {
     RayGrid grid;
-    grid.position =
-      camera_->position()
-      + dvec3(camera_->Rotation().Transform(ovr::conv(eye.pose.Position)))
-        / camera_->scale();
+    grid.position = camera_->Position(ovr::conv(eye.pose.Position));
     grid.rotation_projection_inv =
-      (camera_->Rotation() * ovr::conv(eye.pose.Orientation)).ToMatrix()
+      camera_->Rotation(ovr::conv(eye.pose.Orientation)).ToMatrix()
       * ovr::ProjectionMatrix(eye.render_desc.Fov).Inverse();
     grid.scale = camera_->scale();
     grid.resolution = eye.resolution;
@@ -75,13 +78,17 @@ void OVRController::Render() {
 
     eye.framebuffer->BindForWriting();
     renderer_->Render(*eye.view, eye.resolution);
+
+    if (is_monoscopic_)
+      break;
   }
 
   GL::Framebuffer::Unbind();
   glViewport(0, 0, hmd_.GetResolution().x, hmd_.GetResolution().y);
     CHECK_GL_ERROR();
 
-  hmd_.EndFrame({eyes_[0].texture.get(), eyes_[1].texture.get()});
+  hmd_.EndFrame({eyes_[0].texture.get(),
+    eyes_[is_monoscopic_ ? 0 : 1].texture.get()});
 }
 
 glfw::Window* OVRController::GetWindow() {

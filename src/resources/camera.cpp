@@ -66,14 +66,15 @@ void Camera::ResetPassive() {
   } else
     throw ConfigValueFormatException("unknown camera mode: " + s);
 
-  float new_fov = (float)JsonUtil::doubleValue(config_->Current().Get({ "camera", "fov" }));
+  float new_fov = (float)JsonUtil::doubleValue(
+    config_->Current().Get({ "camera", "fov" }));
 
-  float new_move_speed =
-    (float)JsonUtil::doubleValue(config_->Current().Get({ "camera", "move_speed" }));
-  float new_turn_speed =
-    (float)JsonUtil::doubleValue(config_->Current().Get({ "camera", "turn_speed" }));
-  float new_scale_speed =
-    (float)JsonUtil::doubleValue(config_->Current().Get({ "camera", "scale_speed" }));
+  float new_move_speed = (float)JsonUtil::doubleValue(
+    config_->Current().Get({ "camera", "move_speed" }));
+  float new_turn_speed = (float)JsonUtil::doubleValue(
+    config_->Current().Get({ "camera", "turn_speed" }));
+  float new_scale_speed = (float)JsonUtil::doubleValue(
+    config_->Current().Get({ "camera", "scale_speed" }));
 
   mode_ = new_mode;
   fov_ = new_fov * kDegToRad;
@@ -99,27 +100,40 @@ void Camera::TurnRelative(fvec2 delta) {
 
   if (mode_ == YAW_PITCH) {
     yaw_   += delta.x * turn_speed_;
-    pitch_ += delta.y * turn_speed_;
+    pitch_ = std::max((float)-M_PI/2, std::min((float)M_PI/2, pitch_
+      + delta.y * turn_speed_));
   } else {
-    quat_ = quat_ * fquat((float)delta.Length() * turn_speed_,
-                          fvec3(delta.y, -delta.x, 0));
+    quat_ = quat_ * head_orientation_
+      * fquat((float)delta.Length() * turn_speed_,
+              fvec3(delta.y, -delta.x, 0))
+      * head_orientation_.Inverse();
     quat_.NormalizeMe();
   }
 }
 
 void Camera::MoveRelative(fvec3 delta) {
-  position_ += dvec3(Rotation().Transform(delta)) / scale_;
+  position_ += dvec3(Rotation(head_orientation_).Transform(delta)) / scale_;
 }
 
 void Camera::ScaleRelative(double factor) {
+  position_ = Position(head_position_);
   scale_ *= exp(factor * scale_speed_);
+  position_ = Position(-head_position_);
 }
 
-fquat Camera::Rotation() const {
+dvec3 Camera::Position(fvec3 eye_position) {
+  return position_ + dvec3(Rotation().Transform(eye_position)) / scale_;
+}
+
+fquat Camera::Rotation(fquat eye_orientation) const {
+  fquat res;
   if (mode_ == SPACE)
-    return quat_;
+    res = quat_;
+  else if (have_head_pose_)
+    res = fquat(yaw_, fvec3(0, -1, 0));
   else
-    return fquat(yaw_, fvec3(0, -1, 0)) * fquat(pitch_, fvec3(1, 0, 0));
+    res = fquat(yaw_, fvec3(0, -1, 0)) * fquat(pitch_, fvec3(1, 0, 0));
+  return res * eye_orientation;
 }
 
 fmat4 Camera::RotationProjectionMatrix() const {
@@ -130,6 +144,26 @@ fmat4 Camera::RotationProjectionMatrix() const {
       fov_, aspect_ratio_, near_clip_plane_, 0) *
     // 1. rotate coordinate system (transposition is same as inverse here)
     Rotation().Inverse().ToMatrix();
+}
+
+void Camera::SetPose(fvec3 position, fquat orientation) {
+  head_position_ = position;
+  head_orientation_ = orientation;
+  have_head_pose_ = true;
+}
+
+void Camera::ClearPose() {
+  position_ = Position(head_position_);
+  head_position_ = fvec3(0, 0, 0);
+  if (mode_ == SPACE) {
+    quat_ *= head_orientation_;
+    quat_.NormalizeMe();
+  } else {
+    // TODO: extract yaw and pitch from head_orientation
+    //       and update yaw_ and pitch_
+  }
+  head_orientation_ = fquat(1, 0, 0, 0);
+  have_head_pose_ = false;
 }
 
 }
