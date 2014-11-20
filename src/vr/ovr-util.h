@@ -101,9 +101,7 @@ class HMD {
       throw OVRException("failed to configure tracking");
   }
 
-  // Uses current window.
-  // TODO: monoscopic
-  void ConfigureRendering(bool monoscopic) {
+  void ConfigureRendering(glfw::Window *window, bool monoscopic) {
     ovrGLConfig config;
     memset(&config, 0, sizeof(config));
     config.OGL.Header = {
@@ -111,6 +109,20 @@ class HMD {
       hmd_->Resolution,    // RTSize
       8                    // Multisample 
     };
+#ifdef WIN32
+    config.OGL.Window = window->GetHWND();
+#else
+    static bool warned = false;
+    if (!warned) {
+      warned = true;
+      std::cerr <<
+      "ConfigureRendering implementation for your platform uses current window "
+      "for rendering. This is likely to cause freezing or crashes if "
+      "monoscopic is changed in config at runtime. Consider fixing this in "
+      __FILE__ ":" << __LINE__ << ". It's ceratinly easily fixable on Linux."
+      << std::endl;
+    }
+#endif
     
     int caps =
       ovrDistortionCap_Chromatic |
@@ -131,7 +143,12 @@ class HMD {
     if (!ovrHmd_ConfigureRendering(
         hmd_, &config.Config, caps, fov_, eye_render_desc_))
       throw OVRException("failed to configure rendering");
-    glGetError(); // ovrHmd_ConfigureRendering leaves a GL error behind sometimes
+  }
+
+  void FreeRendering() {
+    if (!ovrHmd_ConfigureRendering(
+        hmd_, nullptr, 0, fov_, eye_render_desc_))
+      throw OVRException("failed to unconfigure rendering");
   }
 
   void GetEyeRenderDescs(std::initializer_list<ovrEyeRenderDesc*> out_descs) {

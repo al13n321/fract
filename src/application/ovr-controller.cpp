@@ -17,15 +17,22 @@ OVRController::OVRController(ConfigPtr config, Camera *camera)
   raytracer_.reset(new Raytracer(config));
   renderer_.reset(new Renderer(config));
 
+  pixel_density_ = -1;
+
   subscription_ = config_->Subscribe({{"pixel_density"}, {"monoscopic"}},
     [this](Config::Version v) {
       double x = JsonUtil::doubleValue(v.Get({"pixel_density"}));
       if (x <= 0 || x > 10)
         throw ConfigValueFormatException(
           "invalid pixel_density: " + ToString(x));
+      float was_density = pixel_density_;
+      bool was_monoscopic = is_monoscopic_;
       is_monoscopic_ = v.TryGet({"monoscopic"}).asBool();
       pixel_density_ = (float)x;
-      hmd_.ConfigureRendering(is_monoscopic_);
+      if (was_density > 0 && is_monoscopic_ != was_monoscopic)
+        hmd_.FreeRendering();
+      if (was_density <= 0 || is_monoscopic_ != was_monoscopic)
+        hmd_.ConfigureRendering(window_.get(), is_monoscopic_);
       eyes_[0].SetResolution(hmd_.GetTextureSize(ovrEye_Left, pixel_density_));
       if (!is_monoscopic_)
         eyes_[1].SetResolution(
@@ -65,7 +72,9 @@ void OVRController::Render() {
                   ((ovr::conv(eyes_[0].pose.Orientation)
                   + ovr::conv(eyes_[1].pose.Orientation)) / 2).Normalized());
 
+  int i = -1;
   for (EyeData &eye: eyes_) {
+    ++i;
     RayGrid grid;
     grid.position = camera_->Position(ovr::conv(eye.pose.Position));
     grid.rotation_projection_inv =

@@ -105,6 +105,10 @@ class Window {
 
   void Focus();
 
+#ifdef WIN32
+  HWND GetHWND();
+#endif
+
   ~Window() {
     glfwDestroyWindow(window);
   }

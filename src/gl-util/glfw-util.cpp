@@ -8,9 +8,13 @@
 
 namespace fract { namespace glfw {
 
+HWND Window::GetHWND() {
+  return glfwGetWin32Window(window);
+}
+
 void Window::Focus() {
 #ifdef WIN32
-  SetFocus(glfwGetWin32Window(window));
+  SetFocus(GetHWND());
 #else
   std::cerr
     << "Window::Focus() is not implemented for this platform. "

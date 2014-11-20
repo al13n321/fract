@@ -7,8 +7,8 @@
   "resolution": [700, 700], // Size of raytraced image. Ignored for VR.
 
   "no_vr": false, // Only checked on startup.
-  "pixel_density": 1, // For VR. Resolution coefficient.
-  "monoscopic": true, // Monoscopic rendering. Two times faster, no stereo.
+  "pixel_density": 0.5, // For VR. Resolution coefficient.
+  "monoscopic": false, // Monoscopic rendering. Two times faster, no stereo.
 
   // Optional.
   // These parameters are only applied when changed.

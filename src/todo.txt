@@ -10,8 +10,6 @@ Important features:
 
 Plan:
 - Rift
-  - Investigate INVALID_OPERATION when reinitializing rendering.
-    Try it in vrtest to confirm it's an SDK issue.
   - Fullscreen window.
   - Fix config handlers called with wrong context active; ConfigView.
 - Mandelbulb

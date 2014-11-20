@@ -34,6 +34,7 @@ class OVRController : public Controller {
     void SetResolution(ivec2 res) {
       resolution = res;
       view.reset(new RaytracedView(resolution));
+      framebuffer.reset();
       texture.reset(new GL::Texture2D(resolution, GL_RGB8, GL_LINEAR));
       framebuffer.reset(new GL::Framebuffer({texture.get()}));
     }
