@@ -10,7 +10,7 @@ Important features:
 
 Plan:
 - Rift
-  - Fix config handlers called with wrong context active; ConfigView.
+  - Fix requiring resolutions in config at startup (race with initial loading).
 - Mandelbulb
 - Good lighting
 - Saving everything to file (shaders, camera)
@@ -26,7 +26,9 @@ Plan:
   automatically triggered by timeouts
 
 Wishlist, to keep in mind:
+- Fix loading shaders twice; don't know how to avoid race yet
 - Loading values for uniforms from separate file
+  (erm, I don't remember why I wanted that; just from config should be enough?)
 - Progressive enhancement for cubemap
 - An space-style camera with no up and down
 - Environment maps

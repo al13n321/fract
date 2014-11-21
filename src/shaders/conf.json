@@ -6,7 +6,6 @@
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
   "resolution": [700, 700], // Size of raytraced image. Ignored for VR.
 
-  "no_vr": false, // Only checked on startup.
   "pixel_density": 0.5, // For VR. Resolution coefficient.
   "monoscopic": false, // Monoscopic rendering. Two times faster, no stereo.
 

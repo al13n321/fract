@@ -176,19 +176,23 @@ int main(int argc, char **argv) {
     freopen("log.txt", "w", stderr);
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    std::string config_path;
-    if (argc == 1)
-      config_path = "shaders/conf.json";
-    else if (argc == 2)
-      config_path = argv[1];
-    else
+    std::string config_path = "shaders/conf.json";
+    bool no_vr = false;
+    if (argc > 3)
       throw CommandLineArgumentsException(
-        "0 or 1 command line arguments expected");
+        "0 - 2 command line arguments expected");
+    if (argc > 1)
+      config_path = argv[1];
+    if (argc > 2)
+      if (argv[2] == std::string("no-vr"))
+        no_vr = true;
+      else
+        throw CommandLineArgumentsException(
+          "second argument should be 'no-vr'");
+      
 
     config.reset(new Config(config_path));
     config_context = config->NewContext();
-
-    bool no_vr = config->Current().TryGet({"no_vr"}) == Json::Value(true);
 
 #ifdef USE_OVR
     if (!no_vr)
