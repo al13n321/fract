@@ -6,7 +6,7 @@ namespace fract {
 const static float kPI = 3.1415926535897932384626433832795f;
 const static float kDegToRad = kPI / 180.0f;
 
-Camera::Camera(ConfigPtr config): config_(config) {
+Camera::Camera(Config::View *config): config_(config) {
   position_subscription_ = config_->Subscribe({
       {"camera", "pos"}
     }, [&](Config::Version v) { ResetPosition(); }, Config::SYNC_NOW);

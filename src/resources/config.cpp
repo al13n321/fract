@@ -132,7 +132,6 @@ void Config::CallHandler(UpdateHandler handler, Version version) {
 }
 
 void Config::Update() {
-  std::lock_guard<std::mutex> lock(mutex_);
   std::cerr << "loading " << path_ << std::endl;
   std::shared_ptr<const Json::Value> old_root = std::atomic_load(&root_);
   std::shared_ptr<const Json::Value> new_root = Load();
@@ -141,32 +140,46 @@ void Config::Update() {
   std::vector<std::string> temp_path;
   Diff(*old_root, *new_root, temp_path, handlers);
   for (auto &handler: handlers) {
-    if (handler.sync != ASYNC)
-      pending_handlers_.insert(handler);
-    else
+    if (handler.view) {
+      std::lock_guard<std::mutex> lock(handler.view->mutex_);
+      handler.view->pending_handlers_.insert(handler);
+    } else {
+      std::lock_guard<std::mutex> lock(mutex_);
       CallHandler(handler.handler, Version(new_root));
+    }
   }
 }
 
-Config::SubscriptionPtr Config::Subscribe(
-    std::initializer_list<std::vector<std::string>> paths,
-    UpdateHandler handler, HandlerSyncMode sync) {
-  std::lock_guard<std::mutex> lock(mutex_);
-  SubscriptionPtr subscription(new Subscription(*this));
+Config::ContextPtr Config::NewContext() {
+  return std::unique_ptr<Context>(new Context(this));
+}
+
+Config::Version Config::View::Current() {
+  return config_->Current();
+}
+
+Config::SubscriptionPtr Config::View::Subscribe(
+      std::initializer_list<std::vector<std::string>> paths,
+      UpdateHandler handler, HandlerSyncMode sync) {
+  std::lock_guard<std::mutex> lock(config_->mutex_);
+  SubscriptionPtr subscription(new Subscription(*config_));
+  subscription->handler_ = HandlerInfo(
+    handler, sync == ASYNC ? nullptr : this, config_->handler_id_increment_++);
   for (const auto &path: paths) {
     subscription->iterators_.push_back(
-      subscriptions_.insert(std::make_pair(
-        path, HandlerInfo(handler, sync, handler_id_increment_++))));
+      config_->subscriptions_.insert(std::make_pair(
+        path, subscription->handler_)));
   }
   if (sync != SYNC)
-    CallHandler(handler, Version(root_));
+    CallHandler(handler, Version(config_->root_));
   return subscription;
 }
 
-void Config::PollUpdates() {
+void Config::Context::PollUpdates() {
   std::lock_guard<std::mutex> lock(mutex_);
+  Version v = Current();
   for (auto &handler: pending_handlers_) {
-    CallHandler(handler.handler, Version(root_));
+    Config::CallHandler(handler.handler, v);
   }
   pending_handlers_.clear();
 }

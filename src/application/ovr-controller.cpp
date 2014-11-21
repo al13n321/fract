@@ -5,8 +5,8 @@
 
 namespace fract {
 
-OVRController::OVRController(ConfigPtr config, Camera *camera)
-    : config_(config), camera_(camera) {
+OVRController::OVRController(Config::View *config, Camera *camera)
+    : config_(config->Config()->NewContext()), camera_(camera) {
   window_.reset(new glfw::Window(hmd_.GetResolution(),
     "vr"));
   window_->SetPosition(hmd_.GetWindowPos());
@@ -63,6 +63,8 @@ void OVRController::Deactivate() {
 }
 
 void OVRController::Render() {
+  config_->PollUpdates();
+
   hmd_.BeginFrame();
   hmd_.GetEyeRenderDescs({&eyes_[0].render_desc, &eyes_[1].render_desc});
   hmd_.GetEyePoses({&eyes_[0].pose, &eyes_[1].pose});

@@ -3,7 +3,7 @@
 
 namespace fract {
 
-Renderer::Renderer(ConfigPtr config)
+Renderer::Renderer(Config::View *config)
   : config_(config)
   , shader_provider_(config, "Predefined/pass.vert", {"renderer"}, {}) {}
 

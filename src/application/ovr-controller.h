@@ -13,7 +13,7 @@ namespace fract {
 // Controller that renders to a window.
 class OVRController : public Controller {
  public:
-  OVRController(ConfigPtr config, Camera *camera);
+  OVRController(Config::View *config, Camera *camera);
   ~OVRController();
 
   bool CaptureMouse() override { return true; }
@@ -40,7 +40,7 @@ class OVRController : public Controller {
     }
   };
 
-  ConfigPtr config_;
+  Config::ContextPtr config_;
   Camera *camera_;
 
   std::unique_ptr<glfw::Window> window_;

@@ -3,7 +3,7 @@
 
 namespace fract {
 
-Raytracer::Raytracer(ConfigPtr config)
+Raytracer::Raytracer(Config::View *config)
   : config_(config)
   , shader_provider_(config, "Predefined/pass.vert", {"raytracer"},
     {{"Camera-shader", "Predefined/PerspectiveCamera.frag"}}) {}

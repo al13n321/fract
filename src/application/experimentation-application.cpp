@@ -12,9 +12,6 @@
 
 using namespace fract;
 
-ivec2 winsize(512, 512);
-const ivec2 imgsize(512, 512);
-
 bool mouse_pressed;
 double initial_mousex;
 double initial_mousey;
@@ -29,7 +26,8 @@ int last_fps_update_frame;
 
 std::unique_ptr<glfw::Initializer> glfw_init;
 
-ConfigPtr config;
+std::unique_ptr<Config> config;
+Config::ContextPtr config_context;
 
 std::unique_ptr<Camera> camera;
 
@@ -187,7 +185,8 @@ int main(int argc, char **argv) {
       throw CommandLineArgumentsException(
         "0 or 1 command line arguments expected");
 
-    config = std::make_shared<Config>(config_path);
+    config.reset(new Config(config_path));
+    config_context = config->NewContext();
 
     bool no_vr = config->Current().TryGet({"no_vr"}) == Json::Value(true);
 
@@ -199,14 +198,15 @@ int main(int argc, char **argv) {
     glfwSetErrorCallback(&LogGLFWError);
     glfw_init.reset(new glfw::Initializer());
 
-    camera.reset(new Camera(config));
+    camera.reset(new Camera(config_context.get()));
 
 #ifdef USE_OVR
     if (!no_vr)
-      controllers.emplace_back(new OVRController(config, camera.get()));
+      controllers.emplace_back(new OVRController(config_context.get(), camera.get()));
 #endif
 
-    controllers.emplace_back(new NormalController(config, camera.get()));
+    controllers.emplace_back(new NormalController(
+      config_context.get(), camera.get()));
     controller_idx = controllers.size() - 1;
     ActivateController();
 
@@ -224,8 +224,7 @@ int main(int argc, char **argv) {
       double frame_time = frame_stopwatch.Restart();
       ++cur_frame_number;
 
-      // TODO: remove.
-      config->PollUpdates();
+      config_context->PollUpdates();
 
       ProcessKeyboardInput(frame_time);
       UpdateFPS();
@@ -241,6 +240,7 @@ int main(int argc, char **argv) {
     // https://connect.microsoft.com/VisualStudio/feedback/details/747145
     controllers.clear();
     camera.reset();
+    config_context.reset();
     config.reset();
 
     return 2;
@@ -249,6 +249,7 @@ int main(int argc, char **argv) {
   // Same as above.
   controllers.clear();
   camera.reset();
+  config_context.reset();
   config.reset();
 
   return 0;

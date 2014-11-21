@@ -3,8 +3,8 @@
 
 namespace fract {
 
-NormalController::NormalController(ConfigPtr config, Camera *camera)
-    : config_(config), camera_(camera) {
+NormalController::NormalController(Config::View *config, Camera *camera)
+    : config_(config->Config()->NewContext()), camera_(camera) {
   resolution_subscription_ = config_->Subscribe({{"resolution"}},
     [this](Config::Version v) {
       resolution_ = JsonUtil::sizeValue(v.Get({"resolution"}));
@@ -47,6 +47,8 @@ void NormalController::Deactivate() {
 }
 
 void NormalController::Render() {
+  config_->PollUpdates();
+
   RayGrid grid;
   grid.position = camera_->Position();
   grid.rotation_projection_inv = camera_->RotationProjectionMatrix().Inverse();

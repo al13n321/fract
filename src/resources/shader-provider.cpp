@@ -6,7 +6,7 @@
 namespace fract {
 
 ShaderProvider::ShaderProvider(
-  ConfigPtr config,
+  Config::View *config,
   const std::string &vert_shader_path,
   std::initializer_list<std::string> config_path,
   std::initializer_list<std::pair<std::string, std::string>>

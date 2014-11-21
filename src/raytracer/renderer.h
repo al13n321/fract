@@ -11,12 +11,12 @@ namespace fract {
 // Renders raw raytracing result into a pretty image on screen.
 class Renderer {
  public:
-  Renderer(ConfigPtr config);
+  Renderer(Config::View *config);
 
   void Render(
     const RaytracedView &raytraced, ivec2 frame_size);
  private:
-  ConfigPtr config_;
+  Config::View *config_;
   ShaderProvider shader_provider_;
   GL::QuadRenderer quad_renderer_;
 };

@@ -18,7 +18,7 @@ namespace fract {
 class ShaderProvider {
  public:
   ShaderProvider(
-    ConfigPtr config,
+    Config::View *config,
     const std::string &vert_shader_path,
     std::initializer_list<std::string> config_path,
     std::initializer_list<std::pair<std::string, std::string>>
@@ -26,7 +26,7 @@ class ShaderProvider {
 
   std::shared_ptr<GL::Shader> Get();
  private:
-  ConfigPtr config_;
+  Config::View *config_;
   std::string vert_shader_path_;
   std::vector<std::string> config_path_;
   ShaderPreprocessor preprocessor_;

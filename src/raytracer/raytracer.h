@@ -12,11 +12,11 @@ namespace fract {
 // Reloads the needed shaders and updates uniforms.
 class Raytracer {
  public:
-  Raytracer(ConfigPtr config);
+  Raytracer(Config::View *config);
 
   void TraceGrid(const RayGrid &grid, RaytracedView &target);
  private:
-  ConfigPtr config_;
+  Config::View *config_;
   ShaderProvider shader_provider_;
   GL::QuadRenderer quad_renderer_;
 };

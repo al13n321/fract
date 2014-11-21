@@ -19,7 +19,7 @@ class Camera {
     SPACE,     // No up and down, like you're in space.
   };
 
-  Camera(ConfigPtr config);
+  Camera(Config::View *config);
 
   // world magnification factor
   inline double scale() const { return scale_; }
@@ -93,7 +93,7 @@ class Camera {
   fvec3 head_position_ {0, 0, 0};
   fquat head_orientation_ {1, 0, 0, 0};
 
-  ConfigPtr config_;
+  Config::View *config_;
 
   Config::SubscriptionPtr position_subscription_;
   Config::SubscriptionPtr scale_subscription_;

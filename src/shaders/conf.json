@@ -27,14 +27,13 @@
     "scale_speed": 10 // scale logarithm increment per unit of scrolling
   },
 
-  // Optional.
   // Currently ignored
   "uniforms": {
     "radius": 1
   },
 
+  // Currently ignored
   "defines": {
     "USE_DOUBLE": true
   }
 }
-

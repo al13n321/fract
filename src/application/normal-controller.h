@@ -12,7 +12,7 @@ namespace fract {
 // Controller that renders to a window.
 class NormalController : public Controller {
  public:
-  NormalController(ConfigPtr config, Camera *camera);
+  NormalController(Config::View *config, Camera *camera);
   ~NormalController();
 
   void Activate() override;
@@ -21,7 +21,7 @@ class NormalController : public Controller {
   glfw::Window* GetWindow() override;
 
  private:
-  ConfigPtr config_;
+  Config::ContextPtr config_;
   Camera *camera_;
   // Window must be destroyed after everything that can make OpenGL calls.
   std::unique_ptr<glfw::Window> window_;
