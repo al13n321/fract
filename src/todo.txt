@@ -9,10 +9,9 @@ Important features:
 - Collision detection (how?)
 
 Plan:
-- Rift
-  - Fix requiring resolutions in config at startup (race with initial loading).
 - Mandelbulb
-- Good lighting
+- Good lighting and coloring
+- Asynchronous timewarp.
 - Saving everything to file (shaders, camera)
 	Should be able to save current view as a camera, so it can be pasted here later to restore view.
   Or save the entire state, with camera inlined.

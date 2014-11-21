@@ -32,10 +32,12 @@ Camera::Camera(Config::View *config): config_(config) {
 }
 
 void Camera::ResetPosition() {
-  position_ = JsonUtil::vec3Value(config_->Current().Get({"camera", "pos"}));
+  position_ = JsonUtil::vec3Value(
+    config_->Current().TryGet({"camera", "pos"}), dvec3(0, 0, 10));
 }
 void Camera::ResetScale() {
-  scale_ = JsonUtil::doubleValue(config_->Current().Get({ "camera", "scale" }));
+  scale_ = JsonUtil::doubleValue(
+    config_->Current().TryGet({ "camera", "scale" }), 1);
 }
 void Camera::ResetRotation() {
   float new_yaw = yaw_;
@@ -67,14 +69,14 @@ void Camera::ResetPassive() {
     throw ConfigValueFormatException("unknown camera mode: " + s);
 
   float new_fov = (float)JsonUtil::doubleValue(
-    config_->Current().Get({ "camera", "fov" }));
+    config_->Current().TryGet({ "camera", "fov" }), 90);
 
   float new_move_speed = (float)JsonUtil::doubleValue(
-    config_->Current().Get({ "camera", "move_speed" }));
+    config_->Current().TryGet({ "camera", "move_speed" }), 3);
   float new_turn_speed = (float)JsonUtil::doubleValue(
-    config_->Current().Get({ "camera", "turn_speed" }));
+    config_->Current().TryGet({ "camera", "turn_speed" }), 0.4);
   float new_scale_speed = (float)JsonUtil::doubleValue(
-    config_->Current().Get({ "camera", "scale_speed" }));
+    config_->Current().TryGet({ "camera", "scale_speed" }), 10);
 
   mode_ = new_mode;
   fov_ = new_fov * kDegToRad;

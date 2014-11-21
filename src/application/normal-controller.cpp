@@ -7,7 +7,8 @@ NormalController::NormalController(Config::View *config, Camera *camera)
     : config_(config->Config()->NewContext()), camera_(camera) {
   resolution_subscription_ = config_->Subscribe({{"resolution"}},
     [this](Config::Version v) {
-      resolution_ = JsonUtil::sizeValue(v.Get({"resolution"}));
+      resolution_ = JsonUtil::sizeValue(
+        v.TryGet({"resolution"}), ivec2(500, 500));
       if (view_->size == resolution_)
         return;
       view_.reset(new RaytracedView(resolution_));
@@ -15,7 +16,8 @@ NormalController::NormalController(Config::View *config, Camera *camera)
       camera_->set_aspect_ratio((float)resolution_.x / resolution_.y);
     }, Config::SYNC);
 
-  resolution_  = JsonUtil::sizeValue(config->Current().Get({"resolution"}));
+  resolution_ = JsonUtil::sizeValue(
+    config->Current().Get({"resolution"}), ivec2(500, 500));
   window_.reset(new glfw::Window(resolution_, "window"));
   window_->MakeCurrent();
   window_->SetPosition(ivec2(20, 40));

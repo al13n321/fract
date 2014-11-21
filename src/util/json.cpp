@@ -89,4 +89,24 @@ fquat JsonUtil::quatValue(const Json::Value &value) {
   }
 }
 
+
+double JsonUtil::doubleValue(const Json::Value &value, double default_) {
+  return value.isNull() ? default_ : doubleValue(value);
+}
+int JsonUtil::intValue(const Json::Value &value, int default_) {
+  return value.isNull() ? default_ : intValue(value);
+}
+
+dvec3 JsonUtil::vec3Value(const Json::Value &value, dvec3 default_) {
+  return value.isNull() ? default_ : vec3Value(value);
+}
+
+ivec2 JsonUtil::sizeValue(const Json::Value &value, ivec2 default_) {
+  return value.isNull() ? default_ : sizeValue(value);
+}
+
+fquat JsonUtil::quatValue(const Json::Value &value, fquat default_) {
+  return value.isNull() ? default_ : quatValue(value);
+}
+
 }

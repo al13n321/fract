@@ -21,7 +21,7 @@ OVRController::OVRController(Config::View *config, Camera *camera)
 
   subscription_ = config_->Subscribe({{"pixel_density"}, {"monoscopic"}},
     [this](Config::Version v) {
-      double x = JsonUtil::doubleValue(v.Get({"pixel_density"}));
+      double x = JsonUtil::doubleValue(v.Get({"pixel_density"}), 1);
       if (x <= 0 || x > 10)
         throw ConfigValueFormatException(
           "invalid pixel_density: " + ToString(x));
