@@ -1,12 +1,12 @@
 {
   "root_dir": "", // relative to directory with this file; optional
-  "raytracer": "Examples/Mandelbox.frag",
+  "raytracer": "Examples/Sphere.frag",
   "renderer": "Renderers/Default.frag",
 
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
   "resolution": [700, 700], // Size of raytraced image. Ignored for VR.
 
-  "pixel_density": 0.5, // For VR. Resolution coefficient.
+  "pixel_density": 1, // For VR. Resolution coefficient.
   "monoscopic": false, // Monoscopic rendering. Two times faster, no stereo.
 
   // Optional.

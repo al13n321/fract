@@ -1,4 +1,5 @@
 #include "ovr-controller.h"
+#include "util/debug.h"
 #include "util/json.h"
 #include "util/exceptions.h"
 #include "util/string-util.h"
@@ -67,6 +68,7 @@ void OVRController::Render() {
 
   hmd_.BeginFrame();
   hmd_.GetEyeRenderDescs({&eyes_[0].render_desc, &eyes_[1].render_desc});
+
   hmd_.GetEyePoses({&eyes_[0].pose, &eyes_[1].pose});
 
   camera_->SetPose((ovr::conv(eyes_[0].pose.Position)
@@ -74,9 +76,7 @@ void OVRController::Render() {
                   ((ovr::conv(eyes_[0].pose.Orientation)
                   + ovr::conv(eyes_[1].pose.Orientation)) / 2).Normalized());
 
-  int i = -1;
   for (EyeData &eye: eyes_) {
-    ++i;
     RayGrid grid;
     grid.position = camera_->Position(ovr::conv(eye.pose.Position));
     grid.rotation_projection_inv =

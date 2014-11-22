@@ -2,6 +2,7 @@
 #include "normal-controller.h"
 #include "gl-util/glfw-util.h"
 #include "resources/camera.h"
+#include "util/debug.h"
 #include "util/stopwatch.h"
 #include "util/string-util.h"
 
@@ -98,6 +99,8 @@ static void KeyCallback(
         controller_idx = (controller_idx + 1) % controllers.size();
         ActivateController();
       }
+    } else if (key == GLFW_KEY_APOSTROPHE) {
+      ++DebugTrigger;
     }
   }
 }

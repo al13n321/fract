@@ -9,6 +9,7 @@ Important features:
 - Collision detection (how?)
 
 Plan:
+- Fullscreen to fix rift stuttering; couldn't get two windows to coexist yet.
 - Mandelbulb
 - Good lighting and coloring
 - Asynchronous timewarp.
@@ -43,3 +44,7 @@ Notes:
 - Can use multiple OpenGL contexts for background rendering.
 - Cubemap face resolution is not image resolution; it depends on image FOV.
   Also, better make it even more for better quality
+
+Random ideas:
+- Averaging iteration count from within DE across raymarching steps;
+  maybe will get some foggy appearance; or glitchy

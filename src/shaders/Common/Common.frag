@@ -20,6 +20,7 @@
 struct RaytracerOutput {
   float hit; // 0 or 1
   float converged; // 0 or 1; 0 if raymarch step limit is hit
+  float inside; // 0 or 1; 1 if ray started inside the body
   float error; // 0 or 1; 1 if something that should never happen happened
   float iterations;
   float dist;

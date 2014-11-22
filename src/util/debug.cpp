@@ -14,4 +14,6 @@ void MaybeDebugBreak() {
 #endif
 }
 
+std::atomic<int> DebugTrigger;
+
 }

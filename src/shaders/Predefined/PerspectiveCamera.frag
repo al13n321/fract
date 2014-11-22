@@ -31,7 +31,7 @@ void main() {
 
   RaytracerOutput res = TraceRay(tvec4(CameraPos, 0.0), dir, CameraScale);
   
-  OutMain = vec4(res.error * 4 + res.converged * 2 + res.hit,
+  OutMain = vec4(res.error * 8 + res.converged * 4 + res.hit * 2 + res.inside,
     res.iterations, res.dist, 0.0);
   OutNormal = vec4(res.normal, 0);
   OutColor = res.color;

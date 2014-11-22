@@ -44,10 +44,10 @@ class OVRController : public Controller {
   Camera *camera_;
 
   std::unique_ptr<glfw::Window> window_;
+  ovr::HMD hmd_;
+
   std::unique_ptr<Raytracer> raytracer_;
   std::unique_ptr<Renderer> renderer_;
-
-  ovr::HMD hmd_;
 
   EyeData eyes_[2];
 

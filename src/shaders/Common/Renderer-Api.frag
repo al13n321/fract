@@ -17,9 +17,10 @@ void main() {
 
   vec4 tex_main = texture(MainTexture, ScreenPosition);
 
-	ray.hit = mod(tex_main.x, 2.0);
-  ray.converged = mod(floor(tex_main.x * 0.5), 2.0);
-  ray.error = mod(floor(tex_main.x * 0.25), 2.0);
+  ray.inside = mod(tex_main.x, 2.0);
+	ray.hit = mod(floor(tex_main.x * 0.5), 2.0);
+  ray.converged = mod(floor(tex_main.x * 0.25), 2.0);
+  ray.error = mod(floor(tex_main.x * 0.125), 2.0);
   ray.iterations = tex_main.y;
   ray.dist = tex_main.z;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <algorithm>
 #include "gl-util/glfw-util.h"
 #include "OVR.h"
@@ -58,6 +59,9 @@ class HMD {
     hmd_ = ovrHmd_Create(0);
     if (!hmd_)
       throw OVRException("no HMD detected");
+    ovrHmd_SetEnabledCaps(hmd_,
+      ovrHmdCap_LowPersistence |
+      ovrHmdCap_DynamicPrediction);
   }
 
   ~HMD() {
@@ -116,11 +120,11 @@ class HMD {
     if (!warned) {
       warned = true;
       std::cerr <<
-      "ConfigureRendering implementation for your platform uses current window "
-      "for rendering. This is likely to cause freezing or crashes if "
-      "monoscopic is changed in config at runtime. Consider fixing this in "
-      __FILE__ ":" << __LINE__ << ". It's ceratinly easily fixable on Linux."
-      << std::endl;
+        "ConfigureRendering implementation for your platform uses current "
+        "window for rendering. This is likely to cause freezing or crashes if "
+        "monoscopic is changed in config at runtime. Consider fixing this in "
+        __FILE__ ":" << __LINE__ << ". It's ceratinly easily fixable on Linux."
+        << std::endl;
     }
 #endif
     
