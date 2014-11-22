@@ -8,15 +8,14 @@ namespace fract {
 
 OVRController::OVRController(Config::View *config, Camera *camera)
     : config_(config->Config()->NewContext()), camera_(camera) {
-  window_.reset(new glfw::Window(hmd_.GetResolution(),
-    "vr"));
-  window_->SetPosition(hmd_.GetWindowPos());
+  window_.reset(new glfw::Window(
+    hmd_.GetWindowPos(), hmd_.GetResolution(), "vr", true));
   window_->MakeCurrent();
 
   GL::InitGl3wIfNeeded();
 
-  raytracer_.reset(new Raytracer(config));
-  renderer_.reset(new Renderer(config));
+  raytracer_.reset(new Raytracer(config_.get()));
+  renderer_.reset(new Renderer(config_.get()));
 
   pixel_density_ = -1;
 

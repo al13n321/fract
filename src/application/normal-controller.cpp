@@ -17,10 +17,9 @@ NormalController::NormalController(Config::View *config, Camera *camera)
     }, Config::SYNC);
 
   resolution_ = JsonUtil::sizeValue(
-    config->Current().Get({"resolution"}), ivec2(500, 500));
-  window_.reset(new glfw::Window(resolution_, "window"));
+    config_->Current().Get({"resolution"}), ivec2(500, 500));
+  window_.reset(new glfw::Window(ivec2(20, 40), resolution_, "window", false));
   window_->MakeCurrent();
-  window_->SetPosition(ivec2(20, 40));
 
   GL::InitGl3wIfNeeded();
 
@@ -28,8 +27,8 @@ NormalController::NormalController(Config::View *config, Camera *camera)
 
   view_.reset(new RaytracedView(resolution_));
 
-  raytracer_.reset(new Raytracer(config));
-  renderer_.reset(new Renderer(config));
+  raytracer_.reset(new Raytracer(config_.get()));
+  renderer_.reset(new Renderer(config_.get()));
 }
 
 NormalController::~NormalController() {

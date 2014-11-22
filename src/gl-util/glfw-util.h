@@ -20,17 +20,45 @@ class Initializer {
 
 class Window {
  public:
-  Window(ivec2 size, const std::string &title,
-    bool resizable = false
-  ) {
+  // If fullscreen, selects monitor with closest desktop rectangle.
+  Window(ivec2 position, ivec2 size, const std::string &title, bool fullscreen){
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, resizable ? GL_TRUE : GL_FALSE);
-    window = glfwCreateWindow(size.x, size.y, title.c_str(), NULL, NULL);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+
+    GLFWmonitor *monitor = nullptr;
+    if (fullscreen) {
+      int count;
+      GLFWmonitor **monitors = glfwGetMonitors(&count);
+      // Find max intersection area.
+      std::pair<int, int> best(-1, -1);
+      for (int i = 0; i < count; ++i) {
+        int x, y;
+        glfwGetMonitorPos(monitors[i], &x, &y);
+        const GLFWvidmode *mode = glfwGetVideoMode(monitors[i]);
+        int area =
+          std::max(0,
+            std::min(position.x + size.x, x + mode->width) -
+            std::max(position.x, x)) *
+          std::max(0,
+            std::min(position.y + size.y, y + mode->height) -
+            std::max(position.y, y));
+        best = std::max(best, std::make_pair(area, i));
+      }
+      if (best.second == -1)
+        throw GLException(
+          "no monitors found; you probably can't see this message :P");
+      monitor = monitors[best.second];
+    }
+
+    window = glfwCreateWindow(size.x, size.y, title.c_str(), monitor, nullptr);
     if (!window)
       throw GLException("couldn't create window");
+
+    if (!fullscreen)
+      SetPosition(position);
   }
 
   void MakeCurrent() {

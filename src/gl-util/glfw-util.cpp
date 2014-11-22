@@ -14,6 +14,7 @@ HWND Window::GetHWND() {
 
 void Window::Focus() {
 #ifdef WIN32
+  ShowWindow(GetHWND(), SW_SHOWNORMAL);
   SetFocus(GetHWND());
 #else
   std::cerr

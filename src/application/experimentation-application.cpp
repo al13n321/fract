@@ -192,7 +192,6 @@ int main(int argc, char **argv) {
       else
         throw CommandLineArgumentsException(
           "second argument should be 'no-vr'");
-      
 
     config.reset(new Config(config_path));
     config_context = config->NewContext();
