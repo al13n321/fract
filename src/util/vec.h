@@ -29,6 +29,9 @@ struct tvec2 {
   bool operator==(const tvec2<T> &rhs) const {
     return x == rhs.x && y == rhs.y;
   }
+  tvec2<T> operator-() const {
+    return tvec2<T>(-x, -y);
+  }
 };
 
 template<typename ftype>

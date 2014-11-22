@@ -100,6 +100,10 @@ void Camera::TurnRelative(fvec2 delta) {
   if (fabs(delta.x) + fabs(delta.y) < 1e-5)
     return;
 
+  // Invert controls in window, so that it feels like dragging.
+  if (!have_head_pose_)
+    delta = -delta;
+
   if (mode_ == YAW_PITCH) {
     yaw_   += delta.x * turn_speed_;
     pitch_ = std::max((float)-M_PI/2, std::min((float)M_PI/2, pitch_
