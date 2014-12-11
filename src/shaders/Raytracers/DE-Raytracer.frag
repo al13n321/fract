@@ -1,6 +1,6 @@
 #include <Common/Raytracer-Api.frag>
 
-uniform int RaySteps = 200;
+uniform int RaySteps = 500;
 uniform float ExtrusionCoef = 0.5;
 uniform float FudgeFactor = 1;
 uniform float BackStep = 0.2;

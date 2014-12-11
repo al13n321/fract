@@ -37,6 +37,7 @@ Wishlist, to keep in mind:
 	+ Saving precalc checkpoints for faster re-rendering?
 
 Notes:
+- Try over-relaxation.
 - Limit quality degradation when using cubemap:
   use pixel size when tracing through cubemap;
   ignore cubemap texels that are too big on screen, including side hits
