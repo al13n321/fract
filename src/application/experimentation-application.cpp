@@ -186,12 +186,13 @@ int main(int argc, char **argv) {
         "0 - 2 command line arguments expected");
     if (argc > 1)
       config_path = argv[1];
-    if (argc > 2)
+    if (argc > 2) {
       if (argv[2] == std::string("no-vr"))
         no_vr = true;
       else
         throw CommandLineArgumentsException(
           "second argument should be 'no-vr'");
+    }
 
     config.reset(new Config(config_path));
     config_context = config->NewContext();

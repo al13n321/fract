@@ -1,4 +1,5 @@
 #include "glfw-util.h"
+#include <iostream>
 
 #ifdef WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -8,15 +9,17 @@
 
 namespace fract { namespace glfw {
 
+#ifdef WIN32
 HWND Window::GetHWND() {
   return glfwGetWin32Window(window);
 }
+#endif
 
 void Window::Focus() {
 #ifdef WIN32
   ShowWindow(GetHWND(), SW_SHOWNORMAL);
   SetFocus(GetHWND());
-#else
+#elif defined(USE_OVR)
   std::cerr
     << "Window::Focus() is not implemented for this platform. "
     << "Consider implementing it to avoid the crappy user experience "

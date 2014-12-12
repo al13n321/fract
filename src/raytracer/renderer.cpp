@@ -5,7 +5,7 @@ namespace fract {
 
 Renderer::Renderer(Config::View *config)
   : config_(config)
-  , shader_provider_(config, "Predefined/pass.vert", {"renderer"}, {}) {}
+  , shader_provider_(config_, "Predefined/pass.vert", {"renderer"}, {}) {}
 
 void Renderer::Render(
     const RaytracedView &raytraced, ivec2 frame_size) {

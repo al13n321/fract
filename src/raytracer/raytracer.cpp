@@ -5,7 +5,7 @@ namespace fract {
 
 Raytracer::Raytracer(Config::View *config)
   : config_(config)
-  , shader_provider_(config, "Predefined/pass.vert", {"raytracer"},
+  , shader_provider_(config_, "Predefined/pass.vert", {"raytracer"},
     {{"Camera-shader", "Predefined/PerspectiveCamera.frag"}}) {}
 
 void Raytracer::TraceGrid(const RayGrid &grid, RaytracedView &target) {
