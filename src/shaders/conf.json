@@ -1,6 +1,6 @@
 {
   "root_dir": "", // relative to directory with this file; optional
-  "raytracer": "Examples/Mandelbulb.frag",
+  "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
