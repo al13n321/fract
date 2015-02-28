@@ -21,10 +21,7 @@ void Raytracer::TraceGrid(const RayGrid &grid, RaytracedView &target) {
 
   shader->Use();
 
-  shader->SetVec3("CameraPos", grid.position);
-  shader->SetScalar("CameraScale", grid.scale);
-  shader->SetMat4("CameraRotProjInv", grid.rotation_projection_inv);
-  shader->SetVec2("Resolution", dvec2(grid.resolution));
+  grid.AssignToUniforms(*shader);
 
   quad_renderer_.Render();
   GL::Framebuffer::Unbind();

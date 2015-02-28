@@ -5,20 +5,12 @@ uniform ftype CameraScale;
 uniform mat4 CameraRotProjInv;
 uniform vec2 Resolution;
 
-in vec2 ScreenPosition;
-
-layout (location = 0) out vec4 OutMain;
-layout (location = 1) out vec4 OutNormal;
-layout (location = 2) out vec4 OutColor;
-
-void main() {
-  vec2 pix = ScreenPosition * 2.0 - 1.0;
-
-  vec4 dir;
-  dir = CameraRotProjInv * vec4(
-    pix, 0.0f, 1.0f);
-  dir.xyz /= dir.w;
-  dir.w = 0.0;
+Ray Unproject(vec2 screen_pos) {
+  Ray ray;
+  vec2 pix = screen_pos * 2.0 - 1.0;
+  ray.direction = CameraRotProjInv * vec4(pix, 0.0f, 1.0f);
+  ray.direction.xyz /= ray.direction.w;
+  ray.direction.w = 0.0;
 
   vec4 a = CameraRotProjInv * vec4(
     pix - 1.0 / Resolution, 0.0f, 1.0f);
@@ -26,14 +18,11 @@ void main() {
     pix + 1.0 / Resolution, 0.0f, 1.0f);
   a.xyz /= a.w;
   b.xyz /= b.w;
-  dir.w = distance(a.xyz, b.xyz) / length(dir.xyz);
-  dir.xyz = normalize(dir.xyz);
+  ray.direction.w = distance(a.xyz, b.xyz) / length(ray.direction.xyz);
+  ray.direction.xyz = normalize(ray.direction.xyz);
 
-  RaytracerOutput res = TraceRay(tvec4(CameraPos, 0.0), dir, CameraScale);
-  
-  OutMain = vec4(res.error * 8 + res.converged * 4 + res.hit * 2 + res.inside,
-    res.iterations, res.dist, 0.0);
-  OutNormal = vec4(res.normal, 0);
-  OutColor = res.color;
+  ray.origin = tvec4(CameraPos, 0.0);
+  ray.scale = CameraScale;
+
+  return ray;
 }
-

@@ -25,5 +25,22 @@ struct RaytracerOutput {
   float iterations;
   float dist;
   vec3 normal;
+  float ao; // ambient occlusion
   vec4 color;
 };
+
+struct Ray {
+	tvec4 origin;
+	vec4 direction;
+	ftype scale; // camera scale (world size multiplier)
+};
+
+// current time
+uniform float Now = 0;
+
+// Get ray corresponding to screen pixel, using current camera.
+// Implemented in [Camera-shader]
+Ray Unproject(vec2 screen_pos);
+
+// Set from application to one of predefined files.
+#include [Camera-shader]

@@ -55,11 +55,17 @@ void NormalController::Render() {
   grid.rotation_projection_inv = camera_->RotationProjectionMatrix().Inverse();
   grid.scale = camera_->scale();
   grid.resolution = resolution_;
+  // Time since something like midnight today. Time since epoch
+  // is too big to be represented in 32-bit flost precisely enough.
+  grid.time = std::chrono::duration_cast<std::chrono::microseconds>(
+    std::chrono::high_resolution_clock::now().time_since_epoch()).count()
+      % (24ll * 3600 * 1000000) * 0.000001;
 
   raytracer_->TraceGrid(grid, *view_);
 
-  glViewport(0, 0, resolution_.x, resolution_.y);CHECK_GL_ERROR();
-  renderer_->Render(*view_, resolution_);
+  // XXX: * 2 is a hack for retina; get rid of it as soon as I have internet connection
+  glViewport(0, 0, resolution_.x * 2, resolution_.y * 2);CHECK_GL_ERROR();
+  renderer_->Render(grid, *view_);
 
   window_->SwapBuffers();
 }

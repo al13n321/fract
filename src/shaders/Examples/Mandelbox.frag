@@ -3,7 +3,7 @@
 
 // Modified code from Fragmentarium examples.
 
-uniform int Iterations = 10;
+uniform int Iterations = 20;
 uniform float MinRad2 = 0.25;
 uniform float Scale = 3.0;
 

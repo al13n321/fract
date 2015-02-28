@@ -2,6 +2,7 @@
 
 #include "util/vec.h"
 #include "util/mat.h"
+#include "gl-util/shader.h"
 
 namespace fract {
 
@@ -19,6 +20,9 @@ struct RayGrid {
 
   // Resolution of the grid.
   ivec2 resolution;
+
+  // Seconds since some fixed point in time.
+  float time;
 
   inline fvec3 GetRayDirection(int x, int y) const {
     return rotation_projection_inv.Transform(fvec3(
@@ -44,6 +48,15 @@ struct RayGrid {
         / static_cast<float>(resolution.y) * 2 - 1,
       .0f));
     return sqrtf(a.DistanceSquare(b) / a.LengthSquare());
+  }
+
+  void AssignToUniforms(GL::Shader &shader) const {
+    shader.SetVec3("CameraPos", position);
+    shader.SetScalar("CameraScale", scale);
+    shader.SetMat4("CameraRotProjInv", rotation_projection_inv);
+    shader.SetVec2("Resolution", dvec2(resolution));
+
+    shader.SetScalar("Now", time);
   }
 };
 

@@ -20,6 +20,10 @@ struct tvec2 {
   template<typename X>
   inline tvec2<T>(const tvec2<X> &v) : x(v.x), y(v.y) {}
 
+  tvec2<T> operator*(const T v) const {
+    return tvec2<T>(x * v, y * v);
+  }
+
   T LengthSquare() const { return x*x + y*y; }
 
   F Length() {
@@ -93,7 +97,7 @@ struct tvec3 {
   // if clamp, all out values are forced to range [0, 1] (while keeping their sum equal to 1)
   inline void ToBarycentric(const tvec3<ftype> *triangle, ftype *out, bool clamp = false) {
     tvec3<ftype> n = (triangle[1] - triangle[0]).Cross(triangle[2] - triangle[0]);
-    
+
     ftype sum = 0;
 
     for (int i = 0; i < 3; ++i) {
@@ -102,7 +106,7 @@ struct tvec3 {
         out[i] = 0;
       sum += out[i];
     }
-    
+
     if (std::abs(sum) >= 1e-5) {
       for(int i = 0; i < 3; ++i)
         out[i] /= sum;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raytraced-view.h"
+#include "ray-grid.h"
 #include "gl-util/quad-renderer.h"
 #include "gl-util/shader.h"
 #include "resources/config.h"
@@ -13,8 +14,7 @@ class Renderer {
  public:
   Renderer(Config::View *config);
 
-  void Render(
-    const RaytracedView &raytraced, ivec2 frame_size);
+  void Render(const RayGrid &grid, const RaytracedView &raytraced);
  private:
   Config::View *config_;
   ShaderProvider shader_provider_;

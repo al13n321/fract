@@ -1,6 +1,7 @@
 #include <Common/Raytracer-Api.frag>
 
-uniform int RaySteps = 500;
+uniform int RaySteps = 100;
+uniform float AOBaseline = 50;
 uniform float ExtrusionCoef = 0.5;
 uniform float FudgeFactor = 1;
 uniform float BackStep = 0.2;
@@ -34,11 +35,14 @@ vec3 Normal(tvec4 p) {
 RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
   RaytracerOutput res;
 
+
   res.hit = 0;
   res.converged = 0;
   res.error = 0;
   res.iterations = 0;
+  res.inside = 0;
   res.normal = vec3(0, 0, 0);
+  res.ao = 1;
   res.color = vec4(1e20, 1e20, 1e20, 1e20);
 
   tvec4 position = origin;
@@ -59,6 +63,10 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
     direction.xyz = normalize(direction.xyz);
   }
 
+  // If iteration limit is exceeded, take "best" point of the trajectory instead of the last.
+  ftype best_dist = 0;
+  ftype best_rel_de = 1e10;
+
   ftype dist = abs(de);
   int i;
   for (i = 0; i < RaySteps; ++i) {
@@ -68,6 +76,7 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
       // No hit (left bounding volume).
       res.converged = 1;
       res.iterations = i;
+      res.ao = (RaySteps - i + .0) / AOBaseline;
       return res;
     }
 
@@ -92,13 +101,21 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
 
     if (!inside && de <= modified_eps) {
       dist += fudged_de;
-      position = origin + direction * dist;
+      best_dist = dist;
       break;
+    }
+
+    ftype rel_de = de / position.w;
+    if (rel_de < best_rel_de) {
+      best_rel_de = rel_de;
+      best_dist = dist;
     }
 
     dist += fudged_de;
     position = origin + direction * dist;
   }
+
+  position = origin + direction * best_dist;
 
   // Hit or iteration limit reached.
   res.hit = 1;
@@ -109,6 +126,7 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
 
   position -= direction * (position.w * BackStep);
   res.normal = Normal(position);
+  res.ao = max(0., 1. - i / AOBaseline);
 #ifdef TRAPS
   res.color = Traps(position);
 #else

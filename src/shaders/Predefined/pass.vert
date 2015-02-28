@@ -6,5 +6,5 @@ out vec2 ScreenPosition;
 
 void main(void){
 	gl_Position = inScreenPos;
-	ScreenPosition=inCanvasPos;
+	ScreenPosition = inCanvasPos;
 }
