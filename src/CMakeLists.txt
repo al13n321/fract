@@ -16,7 +16,7 @@ ENDIF ()
 IF (EXISTS "${OVR_SDK}")
   SET (USE_OVR 1)
   message("Have OVR support")
-  
+
   add_definitions(-DUSE_OVR)
 
   include_directories(
@@ -92,6 +92,7 @@ add_executable(fract
   #application/monitest.cpp
   #application/vrtest.cpp
   application/normal-controller.cpp
+  application/experimental-cpu-raytracer.cpp
   gl-util/framebuffer.cpp
   gl-util/gl-common.cpp
   gl-util/glfw-util.cpp

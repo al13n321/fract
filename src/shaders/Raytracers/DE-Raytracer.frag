@@ -1,6 +1,6 @@
 #include <Common/Raytracer-Api.frag>
 
-uniform int RaySteps = 100;
+uniform int RaySteps = 200;
 uniform float AOBaseline = 50;
 uniform float ExtrusionCoef = 0.5;
 uniform float FudgeFactor = 1;
@@ -71,8 +71,8 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
   int i;
   for (i = 0; i < RaySteps; ++i) {
     position = origin + direction * dist;
-    if (dot(direction, position) > 0.0 &&
-        dot(position, position) > BOUNDS) {
+    if (dot(direction.xyz, position.xyz) > 0.0 &&
+        dot(position.xyz, position.xyz) > BOUNDS) {
       // No hit (left bounding volume).
       res.converged = 1;
       res.iterations = i;
@@ -112,7 +112,6 @@ RaytracerOutput TraceRay(tvec4 origin, vec4 direction, ftype scale) {
     }
 
     dist += fudged_de;
-    position = origin + direction * dist;
   }
 
   position = origin + direction * best_dist;

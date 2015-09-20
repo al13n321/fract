@@ -1,5 +1,6 @@
 #include <iostream>
 #include "normal-controller.h"
+#include "experimental-cpu-raytracer.h"
 #include "gl-util/glfw-util.h"
 #include "resources/camera.h"
 #include "util/debug.h"
@@ -75,8 +76,7 @@ static void ActivateController() {
 
   window->SetKeyCallback(&KeyCallback);
   window->SetScrollCallback(&ScrollCallback);
-  window->SetMouseButtonCallback(
-    &MouseButtonCallback);
+  window->SetMouseButtonCallback(&MouseButtonCallback);
   window->SetCursorPosCallback(&CursorPosCallback);
 
   if (controller->CaptureMouse())
@@ -101,6 +101,18 @@ static void KeyCallback(
       }
     } else if (key == GLFW_KEY_APOSTROPHE) {
       ++DebugTrigger;
+    } else if (key == GLFW_KEY_K) {
+      static std::unique_ptr<IRaytracer> normal_tracer;
+      auto c = dynamic_cast<NormalController*>(
+        controllers[controller_idx].get());
+      if (c) {
+        if (normal_tracer) {
+          c->ExchangeRaytracer(std::move(normal_tracer));
+        } else {
+          normal_tracer = c->ExchangeRaytracer(std::unique_ptr<IRaytracer>(
+            new ExperimentalCPURaytracer()));
+        }
+      }
     }
   }
 }
@@ -154,6 +166,10 @@ static void ProcessKeyboardInput(double frame_time) {
     movement.z -= 1;
   if (window->IsKeyPressed(GLFW_KEY_S))
     movement.z += 1;
+  if (window->IsKeyPressed(GLFW_KEY_E))
+    movement.y += 1;
+  if (window->IsKeyPressed(GLFW_KEY_Q))
+    movement.y -= 1;
 
   if (!movement.IsZero()) {
     camera->MoveRelative(movement * static_cast<float>(frame_time));

@@ -10,8 +10,9 @@ Important features:
 
 Plan:
 - Fix retina issue
+- Power saving (only render if something changed)
 - Mandelbulb
-- Asynchronous timewarp.
+- Asynchronous timewarp
 - Saving everything to file (shaders, camera)
 	Should be able to save current view as a camera, so it can be pasted here later to restore view.
   Or save the entire state, with camera inlined.

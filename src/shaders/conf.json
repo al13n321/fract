@@ -1,6 +1,6 @@
 {
   "root_dir": "", // relative to directory with this file; optional
-  "raytracer": "Examples/Voronoi.frag",
+  "raytracer": "Examples/Mandelbox.frag",
   "renderer": "Renderers/Default.frag",
 
   "auto_resolution": true,  // Dynamically adjust resolution based on FPS.
@@ -14,7 +14,7 @@
   // These parameters are only applied when changed.
   // Or when 'C' key is pressed (to reset camera).
   "camera": {
-    "mode": "space", // Other option is "space".
+    "mode": "fps", // Other option is "space".
     "fov": 90,
     "pos": { "x": 0, "y": 0, "z": 10 },
     "yaw": 0,

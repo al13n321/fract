@@ -3,9 +3,9 @@
 
 // Modified code from Fragmentarium examples.
 
-uniform int Iterations = 20;
+uniform int Iterations = 15;
 uniform float MinRad2 = 0.25;
-uniform float Scale = 3.0;
+uniform float Scale = 3;
 
 float scale = Scale / MinRad2;
 float absScalem1 = abs(Scale - 1.0);
@@ -19,7 +19,7 @@ ftype DE(tvec4 pos) {
     ftype r2 = dot(p.xyz, p.xyz);
     p *= clamp(max(MinRad2/r2, MinRad2), 0.0, 1.0);  // dp3,div,max.sat,mul
     p = p*scale + p0;
-    if (r2>1000.0) break;
+    if (r2>1e3) break;
   }
   return ((length(p.xyz) - absScalem1) / p.w - absScaleRaisedTo1mIters);
 }

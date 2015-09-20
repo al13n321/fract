@@ -9,7 +9,7 @@
 // and allows finding the closest point in O(1).
 
 
-uniform float Radius = 0.1;
+uniform float Radius = 0.03;
 
 tvec3 Point(tvec3 p) {
 	// Random matrix.
@@ -23,6 +23,9 @@ tvec3 Point(tvec3 p) {
 
 	// Smooth waves.
 	return p + 1/3. + (1/ 6.) * (sin(m * p + Now * 5) + 1);
+
+	// No movement.
+	//return p;
 }
 
 tvec4 Closest(tvec4 a, tvec3 p, tvec3 g) {
