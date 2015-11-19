@@ -60,7 +60,7 @@ void NormalController::Render() {
   // is too big to be represented in 32-bit float precisely enough.
   grid.time = std::chrono::duration_cast<std::chrono::microseconds>(
     std::chrono::high_resolution_clock::now().time_since_epoch()).count()
-      % (24ll * 3600 * 1000000) * 0.000001;
+      % (24ll * 3600 * 1000000) * 1e-6f;
 
   raytracer_->TraceGrid(grid, *view_);
 

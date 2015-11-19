@@ -8,8 +8,8 @@ static float DE(fvec3 p) {
   const float MinRad2 = 0.25;
   const float Scale = 3;
   const float scale = Scale / MinRad2;
-  const float absScalem1 = std::abs(Scale - 1.0);
-  const float absScaleRaisedTo1mIters = pow(std::abs(Scale), 1.-Iterations);
+  const float absScalem1 = std::abs(Scale - 1.0f);
+  const float absScaleRaisedTo1mIters = pow(std::abs(Scale), 1.f-Iterations);
 
   fvec3 p0 = p;
   float w = 1;
@@ -48,11 +48,11 @@ static void trace(fvec3 origin, fvec3 direction, float pix_size_coef, float d0,
       // No hit (left bounding volume).
       *out_steps = i;
       *out_hit = false;
-      *out_dist = 1e200;
+      *out_dist = 1e30f;
       return;
     }
 
-    float modified_eps = w * 0.5;
+    float modified_eps = w * 0.5f;
     de = DE(position);
 
     if (de <= modified_eps) {
@@ -103,11 +103,11 @@ void ExperimentalCPURaytracer::TraceGrid(
     for (size_t x1 = 0; x1 < grid.resolution.x; x1 += B) {
       size_t x2 = std::min(x1 + B, (size_t)grid.resolution.x);
       size_t y2 = std::min(y1 + B, (size_t)grid.resolution.y);
-      float mnd = 1e200;
+      float mnd = 1e30f;
       for (size_t y = y1; y < y2; ++y) {
         for (size_t x = x1; x < x2; ++x) {
-          fvec3 dir = grid.GetRayDirection(x, y);
-          float pix_size_coef = grid.GetPixelSizeCoefficient(x, y);
+          fvec3 dir = grid.GetRayDirection((int)x, (int)y);
+          float pix_size_coef = grid.GetPixelSizeCoefficient((int)x, (int)y);
 
           bool hit;
           size_t steps;
@@ -122,8 +122,8 @@ void ExperimentalCPURaytracer::TraceGrid(
 
       for (size_t y = y1; y < y2; ++y) {
         for (size_t x = x1; x < x2; ++x) {
-          fvec3 dir = grid.GetRayDirection(x, y);
-          float pix_size_coef = grid.GetPixelSizeCoefficient(x, y);
+          fvec3 dir = grid.GetRayDirection((int)x, (int)y);
+          float pix_size_coef = grid.GetPixelSizeCoefficient((int)x, (int)y);
 
           bool hit;
           size_t steps;
@@ -135,8 +135,8 @@ void ExperimentalCPURaytracer::TraceGrid(
           total_rem_dist_pct += (dist - mnd) / dist;
 
           size_t ind = (y * grid.resolution.x + x) * 4;
-          main[ind + 0] = 4 + (hit ? 2 : 0);
-          normal[ind + 3] = std::max(0., 1. - steps / 50.);
+          main[ind + 0] = 4.f + (hit ? 2.f : 0.f);
+          normal[ind + 3] = std::max(0.f, 1.f - steps / 50.f);
         }
       }
     }

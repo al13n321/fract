@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
     srand(static_cast<unsigned int>(time(nullptr)));
 
     std::string config_path = "shaders/conf.json";
-    bool no_vr = false;
+    bool no_vr = true; // XXX: fix VR by updating to latest SDK, and default to false
     if (argc > 3)
       throw CommandLineArgumentsException(
         "0 - 2 command line arguments expected");

@@ -87,7 +87,7 @@ void OVRController::Render() {
     raytracer_->TraceGrid(grid, *eye.view);
 
     eye.framebuffer->BindForWriting();
-    renderer_->Render(*eye.view, eye.resolution);
+    renderer_->Render(grid, *eye.view);
 
     if (is_monoscopic_)
       break;

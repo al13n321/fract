@@ -46,7 +46,7 @@ struct tvec3 {
   inline tvec3(ftype x, ftype y, ftype z) : x(x), y(y), z(z) {}
 
   template<typename T>
-  inline tvec3<ftype>(const tvec3<T> &v) : x(v.x), y(v.y), z(v.z) {}
+  inline tvec3<ftype>(const tvec3<T> &v) : x((float)v.x), y((float)v.y), z((float)v.z) {}
 
   inline tvec3<ftype> operator - () const { return tvec3<ftype>(-x, -y, -z); }
 
